@@ -1,0 +1,66 @@
+Name: libfinagle
+Version: @VERSION@
+Release: %()
+
+Summary: Finagle C++ convenience/wrapper library.
+License: LGPL
+Group: Development/Libraries
+#Url:
+Source: libFinagle-@VERSION@.tar.gz
+
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+
+%description
+
+
+%package doc
+Summary: HTML formatted API documention for libFinagle
+Group: Development/Libraries
+Requires: %name = %version
+
+
+%description doc
+
+
+%prep
+%setup -q
+
+
+%build
+%configure --enable-doxygen
+make %{?_smp_mflags}
+
+
+%install
+rm -rf %{buildroot}
+make install DESTDIR=%{buildroot}
+rm -f %{buildroot}/%{_libdir}/*.la
+#rm -rf %{buildroot}/%{_datadir}/cppunit
+
+
+%clean
+rm -rf %{buildroot}
+
+
+%files
+%defattr(-,root,root,-)
+#%{_bindir}/cppunit-config
+#%{_bindir}/DllPlugInTester
+#%{_includedir}/cppunit/*
+#%{_mandir}/man1/*
+#%{_datadir}/aclocal/*
+#%{_libdir}/libcppunit*.so.*
+#%{_libdir}/libcppunit.so
+#%{_libdir}/libcppunit.a
+#%doc AUTHORS COPYING INSTALL NEWS README THANKS ChangeLog TODO BUGS doc/FAQ
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%files doc
+%doc doc/html/*
+
+%changelog
+* Mon Jul  4 2005 Patrice Dumas <dumas@centre-cired.fr>
+- update using the fedora template
