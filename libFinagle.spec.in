@@ -1,29 +1,20 @@
-Name: libfinagle
-Version: @VERSION@
-Release: %()
+Name: libFinagle
+Version: @FINAGLE_VERSION@
+Release: @FINAGLE_RELEASE@
 
 Summary: Finagle C++ convenience/wrapper library.
 License: LGPL
 Group: Development/Libraries
 #Url:
-Source: libFinagle-@VERSION@.tar.gz
+Source: libFinagle-@FINAGLE_VERSION@-@FINAGLE_RELEASE@.tar.bz2
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 %description
 
 
-%package doc
-Summary: HTML formatted API documention for libFinagle
-Group: Development/Libraries
-Requires: %name = %version
-
-
-%description doc
-
-
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}-%{release}
 
 
 %build
@@ -46,21 +37,27 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 #%{_bindir}/cppunit-config
 #%{_bindir}/DllPlugInTester
-#%{_includedir}/cppunit/*
+#%{_includedir}/libFinagle/*.h
 #%{_mandir}/man1/*
 #%{_datadir}/aclocal/*
-#%{_libdir}/libcppunit*.so.*
-#%{_libdir}/libcppunit.so
-#%{_libdir}/libcppunit.a
+%{_libdir}/libFinagle*.so.*
+%{_libdir}/libFinagle.so
+%{_libdir}/libFinagle.a
 #%doc AUTHORS COPYING INSTALL NEWS README THANKS ChangeLog TODO BUGS doc/FAQ
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
-%files doc
-%doc doc/html/*
+###############################################################################
 
-%changelog
-* Mon Jul  4 2005 Patrice Dumas <dumas@centre-cired.fr>
-- update using the fedora template
+#%package doc
+#Summary: HTML formatted API documention for libFinagle
+#Group: Development/Libraries
+#Requires: %name = %version
+
+
+#%description doc
+
+#%files doc
+#%doc doc/html/*

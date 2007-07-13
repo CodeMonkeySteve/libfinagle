@@ -1,8 +1,14 @@
 AC_PREREQ(2.59)
-AC_INIT(libFinagle, 2.0, steve@finagle.org)
+AC_INIT(configure.in)
+
+FINAGLE_VERSION=1.0
+FINAGLE_RELEASE=`svn info . 2>/dev/null  | sed -n -e 's/Last Changed Rev:\s*\(\d*\)/\1/p'`
+AC_SUBST(FINAGLE_VERSION)
+AC_SUBST(FINAGLE_RELEASE)
+
 AC_CONFIG_SRCDIR(configure.in)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(libFinagle, $FINAGLE_VERSION-$FINAGLE_RELEASE)
 
 # Check for programs
 AC_LANG_CPLUSPLUS
@@ -55,5 +61,5 @@ AC_CHECK_FUNCS([getcwd gethostbyaddr gethostbyname gettimeofday inet_ntoa memmov
 
 AC_CONFIG_FILES([Makefile
                  Finagle/Makefile test/Makefile
-                 libfinagle.spec libfinagle.pc])
+                 libFinagle.spec libFinagle.pc])
 AC_OUTPUT
