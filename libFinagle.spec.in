@@ -11,6 +11,14 @@ Source: libFinagle-@FINAGLE_VERSION@-@FINAGLE_RELEASE@.tar.bz2
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 %description
+Finagle is a C++ library providing wrapper classes and convenience 
+functions for many common system functions, including:
+* Multi-threading (pthreads)
+* Regular expressions (pcre)
+* XML parsing (expat)
+* TCP/UNIX network (sockets)
+* Signal/slot messaing (sigslot)
+* Reference-counting smart-pointers
 
 
 %prep
@@ -57,4 +65,4 @@ programs that use libFinagle.
 %{_libdir}/libFinagle*.so
 %{_libdir}/libFinagle*.a
 #% {_includedir}/Finagle/*.h
-%doc doc/html/*
+%doc doc/html
