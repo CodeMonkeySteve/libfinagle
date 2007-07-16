@@ -6,7 +6,7 @@ Summary: Finagle C++ convenience/wrapper library.
 License: LGPL
 Group: Development/Libraries
 #Url:
-Source: libFinagle-@FINAGLE_VERSION@-@FINAGLE_RELEASE@.tar.bz2
+Source: %{name}-@FINAGLE_VERSION@-@FINAGLE_RELEASE@.tar.bz2
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
@@ -42,7 +42,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_libdir}/libFinagle*.so.*
+%{_libdir}/%{name}*.so.*
 %doc AUTHORS COPYING
 
 %post -p /sbin/ldconfig
@@ -62,7 +62,8 @@ programs that use libFinagle.
 
 %files devel
 %defattr(-,root,root,-)
-%{_libdir}/libFinagle*.so
-%{_libdir}/libFinagle*.a
+%{_libdir}/%{name}*.so
+%{_libdir}/%{name}*.a
+%{_libdir}/pkgconfig/%{name}.pc
 %{_includedir}/%{name}-%{version}-%{release}/Finagle/*.h
 %doc doc/html/*
