@@ -9,11 +9,11 @@ doc/html: $(DIST_SOURCES)
 	$(MAKE) doxygen-doc
 
 
-SPEC_FILE=$(PACKAGE).spec
-EXTRA_DIST += libFinagle.pc $(SPEC_FILE)
+SPEC_FILE = $(PACKAGE).spec
+EXTRA_DIST += $(SPEC_FILE)
 
-RPM_PATH_FMT=$(shell rpm --eval '%{_rpmdir}/%{_build_name_fmt}')
-RPM_PATHS=$(shell rpm -q --qf "$(RPM_PATH_FMT) " --specfile $(SPEC_FILE))
+RPM_PATH_FMT = $(shell rpm --eval '%{_rpmdir}/%{_build_name_fmt}')
+RPM_PATHS = $(shell rpm -q --qf "$(RPM_PATH_FMT) " --specfile $(SPEC_FILE))
 
 pkgs: $(RPM_PATHS)
 

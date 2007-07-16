@@ -64,5 +64,5 @@ programs that use libFinagle.
 %defattr(-,root,root,-)
 %{_libdir}/libFinagle*.so
 %{_libdir}/libFinagle*.a
-#% {_includedir}/Finagle/*.h
-%doc doc/html
+%{_includedir}/%{name}-%{version}-%{release}/Finagle/*.h
+%doc doc/html/*

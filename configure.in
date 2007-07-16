@@ -2,7 +2,7 @@ AC_PREREQ(2.59)
 AC_INIT(configure.in)
 
 FINAGLE_VERSION=1.0
-FINAGLE_RELEASE=`svn info . 2>/dev/null  | sed -n -e 's/Last Changed Rev:\s*\(\d*\)/\1/p'`
+FINAGLE_RELEASE=esyscmd([svn info . 2>/dev/null  | sed -n -e 's/Last Changed Rev:\s*\(\d*\)/\1/p'])
 AC_SUBST(FINAGLE_VERSION)
 AC_SUBST(FINAGLE_RELEASE)
 

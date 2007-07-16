@@ -20,3 +20,13 @@ libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp Array.h Finagle.h Compress.cpp \
 libFinagle_la_LDFLAGS = -no-undefined -version-info @LIB_CURRENT@:@LIB_REVISION@:@LIB_AGE@ -release @FINAGLE_VERSION@
 libFinagle_la_LIBADD = $(PTHREAD_LIBS) $(z_LIBS) $(libpcre_LIBS) $(expat_LIBS) $(openssl_LIBS)
 INCLUDES = -I$(top_srcdir) $(PTHREAD_CFLAGS) $(expat_CFLAGS) $(libpcre_CFLAGS) $(openssl_CFLAGS) $(z_CFLAGS)
+
+library_includedir=$(includedir)/$(PACKAGE)-$(VERSION)/Finagle
+library_include_HEADERS = Array.h Finagle.h Compress.h Configure.h Constructable.h DataStream.h DateTime.h \
+	DateTimeMask.h Dir.h Exception.h File.h FileDescWatcher.h FilePath.h FileSystem.h GarbageCollector.h \
+	IPAddress.h InetSocket.h List.h MD5.h Map.h MapIterator.h MemTrace.h MultiMap.h Mutex.h OptionParser.h OrderedMap.h \
+	PriorityMutex.h Property.h PThreadEx.h Queue.h Range.h Rate.h Rectangle.h ReferencedObject.h RegEx.h \
+	SSL.h Schedule.h ServerSocket.h Set.h Singleton.h Socket.h StreamIO.h TextString.h Thread.h ThreadFunc.h \
+	Timer.h UUID.h UnixSocket.h Util.h WaitCondition.h XML.h XMLParse.h sigslot.h AppLog.h AppLogEntry.h AppLoop.h \
+	ByteArray.h ByteOrder.h Collection.h
+
