@@ -35,15 +35,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-#%{_bindir}/cppunit-config
-#%{_bindir}/DllPlugInTester
-#%{_includedir}/libFinagle/*.h
-#%{_mandir}/man1/*
-#%{_datadir}/aclocal/*
 %{_libdir}/libFinagle*.so.*
-%{_libdir}/libFinagle.so
-%{_libdir}/libFinagle.a
-#%doc AUTHORS COPYING INSTALL NEWS README THANKS ChangeLog TODO BUGS doc/FAQ
+%doc AUTHORS COPYING INSTALL 
 
 %post -p /sbin/ldconfig
 
