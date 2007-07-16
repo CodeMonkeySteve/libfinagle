@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = libFinagle
 PROJECT_NUMBER         = v2.0
-OUTPUT_DIRECTORY       = docs/
+OUTPUT_DIRECTORY       = doc/
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
 BRIEF_MEMBER_DESC      = YES

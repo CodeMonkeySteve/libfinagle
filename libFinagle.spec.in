@@ -26,7 +26,6 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 rm -f %{buildroot}/%{_libdir}/*.la
-#rm -rf %{buildroot}/%{_datadir}/cppunit
 
 
 %clean
@@ -36,7 +35,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %{_libdir}/libFinagle*.so.*
-%doc AUTHORS COPYING INSTALL 
+%doc AUTHORS COPYING
 
 %post -p /sbin/ldconfig
 
@@ -44,13 +43,18 @@ rm -rf %{buildroot}
 
 ###############################################################################
 
-#%package doc
-#Summary: HTML formatted API documention for libFinagle
-#Group: Development/Libraries
-#Requires: %name = %version
+%package devel
+Summary: Static libraries and header files for libFinagle app development.
+Group: Development/Libraries
+Requires: %name = %version
 
+%description devel
+This package contains the static libraries and headers necessary for developing 
+programs that use libFinagle.
 
-#%description doc
-
-#%files doc
-#%doc doc/html/*
+%files devel
+%defattr(-,root,root,-)
+%{_libdir}/libFinagle*.so
+%{_libdir}/libFinagle*.a
+#% {_includedir}/Finagle/*.h
+%doc doc/html/*
