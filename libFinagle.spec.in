@@ -28,6 +28,7 @@ functions for many common system functions, including:
 %build
 %configure --enable-doxygen
 make %{?_smp_mflags}
+make check
 
 
 %install

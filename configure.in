@@ -32,9 +32,6 @@ DX_INIT_DOXYGEN(libFinagle, Doxyfile, doc)
 # Check for programs
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
-
-dnl AC_DISABLE_FAST_INSTALL
-dnl AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 
 # Check for libraries
@@ -83,5 +80,5 @@ AC_CHECK_FUNCS([getcwd gethostbyaddr gethostbyname gettimeofday inet_ntoa memmov
 
 AC_CONFIG_FILES([Makefile
                  Finagle/Makefile test/Makefile
-                 libFinagle.spec libFinagle.pc])
+                 libFinagle.spec libFinagle.pc Doxyfile])
 AC_OUTPUT

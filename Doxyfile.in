@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = libFinagle
-PROJECT_NUMBER         = v2.0
+PROJECT_NUMBER         = v@FINAGLE_VERSION@
 OUTPUT_DIRECTORY       = doc/
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO

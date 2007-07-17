@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: libFinagle
-Description: Finagle C++ convenience/wrapper library.
+Description: Finagle C++ convenience/wrapper library
 Version: @VERSION@
 Libs: -L${libdir} -lFinagle
 Libs.private: @LIBADD_DL@
