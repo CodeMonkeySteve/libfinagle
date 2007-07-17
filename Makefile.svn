@@ -1,6 +1,5 @@
-default: all
-
 all:
+	$(RM) -r configure *.spec autom4te.cache
 	aclocal
 	autoheader
 	automake
