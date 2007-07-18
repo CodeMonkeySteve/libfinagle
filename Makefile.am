@@ -12,10 +12,11 @@ doc/html: $(DIST_SOURCES)
 
 # Add pkg-config file
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = @PACKAGE@.pc
+pkgconfig_DATA = @PACKAGE@.pc 
+EXTRA_DIST += @PACKAGE@.pc.in
 
 # Build RPMS
-EXTRA_DIST += @PACKAGE@.spec 
+EXTRA_DIST += @PACKAGE@.spec @PACKAGE@.spec.in
 RPM_PATH_FMT = $(shell rpm --eval '%{_rpmdir}/%{_build_name_fmt}')
 RPM_PATHS = $(shell rpm -q --qf "$(RPM_PATH_FMT) " --specfile @PACKAGE@.spec)
 
