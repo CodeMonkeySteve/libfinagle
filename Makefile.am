@@ -22,6 +22,9 @@ RPM_PATHS = $(shell rpm -q --qf "$(RPM_PATH_FMT) " --specfile @PACKAGE@.spec)
 
 pkgs: $(RPM_PATHS)
 
+pkgs-install: pkgs
+	cp $(RPM_PATHS) $(PKGDIR)
+
 $(RPM_PATHS): @PACKAGE@.spec.in $(DIST_COMMON) $(DIST_SOURCES)
 	$(MAKE) dist-bzip2
 	rpmbuild -tb $(distdir).tar.bz2	
