@@ -42,6 +42,7 @@ public:
   String title( void ) const;
 
   FilePath absolute( void ) const;
+  bool isAbsolute( void ) const;
 
   FilePath &operator +=( String const &str );
 
@@ -110,6 +111,11 @@ inline String FilePath::title( void ) const
   return( (i != npos) ? String( Name, 0, i ) : Name );
 }
 
+//! Returns \c true iff the path is absolute (i.e. begins with DirDelim).
+inline bool FilePath::isAbsolute( void ) const
+{
+  return operator[](0) == DirDelim;
+}
 
 inline FilePath &FilePath::operator +=( String const &str )
 {

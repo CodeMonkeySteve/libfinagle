@@ -49,9 +49,11 @@ rm -rf %{buildroot}
 %{_libdir}/%{name}*.so.*
 %doc AUTHORS COPYING
 
-%post -p /sbin/ldconfig
+%post
+/sbin/ldconfig
 
-%postun -p /sbin/ldconfig
+%postun
+/sbin/ldconfig
 
 ###############################################################################
 
