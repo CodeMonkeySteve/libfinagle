@@ -1,8 +1,8 @@
 /*!
 ** \file UUID.h
 ** \author Steve Sloan <steve@finagle.org>
-** \date Mon Nov 1 2004
-** Copyright (C) 2004 by Steve Sloan
+** \date Tue Jul 31 2007
+** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU Lesser General Public License as published
@@ -23,63 +23,125 @@
 #define FINAGLE_UUID_H
 
 #include <ostream>
+#include <uuid.h>
+#include <Finagle/Exception.h>
 #include <Finagle/TextString.h>
 
 namespace Finagle {
 
 class UUID {
-  typedef unsigned long  L;
-  typedef unsigned short W;
-  typedef unsigned char  B;
+public:
+  class Exception : public Finagle::Exception {
+  public:
+    Exception( uuid_rc_t res );
+  };
 
 public:
   UUID( void );
-  UUID( L l, W w1, W w2, B b1, B b2, B b3, B b4, B b5, B b6, B b7, B b8 );
+  UUID( String const &str );
+  UUID( UUID const &uuid );
+ ~UUID( void );
+
+  bool operator ==( UUID const &uuid );
+  bool operator !=( UUID const &uuid );
+  bool operator <( UUID const &uuid );
 
   bool isNull( void ) const;
   operator String( void ) const;
 
+  void generate( void );
+
 protected:
-  unsigned long  Data1;
-  unsigned short Data2;
-  unsigned short Data3;
-  unsigned char  Data4[8];
+  uuid_t *_uuid;
 };
 
 std::ostream &operator <<( std::ostream &out, UUID const &ID );
 
 // INLINE IMPLEMENTATION ******************************************************
 
-inline UUID::UUID( L l, W w1, W w2, B b1, B b2, B b3, B b4, B b5, B b6, B b7, B b8 )
-: Data1( l ), Data2( w1 ), Data3( w2 )
-{
-  Data4[0] = b1;  Data4[1] = b2;  Data4[2] = b3;  Data4[3] = b4;
-  Data4[4] = b5;  Data4[5] = b6;  Data4[6] = b7;  Data4[7] = b8;
+#define UUID_ASSERT( e ) {                   \
+  uuid_rc_t __uuid_result = (e);                   \
+  if ( __uuid_result != 0 ) {                \
+    throw UUID::Exception( __uuid_result );  \
+  }                                          \
 }
 
 inline UUID::UUID( void )
-: Data1( 0 ), Data2( 0 ), Data3( 0 )
+: _uuid(0)
 {
-  Data4[0] = Data4[1] = Data4[2] = Data4[3] = Data4[4] = Data4[5] = Data4[6] = Data4[7] = 0;
+  UUID_ASSERT( uuid_create( &_uuid ) );
 }
+
+inline UUID::UUID( String const &str )
+: _uuid(0)
+{
+  UUID_ASSERT( uuid_create( &_uuid ) );
+  UUID_ASSERT( uuid_import( _uuid, UUID_FMT_STR, str.c_str(), str.length() ) );
+}
+
+inline UUID::UUID( UUID const &uuid )
+{
+  UUID_ASSERT( uuid_clone( uuid._uuid, &_uuid ) );
+}
+
+inline UUID::~UUID( void )
+{
+  UUID_ASSERT( uuid_destroy( _uuid ) );
+}
+
+
+inline bool UUID::operator ==( UUID const &uuid )
+{
+  int res = 0;
+  UUID_ASSERT( uuid_compare( _uuid, uuid._uuid, &res ) );
+  return res == 0;
+}
+
+inline bool UUID::operator !=( UUID const &uuid )
+{
+  return ! operator==(uuid);
+}
+
+inline bool UUID::operator <( UUID const &uuid )
+{
+  int res = 0;
+  UUID_ASSERT( uuid_compare( _uuid, uuid._uuid, &res ) );
+  return res < 0;
+}
+
 
 inline bool UUID::isNull( void ) const
 {
-  return( !Data1 && !Data2 && !Data3 && !Data4[0] && !Data4[1] && !Data4[2] &&
-          !Data4[3] && !Data4[4] && !Data4[5] && !Data4[6] && !Data4[7] );
+  int res = 0;
+  UUID_ASSERT( uuid_isnil( _uuid, &res ) );
+  return res;
 }
-
 
 inline UUID::operator String( void ) const
 {
-  return( String::format( "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-          Data1, Data2, Data3, Data4[0], Data4[1], Data4[2], Data4[3], Data4[4], Data4[5], Data4[6], Data4[7] ) );
+  String str(UUID_LEN_STR + 1, 0 );
+  char *strp = (char *) str.data();
+  size_t strl = str.length();
+  UUID_ASSERT( uuid_export( _uuid, UUID_FMT_STR, (void **) &strp, &strl ) );
+  return str;
 }
 
-inline std::ostream &operator <<( std::ostream &out, UUID const &ID )
+
+inline void UUID::generate( void )
 {
-  return out << (String) ID;
+  UUID_ASSERT( uuid_make( _uuid, UUID_MAKE_V1 ) );
 }
+
+inline std::ostream &operator <<( std::ostream &out, UUID const &uuid )
+{
+  return out << (String) uuid;
+}
+
+
+inline UUID::Exception::Exception( uuid_rc_t res )
+: Finagle::Exception( "UUID: " + String(uuid_error(res)) )
+{}
+
 
 };
 

@@ -30,7 +30,6 @@
 #include <Finagle/Mutex.h>
 #include <Finagle/sigslot.h>
 #include <Finagle/Singleton.h>
-#include <Finagle/UUID.h>
 
 namespace Finagle {
 
@@ -101,18 +100,12 @@ class LogWarn : public LogMsg {
 public:
   LogWarn( const char *file, unsigned line, String const &func )
   : LogMsg( "warn", file, line, func ) {}
-
-  LogWarn( UUID const &id, const char *file, unsigned line, String const &func )
-  : LogMsg( "warn", (String) id, file, line, func ) {}
 };
 
 class LogErr : public LogMsg {
 public:
   LogErr( const char *file, unsigned line, String const &func )
   : LogMsg( "error", file, line, func ) {}
-
-  LogErr( UUID const &id, const char *file, unsigned line, String const &func )
-  : LogMsg( "error", (String) id, file, line, func ) {}
 };
 
 class LogAssert : public LogErr {
@@ -148,22 +141,6 @@ protected:
   FilePath _base;
   std::filebuf _buf;
 };
-
-
-/*
-class LogToSysLog : public AppLog::Logger {
-public:
-  LogToSysLog( int facility = -1, String const &ident = 0 );
-  void onMsg( XML::Element const &msg );
-
-  static int facility( String const &fac );
-  static int priority( String const &pri );
-
-protected:
-  String _ident;
-  unsigned _facility;
-};
-*/
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************
 

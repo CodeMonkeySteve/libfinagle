@@ -18,9 +18,8 @@ libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp Array.h Finagle.h Compress.cpp \
 	ByteOrder.h Collection.h
 
 libFinagle_la_LDFLAGS = -no-undefined -version-info @LIB_CURRENT@:@LIB_REVISION@:@LIB_AGE@ -release @FINAGLE_VERSION@
-libFinagle_la_LIBADD = $(PTHREAD_LIBS) $(z_LIBS) $(libpcre_LIBS) $(expat_LIBS) $(openssl_LIBS)
-#INCLUDES = -I$(top_srcdir) $(PTHREAD_CFLAGS) $(expat_CFLAGS) $(libpcre_CFLAGS) $(openssl_CFLAGS) $(z_CFLAGS)
-INCLUDES = $(PTHREAD_CFLAGS) $(expat_CFLAGS) $(libpcre_CFLAGS) $(openssl_CFLAGS) $(z_CFLAGS)
+libFinagle_la_LIBADD = $(PTHREAD_LIBS) $(z_LIBS) $(libpcre_LIBS) $(expat_LIBS) $(openssl_LIBS) $(uuid_LIBS)
+INCLUDES = $(PTHREAD_CFLAGS) $(expat_CFLAGS) $(libpcre_CFLAGS) $(openssl_CFLAGS) $(z_CFLAGS) $(uuid_CFLAGS)
 
 library_includedir=$(includedir)/$(PACKAGE)-$(VERSION)/Finagle
 library_include_HEADERS = Array.h Finagle.h Compress.h Configure.h Constructable.h DataStream.h DateTime.h \
