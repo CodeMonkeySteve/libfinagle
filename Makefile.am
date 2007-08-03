@@ -3,12 +3,11 @@ AUTOMAKE_OPTIONS = foreign 1.4
 SUBDIRS = Finagle test
 
 # Build documentation
-include aminclude.am
+#include aminclude.am
 
-EXTRA_DIST = $(DX_CONFIG) doc/html
-doc/html: $(DIST_SOURCES)
-	$(MAKE) doxygen-doc
-
+EXTRA_DIST = Doxyfile Doxyfile.in doc/html
+doc/html: Doxyfile $(DIST_SOURCES)
+	@doxygen Doxyfile >/dev/null
 
 # Add pkg-config file
 pkgconfigdir = $(libdir)/pkgconfig
