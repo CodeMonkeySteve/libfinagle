@@ -2,9 +2,6 @@ AUTOMAKE_OPTIONS = foreign 1.4
 
 SUBDIRS = Finagle test
 
-# Build documentation
-#include aminclude.am
-
 EXTRA_DIST = Doxyfile Doxyfile.in doc/html
 doc/html: Doxyfile $(DIST_SOURCES)
 	@doxygen Doxyfile >/dev/null
@@ -24,7 +21,7 @@ pkgs: $(RPM_PATHS)
 pkgs-install: pkgs
 	cp $(RPM_PATHS) $(PKGDIR)
 
-$(RPM_PATHS): @PACKAGE@.spec.in $(DIST_COMMON) $(DIST_SOURCES)
+$(RPM_PATHS): @PACKAGE@.spec.in $(DIST_SOURCES)
 	$(MAKE) dist-bzip2
 	rpmbuild -tb $(distdir).tar.bz2	
 
