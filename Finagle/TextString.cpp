@@ -124,7 +124,7 @@ String &String::trim( const char *Chars )
 */
 String String::format( const char *form, ... )
 {
-  static char buff[512];
+  char buff[512];
   va_list args;
   va_start( args, form );
 

@@ -29,15 +29,30 @@ using namespace Finagle;
 class StringTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( StringTest );
+  void testFromInteger( void );
   CPPUNIT_TEST( testSplit );
   CPPUNIT_TEST_SUITE_END();
 
 public:
+  void testFromInteger( void );
   void testSplit( void );
 };
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION( StringTest );
+
+#include <sstream>
+#include <Finagle/Util.h>
+void StringTest::testFromInteger( void )
+{
+  for ( unsigned i = 1; i <= 2000000000; i += rand( Range<int>(0, i) ) ) {
+    String a(i);
+    ostringstream b;
+    b << i;
+    CPPUNIT_ASSERT_EQUAL( b.str(), (string) a );
+  }
+}
+
 
 void StringTest::testSplit( void )
 {
