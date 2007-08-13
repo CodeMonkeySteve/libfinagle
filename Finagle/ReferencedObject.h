@@ -58,18 +58,18 @@ public:
 
   template <typename OtherType>
   explicit ObjectRef( OtherType *ObjPtr )
-  : Ptr( dynamic_cast<PtrType>( ObjPtr ) )
+  : _ptr( dynamic_cast<PtrType>( ObjPtr ) )
   {
-    if ( Ptr )
-      Ptr->ref();
+    if ( _ptr )
+      _ptr->ref();
   }
 
   template <typename OtherType>
   explicit ObjectRef( ObjectRef<OtherType> const &Ref )
-  : Ptr( dynamic_cast<PtrType>( typename ObjectRef<OtherType>::PtrType( const_cast<ObjectRef<OtherType> &>( Ref ) ) ) )
+  : _ptr( dynamic_cast<PtrType>( typename ObjectRef<OtherType>::PtrType( const_cast<ObjectRef<OtherType> &>( Ref ) ) ) )
   {
-    if ( Ptr )
-      Ptr->ref();
+    if ( _ptr )
+      _ptr->ref();
   }
 
   ObjectRef &operator =( ObjectRef<Type,RType,PType> Ref );
@@ -89,7 +89,7 @@ public:
   operator PtrType( void );
 
 protected:
-  PtrType Ptr;
+  PtrType _ptr;
 };
 
 
@@ -118,7 +118,7 @@ public:
   unsigned refCount( void ) const;
 
 protected:
-  mutable unsigned RefCount;
+  mutable unsigned _refs;
 };
 
 
@@ -177,91 +177,91 @@ public:
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
 
 #define CHECK_PTR() \
-  if ( !Ptr )  throw NullRefEx( __FUNCTION__ );
+  if ( !_ptr )  throw NullRefEx( __FUNCTION__ );
 
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::ObjectRef( PtrType ObjPtr )
-: Ptr( ObjPtr )
+: _ptr( ObjPtr )
 {
-  if ( Ptr )
-    Ptr->ref();
+  if ( _ptr )
+    _ptr->ref();
 }
 
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::ObjectRef( RefType ObjRef )
-: Ptr( &ObjRef )
+: _ptr( &ObjRef )
 {
   ObjRef.ref();
 }
 
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::ObjectRef( ObjectRef<Type,RType,PType> const &Ref )
-: Ptr( Ref.Ptr )
+: _ptr( Ref._ptr )
 {
-  if ( Ptr )
-    Ptr->ref();
+  if ( _ptr )
+    _ptr->ref();
 }
 
 template <typename Type, typename RType, typename PType>
 ObjectRef<Type, RType, PType>::~ObjectRef( void )
 {
-  if ( Ptr && Ptr->deref() ) {
-    delete Ptr;
-    Ptr = 0;
+  if ( _ptr && _ptr->deref() ) {
+    delete _ptr;
+    _ptr = 0;
   }
 }
 
 template <typename Type, typename RType, typename PType>
 inline bool ObjectRef<Type, RType, PType>::isValid( void ) const
 {
-  return Ptr != 0;
+  return _ptr != 0;
 }
 
 template <typename Type, typename RType, typename PType>
 ObjectRef<Type, RType, PType> &ObjectRef<Type, RType, PType>::operator =( ObjectRef<Type,RType,PType> Ref )
 {
-  if ( Ref.Ptr )
-    Ref.Ptr->ref();
+  if ( Ref._ptr )
+    Ref._ptr->ref();
 
-  if ( Ptr && Ptr->deref() )
-    delete Ptr;
+  if ( _ptr && _ptr->deref() )
+    delete _ptr;
 
-  Ptr = Ref.Ptr;
+  _ptr = Ref._ptr;
   return *this;
 }
 
 template <typename Type, typename RType, typename PType>
 inline bool ObjectRef<Type, RType, PType>::operator ==( PtrType ObjPtr ) const
 {
-  return Ptr == ObjPtr;
+  return _ptr == ObjPtr;
 }
 
 template <typename Type, typename RType, typename PType>
 inline Type const &ObjectRef<Type, RType, PType>::operator *( void ) const
 {
   CHECK_PTR();
-  return *Ptr;
+  return *_ptr;
 }
 
 template <typename Type, typename RType, typename PType>
 inline Type const *ObjectRef<Type, RType, PType>::operator ->( void ) const
 {
   CHECK_PTR();
-  return Ptr;
+  return _ptr;
 }
 
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::operator Type const &( void ) const
 {
   CHECK_PTR();
-  return( *Ptr );
+  return( *_ptr );
 }
 
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::operator Type const *( void ) const
 {
   CHECK_PTR();
-  return( Ptr );
+  return( _ptr );
 }
 
 
@@ -269,27 +269,27 @@ template <typename Type, typename RType, typename PType>
 inline RType ObjectRef<Type, RType, PType>::operator *( void )
 {
   CHECK_PTR();
-  return( *Ptr );
+  return( *_ptr );
 }
 
 template <typename Type, typename RType, typename PType>
 inline PType ObjectRef<Type, RType, PType>::operator ->( void )
 {
   CHECK_PTR();
-  return( Ptr );
+  return( _ptr );
 }
 
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::operator RType( void )
 {
   CHECK_PTR();
-  return( *Ptr );
+  return( *_ptr );
 }
 
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::operator PType( void )
 {
-  return( Ptr );
+  return( _ptr );
 }
 
 // PASS-THROUGH OPERATORS -----------------------------------------------------
@@ -301,28 +301,28 @@ inline bool operator <( ObjectRef<Type> const &A, ObjectRef<Type> const &B )
 // REFERENCE COUNT ------------------------------------------------------------
 
 inline ReferenceCount::ReferenceCount( void )
-: RefCount( 0 )
+: _refs( 0 )
 {
 }
 
 inline ReferenceCount::ReferenceCount( ReferenceCount const & )
-: RefCount( 0 )
+: _refs( 0 )
 {
 }
 
 inline void ReferenceCount::ref( void ) const
 {
-  RefCount++;
+  _refs++;
 }
 
 inline bool ReferenceCount::deref( void ) const
 {
-  return( --RefCount == 0 );
+  return( --_refs == 0 );
 }
 
 inline unsigned ReferenceCount::refCount( void ) const
 {
-  return( RefCount );
+  return( _refs );
 }
 
 
