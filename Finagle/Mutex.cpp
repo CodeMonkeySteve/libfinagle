@@ -28,8 +28,7 @@ using namespace Finagle;
 ** \brief Provides a mutually-exclusive synchronization object with recursive locking.
 */
 
-//! Creates the mutex.
-Mutex::Mutex( void )
+void Mutex::init( void )
 {
   pthread_mutexattr_t attr;
   PTHREAD_ASSERT( pthread_mutexattr_init( &attr ) );

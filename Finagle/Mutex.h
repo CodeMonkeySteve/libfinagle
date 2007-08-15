@@ -30,16 +30,17 @@ class Mutex {
 public:
   Mutex( void );
  ~Mutex( void );
+  Mutex( Mutex const & );
+  Mutex &operator =( Mutex const & );
 
   void lock( void );
   void unlock( void );
 
 protected:
-  pthread_mutex_t _mutex;
+  void init( void );
 
-private:
-  Mutex( Mutex const & ) {}
-  Mutex &operator =( Mutex const & ) {  return *this; }
+protected:
+  pthread_mutex_t _mutex;
 };
 
 class Lock {
@@ -52,6 +53,25 @@ protected:
 };
 
 // INLINE IMPLEMENTATION ******************************************************
+
+//! Creates the mutex.
+inline Mutex::Mutex( void )
+{
+  init();
+}
+
+//! Copying a Mutex just creates a new Mutex.
+inline Mutex::Mutex( Mutex const & )
+{
+  init();
+}
+
+//! Copying a Mutex just creates a new Mutex.
+inline Mutex &Mutex::operator =( Mutex const & )
+{
+  init();
+  return *this;
+}
 
 //! Destroys the mutex.
 inline Mutex::~Mutex( void )
