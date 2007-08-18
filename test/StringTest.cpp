@@ -20,8 +20,11 @@
 */
 
 #include <iostream>
+#include <sstream>
 #include <cppunit/extensions/HelperMacros.h>
 #include <Finagle/TextString.h>
+#include <Finagle/FilePath.h>
+#include <Finagle/Util.h>
 
 using namespace std;
 using namespace Finagle;
@@ -29,27 +32,90 @@ using namespace Finagle;
 class StringTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( StringTest );
-  void testFromInteger( void );
+  CPPUNIT_TEST( testInitializers );
+  CPPUNIT_TEST( testConversions );
   CPPUNIT_TEST( testSplit );
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  void testFromInteger( void );
+  void testInitializers( void );
+  void testConversions( void );
   void testSplit( void );
 };
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION( StringTest );
 
-#include <sstream>
-#include <Finagle/Util.h>
-void StringTest::testFromInteger( void )
+void StringTest::testInitializers( void )
 {
-  for ( unsigned i = 1; i <= 2000000000; i += rand( Range<int>(0, i) ) ) {
-    String a(i);
-    ostringstream b;
-    b << i;
-    CPPUNIT_ASSERT_EQUAL( b.str(), (string) a );
+  for ( unsigned i = 0; i <= 100; ++i ) {
+    {
+      short n = rand();
+      ostringstream strm;
+      strm << (int) n;
+
+      CPPUNIT_ASSERT_EQUAL( strm.str(), (string) String( (short) n ) );
+      CPPUNIT_ASSERT_EQUAL( strm.str(), (string) String( (int) n ) );
+      CPPUNIT_ASSERT_EQUAL( strm.str(), (string) String( (long) n ) );
+    }
+
+    {
+      unsigned short n = rand();
+      ostringstream strm;
+      strm << (unsigned) n;
+
+      CPPUNIT_ASSERT_EQUAL( strm.str(), (string) String( (unsigned short) n ) );
+      CPPUNIT_ASSERT_EQUAL( strm.str(), (string) String( (unsigned) n ) );
+      CPPUNIT_ASSERT_EQUAL( strm.str(), (string) String( (unsigned long) n ) );
+    }
+  }
+}
+
+
+void StringTest::testConversions( void )
+{
+  for ( unsigned i = 0; i <= 100; ++i ) {
+    {
+      int n = rand();
+      String s( n );
+
+      int i = 0;
+      CPPUNIT_ASSERT( s.to<int>( i ) );
+      CPPUNIT_ASSERT_EQUAL( n, i );
+
+      CPPUNIT_ASSERT_EQUAL( n, s.as<int>() );
+    }
+
+    {
+      double n = drand() * 100000;
+      String s( n );
+
+      double d = 0;
+      CPPUNIT_ASSERT( s.to<>( d ) );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( n, d, 0.000001 );
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( n, s.as<double>(), 0.000001 );
+    }
+  }
+
+  {
+    String s( "And now for something completely different ..." );
+
+    String t;
+    CPPUNIT_ASSERT( s.to<>( t ) );
+    CPPUNIT_ASSERT_EQUAL( s, t );
+
+    CPPUNIT_ASSERT_EQUAL( s, s.as<String>() );
+  }
+
+  {
+    String s( "foo/bar/baaz" );
+
+    FilePath p;
+    CPPUNIT_ASSERT( s.to<>( p ) );
+    CPPUNIT_ASSERT_EQUAL( s, p.path() );
+
+    CPPUNIT_ASSERT_EQUAL( s, s.as<FilePath>().path() );
   }
 }
 

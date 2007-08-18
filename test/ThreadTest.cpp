@@ -63,7 +63,7 @@ void ThreadTest::countDown( void )
 
 void ThreadTest::testClassThreadFunc( void )
 {
-  int start = rand( Range<int>( 100, 1000 ) );
+  int start = (rand() % 1000) + 100;
   _count = start;
 
   ClassFuncThread<ThreadTest> t1( this, &ThreadTest::countUp ), t2( this, &ThreadTest::countDown );

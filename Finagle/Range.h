@@ -24,27 +24,27 @@
 
 namespace Finagle {
 
-template <typename ValType>
+template <typename RType>
 class Range {
 public:
-  typedef ValType Type;
+  typedef RType Type;
 
 public:
   Range( void );
-  Range( ValType const &Lower, ValType const &Upper );
+  Range( RType const &lower, RType const &upper );
 
   Type const &lower( void ) const;
   Type const &upper( void ) const;
 
-  Type const &lower( Type const &Lower );
-  Type const &upper( Type const &Upper );
+  Type const &lower( Type const &lower );
+  Type const &upper( Type const &upper );
 
-  bool contains( Type const &Val ) const;
-  bool clamp( Type &Val ) const;
+  bool contains( Type const &val ) const;
+  bool clamp( Type &val ) const;
   Type height( void ) const;
 
 protected:
-  Type Lower, Upper;
+  Type _lower, _upper;
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
@@ -54,62 +54,65 @@ protected:
 ** \brief Represents a range of values.
 */
 
-//! Initializes the range to the maximum possible range.
+//! Initializes the range to the full numeric range.
 template <typename Type>
 inline Range<Type>::Range( void )
-: Lower( std::numeric_limits<Type>::min() ),
-  Upper( std::numeric_limits<Type>::max() )
-{
-}
+: _lower( std::numeric_limits<Type>::min() ), _upper( std::numeric_limits<Type>::max() )
+{}
 
-//! Initializes the range to go from \a Lower to \a Higher.
+
+//! Initializes the range to go from \a lower to \a upper.
 template <typename Type>
-inline Range<Type>::Range( Type const &Lower, Type const &Upper )
-: Lower( Lower ), Upper( Upper )
+inline Range<Type>::Range( Type const &lower, Type const &upper )
 {
+  if ( lower <= upper ) {
+    _lower = lower;  _upper = upper;
+  } else {
+    _lower = upper;  _upper = lower;
+  }
 }
 
 template <typename Type>
 inline Type const &Range<Type>::lower( void ) const
 {
-  return( Lower );
+  return _lower;
 }
 
 template <typename Type>
 inline Type const &Range<Type>::upper( void ) const
 {
-  return( Upper );
+  return _upper;
 }
 
 template <typename Type>
-inline Type const &Range<Type>::lower( Type const &Lower )
+inline Type const &Range<Type>::lower( Type const &lower )
 {
-  return( Range::Lower = Lower );
+  return( _lower = lower );
 }
 
 template <typename Type>
-inline Type const &Range<Type>::upper( Type const &Upper )
+inline Type const &Range<Type>::upper( Type const &upper )
 {
-  return( Range::Upper = Upper );
+  return( _upper = upper );
 }
 
-//! Returns \c true if \a Val is within [\a Lower ... \a Higher], inclusively.
+//! Returns \c true if \a val is within [\a lower ... \a Higher], inclusively.
 template <typename Type>
-inline bool Range<Type>::contains( Type const &Val ) const
+inline bool Range<Type>::contains( Type const &val ) const
 {
-  return( (Val >= Lower) && (Val <= Upper) );
+  return (val >= _lower) && (val <= _upper);
 }
 
-//! If \a Val is outside of the range, sets it such that it is within the range,
+//! If \a val is outside of the range, sets it such that it is within the range,
 //! and returns \c true.  Returns \c false, otherwise.
 template <typename Type>
-inline bool Range<Type>::clamp( Type &Val ) const
+inline bool Range<Type>::clamp( Type &val ) const
 {
-  if ( Val < Lower )
-    Val = Lower;
+  if ( val < _lower )
+    val = _lower;
   else
-  if ( Val > Upper )
-    Val = Upper;
+  if ( val > _upper )
+    val = _upper;
   else
     return false;
 
@@ -119,10 +122,7 @@ inline bool Range<Type>::clamp( Type &Val ) const
 template <typename Type>
 inline Type Range<Type>::height( void ) const
 {
-  if ( std::numeric_limits<Type>::is_integer )
-    return( Upper - Lower + 1 );
-  else
-    return( Upper - Lower );
+  return std::numeric_limits<Type>::is_integer ? (_upper - _lower + 1) : (_upper - _lower);
 }
 
 

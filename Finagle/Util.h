@@ -23,6 +23,7 @@
 #define FINAGLE_UTIL_H
 
 #include <limits>
+#include <cstdlib>
 #include <Finagle/File.h>
 #include <Finagle/Range.h>
 
@@ -32,8 +33,8 @@ FilePath execFile( pid_t pid = getpid() );
 String execTitle( pid_t pid = getpid() );
 
 void sleep( double Secs );
-int rand( Range<int> const &r );
-double rand( Range<double> const &r );
+
+double drand( void );
 
 template <typename CType>
 typename CType::value_type pop_front( CType &container );
@@ -45,6 +46,13 @@ template <typename Type>
 Type absVal( Type const &Val );
 
 // TEMPLATE IMPLEMENTATION ****************************************************
+
+//! Returns a random number in the range [0, 1).
+inline double drand( void )
+{
+  return ((double) ::rand() / RAND_MAX);
+}
+
 
 /*! \brief Pops the front-most item from \a Container and returns it.
 ** Uses \c front() and \c erase(). If the container is empty, returns an empty value.
@@ -92,22 +100,22 @@ Type absVal( Type const &Val )
 #undef min
 #endif
 
-//! Returns the smaller of \a A and \a B.
+//! Returns the smaller of \a a and \a b.
 template <typename Type>
-inline Type const &min( Type const &A, Type const &B )
+inline Type const &min( Type const &a, Type const &b )
 {
-  return( (A < B) ? A : B );
+  return (a <= b) ? a : b;
 }
 
 #ifdef max
 #undef max
 #endif
 
-//! Returns the larger of \a A and \a B.
+//! Returns the larger of \a a and \a b.
 template <typename Type>
-inline Type const &max( Type const &A, Type const &B )
+inline Type const &max( Type const &a, Type const &b )
 {
-  return( (A > B) ? A : B );
+  return (a >= b) ? a : b;
 }
 
 /*! \brief Clamps \a Val to within \a Min and \a Max.
@@ -116,41 +124,41 @@ inline Type const &max( Type const &A, Type const &B )
 ** Otherwise, returns the number within the range nearest to \a Val.
 */
 template <typename Type>
-inline Type clamp( Type Val, Type const &Min, Type const &Max )
+inline Type clamp( Type val, Type const &min, Type const &max )
 {
-  if ( Val < Min )
-    return( Val = Min );
+  if ( val < min )
+    return val = min;
 
-  if ( Val > Max )
-    return( Val = Max );
+  if ( val > max )
+    return val = max;
 
-  return( Val );
+  return val;
 }
 
-//! Returns the square of \a Val (i.e. \a Val * \a Val).
+//! Returns the square of \a val (i.e. \a val * \a val).
 template <typename Type>
-inline Type sqr( Type const &Val )
+inline Type sqr( Type const &val )
 {
-  return( Val * Val );
+  return val * val;
 }
 
 //! Normalize a numeric type to a double in the range 0..1
 template <typename Type>
-inline double normalize( Type const &Val )
+inline double normalize( Type const &val )
 {
   return std::numeric_limits<Type>::is_integer
-    ? (double(Val) / double(std::numeric_limits<Type>::max()))
-    : double(Val);
+    ? (double(val) / double(std::numeric_limits<Type>::max()))
+    : double(val);
 }
 
 
 //! Expand a double in the range 0..1 to the range of any numeric type.
 template <typename Type>
-inline Type unnormalize( double const &NormVal )
+inline Type unnormalize( double const &norm )
 {
   return std::numeric_limits<Type>::is_integer
-    ? Type( NormVal * std::numeric_limits<Type>::max() )
-    : Type( NormVal );
+    ? Type( norm * std::numeric_limits<Type>::max() )
+    : Type( norm );
 }
 
 

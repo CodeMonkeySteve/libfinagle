@@ -178,11 +178,11 @@
       <showOnlyAccessibleItems>false</showOnlyAccessibleItems>
       <completionBoxItemOrder>0</completionBoxItemOrder>
       <howEvaluationContextMenu>true</howEvaluationContextMenu>
-      <showCommentWithArgumentHint>true</showCommentWithArgumentHint>
+      <showCommentWithArgumentHint>false</showCommentWithArgumentHint>
       <statusBarTypeEvaluation>false</statusBarTypeEvaluation>
       <namespaceAliases>std=_GLIBCXX_STD;__gnu_cxx=std</namespaceAliases>
       <processPrimaryTypes>true</processPrimaryTypes>
-      <processFunctionArguments>false</processFunctionArguments>
+      <processFunctionArguments>true</processFunctionArguments>
       <preProcessAllHeaders>false</preProcessAllHeaders>
       <parseMissingHeaders>false</parseMissingHeaders>
       <resolveIncludePaths>true</resolveIncludePaths>
@@ -202,7 +202,7 @@
       <inlineSet>true</inlineSet>
     </creategettersetter>
     <splitheadersource>
-      <enabled>false</enabled>
+      <enabled>true</enabled>
       <synchronize>true</synchronize>
       <orientation>Vertical</orientation>
     </splitheadersource>

@@ -52,9 +52,11 @@ public:
   String( const std::string &Str, size_type Pos = 0, size_type Len = npos );
   String( String const &str, size_type Pos = 0, size_type Len = npos );
   String( unsigned Count, char Ch );
-  explicit String( unsigned Number );
-  explicit String( int Number );
-  explicit String( double Number );
+  String( unsigned num );
+  String( int num );
+  String( unsigned long num );
+  String( long num );
+  String( double num );
 
   String &operator=( const String &That );
   operator const char *( void ) const;
@@ -164,21 +166,31 @@ inline String::String( unsigned Count, char Ch )
 : std::string( Count, Ch )
 {}
 
-//! Initializes the string with the decimal representation of \a Number.
+//! Initializes the string with the decimal representation of \a num.
 //! \note This is contratry to the STL version of \c string(int).
-inline String::String( unsigned Number )
-: std::string( String::format( "%u", Number ) )
+inline String::String( unsigned num )
+: std::string( String::format( "%u", num ) )
 {}
 
-//! Initializes the string with the decimal representation of \a Number.
+//! Initializes the string with the decimal representation of \a num.
 //! \note This is contratry to the STL version of \c string(int).
-inline String::String( int Number )
-: std::string( String::format( "%d", Number ) )
+inline String::String( int num )
+: std::string( String::format( "%d", num ) )
 {}
 
-//! Initializes the string with the decimal representation of \a Number.
-inline String::String( double Number )
-: std::string( String::format( "%f", Number ) )
+//! Initializes the string with the decimal representation of \a num.
+inline String::String( unsigned long num )
+: std::string( String::format( "%lu", num ) )
+{}
+
+//! Initializes the string with the decimal representation of \a num.
+inline String::String( long num )
+: std::string( String::format( "%ld", num ) )
+{}
+
+//! Initializes the string with the decimal representation of \a num.
+inline String::String( double num )
+: std::string( String::format( "%f", num ) )
 {}
 
 inline String &String::operator=( const String &That )

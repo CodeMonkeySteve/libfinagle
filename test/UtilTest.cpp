@@ -1,8 +1,8 @@
 /*!
-** \file Util.cpp
+** \file UtilTest.cpp
+** \date Mon May 8 2007
 ** \author Steve Sloan <steve@finagle.org>
-** \date Sat Nov 1 2003
-** Copyright (C) 2004 by Steve Sloan
+** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU Lesser General Public License as published
@@ -19,38 +19,35 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <fstream>
-#include <iomanip>
-#include <vector>
-
-#include "Util.h"
-#include "MemTrace.h"
+#include <iostream>
+#include <sstream>
+#include <cppunit/extensions/HelperMacros.h>
+#include <Finagle/Util.h>
 
 using namespace std;
 using namespace Finagle;
 
-//! Sleeps for \a Secs seconds
-void Finagle::sleep( double Secs )
+class UtilTest : public CppUnit::TestFixture
 {
-  if ( Secs > 0.0 )
-    usleep( (unsigned long) ((Secs * 1000000) + 0.5) );
-}
+  CPPUNIT_TEST_SUITE( UtilTest );
+  CPPUNIT_TEST( testRand );
+  CPPUNIT_TEST_SUITE_END();
+
+public:
+  void testRand( void );
+};
 
 
-//! Returns the path of the currently running executable (or another executable by \a pid).
-FilePath Finagle::execFile( pid_t pid )
+CPPUNIT_TEST_SUITE_REGISTRATION( UtilTest );
+
+void UtilTest::testRand( void )
 {
-  std::ostringstream Path;
-  Path << "/proc/" << pid << "/exe";
-  return File(Path.str()).followSymLink();
-}
+  Range<int> r( 0, 0 );
+  for ( unsigned i = 0; i < 10; ++i ) {
+    int n = rand() % 100000;
+    if ( n < r.lower() )  r.lower(n);
+    if ( n > r.upper() )  r.upper(n);
+  }
 
-
-//! Returns the title of the currently running executable
-String Finagle::execTitle( pid_t pid )
-{
-  String t( execFile( pid ).title() );
-  if ( t.beginsWith( "lt-" ) )
-    t.erase( 0, 3 );
-  return t;
+  CPPUNIT_ASSERT( r.height() > 10000 );
 }
