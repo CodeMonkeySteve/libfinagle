@@ -45,19 +45,21 @@ public:
   template <typename Container>
   explicit List( Container container ) : std::list<Type, Alloc>( container.begin(), container.end() ) {}
 
-  Type &operator[]( unsigned Index );
-  Type const &operator[]( unsigned Index ) const;
+  Type &operator[]( unsigned index );
+  Type const &operator[]( unsigned index ) const;
 
-  bool contains( Type const &El ) const;
+  ConstIterator find( Type const &el ) const;
+  Iterator find( Type const &el );
+  bool contains( Type const &el ) const;
 
   // For sorted lists
-  Iterator insert( Type const &El );
+  Iterator insert( Type const &el );
 
   // For unsorted-lists (pass-through wrappers)
-  Iterator insert( Iterator Pos, Type const &El );
+  Iterator insert( Iterator pos, Type const &el );
   template <class InputIterator>
-  void insert( Iterator Pos, InputIterator f, InputIterator l );
-  void insert( Iterator Pos, size_type n, Type const &El );
+  void insert( Iterator pos, InputIterator first, InputIterator last );
+  void insert( Iterator pos, size_type n, Type const &el );
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
@@ -68,10 +70,22 @@ public:
 ** element (i.e. \c null).
 */
 template <typename Type, typename Alloc>
-inline Type &List<Type, Alloc>::operator[]( unsigned Index )
+inline Type &List<Type, Alloc>::operator[]( unsigned index )
 {
-  Type const &r = operator[]( Index );
-  return( const_cast<Type &>( r ) );
+  Type const &r = operator[]( index );
+  return const_cast<Type &>( r );
+}
+
+template <typename Type, typename Alloc>
+inline typename List<Type, Alloc>::ConstIterator List<Type, Alloc>::find( Type const &el ) const
+{
+  return std::find( List::begin(), List::end(), el );
+}
+
+template <typename Type, typename Alloc>
+inline typename List<Type, Alloc>::Iterator List<Type, Alloc>::find( Type const &el )
+{
+  return std::find( List::begin(), List::end(), el );
 }
 
 //! Returns \c true iff the list contains an element equal to \a El.
@@ -87,49 +101,49 @@ inline bool List<Type, Alloc>::contains( Type const &el ) const
 ** element (i.e. \c null).
 */
 template <typename Type, typename Alloc>
-Type const &List<Type, Alloc>::operator[]( unsigned Index ) const
+Type const &List<Type, Alloc>::operator[]( unsigned index ) const
 {
   static Type null;
 
-  if ( Index >= List::size() )
-    return( null );
+  if ( index >= List::size() )
+    return null;
 
   ConstIterator i = List::begin();
-  while ( Index-- )
+  while ( index-- )
     ++i;
 
-  return( *i );
+  return *i;
 }
 
 template <typename Type, typename Alloc>
-typename List<Type, Alloc>::Iterator List<Type, Alloc>::insert( Type const &El )
+typename List<Type, Alloc>::Iterator List<Type, Alloc>::insert( Type const &el )
 {
   for ( Iterator i = List::begin(); i != List::end(); ++i ) {
-    if ( El < *i )
-      return( List::insert( i, El ) );
+    if ( el < *i )
+      return List::insert( i, el );
   }
 
-  push_back( El );
-  return( --List::end() );
+  push_back( el );
+  return --List::end();
 }
 
 template <typename Type, typename Alloc>
-typename List<Type, Alloc>::Iterator List<Type, Alloc>::insert( Iterator Pos, Type const &El )
+typename List<Type, Alloc>::Iterator List<Type, Alloc>::insert( Iterator pos, Type const &el )
 {
-  return( List::insert( Pos, El ) );
+  return List::insert( pos, el );
 }
 
 template <typename Type, typename Alloc>
 template <class InputIterator>
-void List<Type, Alloc>::insert( Iterator Pos, InputIterator f, InputIterator l )
+void List<Type, Alloc>::insert( Iterator pos, InputIterator first, InputIterator last )
 {
-  List::insert( Pos, f, l );
+  List::insert( pos, first, last );
 }
 
 template <typename Type, typename Alloc>
-void List<Type, Alloc>::insert( Iterator Pos, size_type n, Type const &El )
+void List<Type, Alloc>::insert( Iterator pos, size_type n, Type const &el )
 {
-  List::insert( Pos, n, El );
+  List::insert( pos, n, el );
 }
 
 }
