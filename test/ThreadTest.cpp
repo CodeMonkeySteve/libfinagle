@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
+#include <Finagle/Queue.h>
 #include <Finagle/Thread.h>
 #include <Finagle/ThreadFunc.h>
 #include <Finagle/Util.h>
@@ -32,34 +33,63 @@ class ThreadTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( ThreadTest );
   CPPUNIT_TEST( testClassThreadFunc );
+//  CPPUNIT_TEST( testCancel );
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  void setUp( void ) {}
-  void tearDown( void ) {}
+  void setUp( void );
+  void tearDown( void );
 
   void testClassThreadFunc( void );
+  void testCancel( void );
 
 protected:
   int _count;
   void countUp( void );
   void countDown( void );
+
+  Queue<unsigned> *_wait;
+  void eternalWait( void );
 };
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION( ThreadTest );
 
+void ThreadTest::setUp( void )
+{
+  CPPUNIT_ASSERT_NO_THROW( _wait = new Queue<unsigned> );
+  _count = 0;
+}
+
+
+void ThreadTest::tearDown( void )
+{
+  CPPUNIT_ASSERT_NO_THROW( delete _wait );
+  _wait = 0;
+}
+
+
 void ThreadTest::countUp( void )
 {
-  for ( unsigned i = 1; i <= 10000; ++i )
+  for ( unsigned i = 1; i <= 1000; ++i ) {
     _count += i;
+  }
 }
 
 void ThreadTest::countDown( void )
 {
-  for ( unsigned i = 1; i <= 10000; ++i )
+  for ( unsigned i = 1; i <= 1000; ++i ) {
     _count -= i;
+  }
 }
+
+void ThreadTest::eternalWait( void )
+{
+  _wait->pop();
+  // Should never get here!
+  _count++;
+}
+
 
 void ThreadTest::testClassThreadFunc( void )
 {
@@ -75,3 +105,13 @@ void ThreadTest::testClassThreadFunc( void )
   CPPUNIT_ASSERT_EQUAL( start, _count );
 }
 
+
+void ThreadTest::testCancel( void )
+{
+  _count = 0;
+  ClassFuncThread<ThreadTest> t( this, &ThreadTest::eternalWait );
+  CPPUNIT_ASSERT_NO_THROW( t.start() );
+  sleep(0.1);
+  CPPUNIT_ASSERT_NO_THROW( t.kill() );
+  CPPUNIT_ASSERT_EQUAL( 0, _count );
+}
