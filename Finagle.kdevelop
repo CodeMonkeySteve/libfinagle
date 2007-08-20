@@ -14,8 +14,8 @@
     <projectname>libFinagle</projectname>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
-    <defaultencoding/>
+    <description></description>
+    <defaultencoding></defaultencoding>
   </general>
   <kdevautoproject>
     <general>
@@ -26,10 +26,10 @@
       <mainprogram>/home/steve/src/product/branches/llama/appliance/libs/Finagle/debug</mainprogram>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle/>
+        <testFinagle>SizedQueueTest</testFinagle>
       </runarguments>
       <debugarguments>
-        <testFinagle/>
+        <testFinagle>SizedQueueTest</testFinagle>
       </debugarguments>
       <cwd>
         <testFinagle>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./test</testFinagle>
@@ -57,7 +57,16 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevg77options</f77compiler>
-        <cxxflags>-O0 -g3</cxxflags>
+        <cxxflags></cxxflags>
+        <envvars/>
+        <topsourcedir></topsourcedir>
+        <cppflags>-g3 -O0</cppflags>
+        <ldflags>-g</ldflags>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags></cflags>
+        <f77flags></f77flags>
       </debug>
     </configurations>
     <make>
@@ -194,7 +203,7 @@
       <resolveIncludePathsUsingMakeExperimental>false</resolveIncludePathsUsingMakeExperimental>
     </codecompletion>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -202,7 +211,7 @@
       <inlineSet>true</inlineSet>
     </creategettersetter>
     <splitheadersource>
-      <enabled>true</enabled>
+      <enabled>false</enabled>
       <synchronize>true</synchronize>
       <orientation>Vertical</orientation>
     </splitheadersource>
@@ -215,11 +224,11 @@
   </cppsupportpart>
   <kdevdebugger>
     <general>
-      <gdbpath/>
+      <gdbpath></gdbpath>
       <dbgshell>libtool</dbgshell>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

@@ -1,6 +1,6 @@
 /*!
-** \file QueueTest.cpp
-** \date Mon Apr 2 2007
+** \file SizedSizedQueueTest.cpp
+** \date Mon Aug 20 2007
 ** \author Steve Sloan <steve@finagle.org>
 ** Copyright (C) 2007 by Steve Sloan
 **
@@ -21,22 +21,21 @@
 
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/Queue.h>
+#include <Finagle/SizedQueue.h>
 #include <Finagle/ThreadFunc.h>
 #include <Finagle/Util.h>
 
 using namespace std;
 using namespace Finagle;
 
-class QueueTest : public CppUnit::TestFixture
+class SizedQueueTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( QueueTest );
+  CPPUNIT_TEST_SUITE( SizedQueueTest );
   CPPUNIT_TEST( testCreateDestroy );
   CPPUNIT_TEST( testPush );
   CPPUNIT_TEST( testPushPop );
   CPPUNIT_TEST( testSynchronize );
   CPPUNIT_TEST( testThreadFill );
-//  CPPUNIT_TEST( testCoprocess );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -49,74 +48,61 @@ public:
   void testSynchronize( void );
   void testThreadFill( void );
 
-  void testCoprocess( void );
-
 protected:
   void enqueue( void );
   void fillQueue( void );
   void squareQueue( void );
 
 protected:
-  static const unsigned QueueSize = 10000;
-  Queue<unsigned> *_queue;
-  Queue<unsigned> *_squared;
+  static const unsigned QueueSize;
+  static const unsigned FillSize;
+  SizedQueue<unsigned> *_queue;
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION( QueueTest );
+CPPUNIT_TEST_SUITE_REGISTRATION( SizedQueueTest );
 
+const unsigned SizedQueueTest::QueueSize = 100;
+const unsigned SizedQueueTest::FillSize = QueueSize * 100;
 
-void QueueTest::setUp( void )
+void SizedQueueTest::setUp( void )
 {
-  CPPUNIT_ASSERT_NO_THROW( _queue = new Queue<unsigned> );
-  _squared = 0;
+  CPPUNIT_ASSERT_NO_THROW( _queue = new SizedQueue<unsigned>( QueueSize ) );
 }
 
 
-void QueueTest::tearDown( void )
+void SizedQueueTest::tearDown( void )
 {
   CPPUNIT_ASSERT_NO_THROW( delete _queue );
   _queue = 0;
-  CPPUNIT_ASSERT_NO_THROW( delete _squared );
-  _squared = 0;
 }
 
 
-void QueueTest::enqueue( void )
+void SizedQueueTest::enqueue( void )
 {
   sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
   CPPUNIT_ASSERT_NO_THROW( _queue->push( 42 ) );
 }
 
-void QueueTest::fillQueue( void )
+void SizedQueueTest::fillQueue( void )
 {
-  sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
-  for ( unsigned i = 0; i < QueueSize; ++i )
+  for ( unsigned i = 0; i < FillSize; ++i )
     CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
 }
 
-void QueueTest::squareQueue( void )
-{
-  for ( unsigned i = 0; i < QueueSize; ++i ) {
-    unsigned v;
-    CPPUNIT_ASSERT_NO_THROW( v = _queue->pop() );
-    CPPUNIT_ASSERT_NO_THROW( _squared->push( sqr(v) ) );
-  }
-}
 
-
-void QueueTest::testCreateDestroy( void )
+void SizedQueueTest::testCreateDestroy( void )
 {
   CPPUNIT_ASSERT( _queue != 0 );
 }
 
-void QueueTest::testPush( void )
+void SizedQueueTest::testPush( void )
 {
   CPPUNIT_ASSERT( _queue->empty() );
   CPPUNIT_ASSERT_NO_THROW( _queue->push( 42 ) );
   CPPUNIT_ASSERT_EQUAL( 1U, _queue->size() );
 }
 
-void QueueTest::testPushPop( void )
+void SizedQueueTest::testPushPop( void )
 {
   CPPUNIT_ASSERT( _queue->empty() );
 
@@ -135,9 +121,9 @@ void QueueTest::testPushPop( void )
   CPPUNIT_ASSERT( _queue->empty() );
 }
 
-void QueueTest::testSynchronize( void )
+void SizedQueueTest::testSynchronize( void )
 {
-  ClassFuncThread<QueueTest> enqueueThread( this, &QueueTest::enqueue );
+  ClassFuncThread<SizedQueueTest> enqueueThread( this, &SizedQueueTest::enqueue );
   CPPUNIT_ASSERT_NO_THROW( enqueueThread.start() );
 
   unsigned v;
@@ -149,35 +135,25 @@ void QueueTest::testSynchronize( void )
 }
 
 
-void QueueTest::testThreadFill( void )
+void SizedQueueTest::testThreadFill( void )
 {
   CPPUNIT_ASSERT( _queue->empty() );
 
-  ClassFuncThread<QueueTest> fillQueueThread( this, &QueueTest::fillQueue );
+  ClassFuncThread<SizedQueueTest> fillQueueThread( this, &SizedQueueTest::fillQueue );
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.start() );
+  sleep( 0.1 );
 
-  for ( unsigned i = 0; i < QueueSize; ++i )
-    CPPUNIT_ASSERT_EQUAL( i, _queue->pop() );
+  for ( unsigned i = FillSize; i > QueueSize; --i ) {
+    CPPUNIT_ASSERT( _queue->size() <= QueueSize );
+    CPPUNIT_ASSERT_EQUAL( FillSize - i, _queue->pop() );
+  }
+
+  for ( unsigned i = QueueSize; i > 0; --i ) {
+    CPPUNIT_ASSERT( _queue->size() <= i );
+    CPPUNIT_ASSERT_EQUAL( FillSize - i, _queue->pop() );
+  }
 
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.join() );
   CPPUNIT_ASSERT( _queue->empty() );
-}
-
-void QueueTest::testCoprocess( void )
-{
-  CPPUNIT_ASSERT_NO_THROW( _squared = new Queue<unsigned> );
-  CPPUNIT_ASSERT( _queue->empty() );
-
-  ClassFuncThread<QueueTest> squareQueueThread( this, &QueueTest::squareQueue );
-  CPPUNIT_ASSERT_NO_THROW( squareQueueThread.start() );
-
-  for ( unsigned i = 0; i < QueueSize; ++i ) {
-    CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
-    CPPUNIT_ASSERT_EQUAL( sqr(i), _squared->pop() );
-  }
-
-  CPPUNIT_ASSERT_NO_THROW( squareQueueThread.join() );
-  CPPUNIT_ASSERT( _queue->empty() );
-  CPPUNIT_ASSERT( _squared->empty() );
 }
 

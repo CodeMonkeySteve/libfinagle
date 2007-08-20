@@ -31,3 +31,4 @@ library_include_HEADERS = Array.h Finagle.h Compress.h Configure.h Constructable
 	Timer.h UUID.h UnixSocket.h Util.h WaitCondition.h XML.h XMLParse.h sigslot.h AppLog.h AppLogEntry.h AppLoop.h \
 	ByteArray.h ByteOrder.h Collection.h
 
+noinst_HEADERS = SizedQueue.h

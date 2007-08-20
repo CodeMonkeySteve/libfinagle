@@ -59,7 +59,7 @@ int Thread::join( void )
 
   int join_res = pthread_join( id, &res );
   _id = 0;
-  if ( ((join_res == ESRCH) && !running()) ||                       // Thread not running
+  if ( ((join_res == ESRCH) && !running()) ||                      // Thread not running
        ((join_res == EDEADLK) && (id == Thread::current())) )      // Thread is current
     return _exitVal;
 

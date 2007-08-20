@@ -21,17 +21,21 @@ template <typename Type>
 class Queue {
 public:
   Queue( void ) {}
+  virtual ~Queue( void ) {}
 
   bool empty( void ) const;
   unsigned size( void ) const;
 
-  void push( Type const &el );
+  virtual void push( Type const &el );
   void unpop( Type const &el );
 
   Type pop( void );
 
   bool tug( Type &dest );
   bool tug( Type &dest, Time timeout );
+
+protected:
+  virtual void pop_front( Type & );
 
 protected:
   mutable Mutex _guard;
@@ -90,8 +94,8 @@ Type Queue<Type>::pop( void )
     _notEmpty.unlock();
   }
 
-  Type t( _queue.front() );
-  _queue.pop_front();
+  Type t;
+  pop_front( t );
   _guard.unlock();
   return t;
 }
@@ -106,8 +110,7 @@ bool Queue<Type>::tug( Type &dest )
   if ( _queue.empty() )
     return false;
 
-  dest = _queue.front();
-  _queue.pop_front();
+  pop_front( dest );
   return true;
 }
 
@@ -131,13 +134,17 @@ bool Queue<Type>::tug( Type &dest, Time timeout )
     _notEmpty.unlock();
   }
 
-  dest = _queue.front();
-  _queue.pop_front();
-
+  pop_front( dest );
   _guard.unlock();
   return true;
 }
 
+template <typename Type>
+void Queue<Type>::pop_front( Type &dest )
+{
+  dest = _queue.front();
+  _queue.pop_front();
+}
 
 }
 
