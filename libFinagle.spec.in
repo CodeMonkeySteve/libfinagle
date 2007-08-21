@@ -14,7 +14,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: expat-devel uuid-devel
 
 %description
-Finagle is a C++ library providing wrapper classes and convenience 
+Finagle is a C++ library providing wrapper classes and convenience
 functions for many common system functions, including:
 * Multi-threading (pthreads)
 * Regular expressions (pcre)
@@ -63,7 +63,7 @@ Group: Development/Libraries
 Requires: %name = %version
 
 %description devel
-This package contains the static libraries and headers necessary for developing 
+This package contains the static libraries and headers necessary for developing
 programs that use libFinagle.
 
 %files devel
@@ -71,5 +71,5 @@ programs that use libFinagle.
 %{_libdir}/%{name}*.so
 %{_libdir}/%{name}*.a
 %{_libdir}/pkgconfig/%{name}.pc
-%{_includedir}/%{name}-%{version}-%{release}/Finagle/*.h
+%{_includedir}/%{name}-%{version}-%{release}
 %doc doc/html/*

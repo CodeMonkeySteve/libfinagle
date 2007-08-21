@@ -34,6 +34,7 @@ public:
 
   unsigned capacity( void ) const;
   unsigned capacity( unsigned capacity );
+  bool full( void ) const;
 
   virtual void push( Type const &el );
 
@@ -64,6 +65,14 @@ inline unsigned SizedQueue<Type>::capacity( unsigned capacity )
 {
   return _capacity = capacity;
 }
+
+template <typename Type>
+inline bool SizedQueue<Type>::full( void ) const
+{
+  Lock _( Queue<Type>::_guard );
+  return Queue<Type>::_queue.size() >= _capacity;
+}
+
 
 //! Adds an item \a el to the tail of the queue.  Will block while the queue is full.
 template <typename Type>
