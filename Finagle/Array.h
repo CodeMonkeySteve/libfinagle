@@ -45,20 +45,15 @@ public:
   template <class InputIterator>
   Array( InputIterator b, InputIterator e ) : std::vector<Type, AllocType>( b, e ) {}
 
-  bool contains( Type const &El ) const;
-
   Type &operator[]( size_type i );
   Type const &operator[]( size_type i ) const;
+
+  bool contains( Type const &El ) const;
+
+  void sort( void );
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
-
-//! Returns \c true iff the array contains an element equal to \a el.
-template <typename Type, typename AllocType>
-inline bool Array<Type, AllocType>::contains( Type const &el ) const
-{
-  return std::find( Array::begin(), Array::end(), el ) != Array::end();
-}
 
 template <typename Type, typename AllocType>
 inline Type &Array<Type, AllocType>::operator[]( size_type i )
@@ -73,6 +68,21 @@ template <typename Type, typename AllocType>
 inline Type const &Array<Type, AllocType>::operator[]( size_type i ) const
 {
   return( std::vector<Type, AllocType>::operator[]( i ) );
+}
+
+//! Returns \c true iff the array contains an element equal to \a el.
+template <typename Type, typename AllocType>
+inline bool Array<Type, AllocType>::contains( Type const &el ) const
+{
+  return std::find( Array::begin(), Array::end(), el ) != Array::end();
+}
+
+
+//! Sorts the array using the std::sort algorithm.
+template <typename Type, typename AllocType>
+inline void Array<Type, AllocType>::sort( void )
+{
+  std::sort( Array::begin(), Array::end() );
 }
 
 

@@ -48,7 +48,7 @@ protected:
   void countUp( void );
   void countDown( void );
 
-  Queue<unsigned> *_wait;
+  Mutex *_wait;
   void eternalWait( void );
 };
 
@@ -57,7 +57,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( ThreadTest );
 
 void ThreadTest::setUp( void )
 {
-  CPPUNIT_ASSERT_NO_THROW( _wait = new Queue<unsigned> );
+  CPPUNIT_ASSERT_NO_THROW( _wait = new Mutex );
   _count = 0;
 }
 
@@ -85,7 +85,10 @@ void ThreadTest::countDown( void )
 
 void ThreadTest::eternalWait( void )
 {
-  _wait->pop();
+//  while ( current().running() )
+    sleep( 0.01 );
+  return;
+
   // Should never get here!
   _count++;
 }
@@ -112,6 +115,11 @@ void ThreadTest::testCancel( void )
   ClassFuncThread<ThreadTest> t( this, &ThreadTest::eternalWait );
   CPPUNIT_ASSERT_NO_THROW( t.start() );
   sleep(0.1);
+
   CPPUNIT_ASSERT_NO_THROW( t.kill() );
+  sleep(0.1);
+
   CPPUNIT_ASSERT_EQUAL( 0, _count );
+  CPPUNIT_ASSERT_NO_THROW( delete _wait );
+  _wait = 0;
 }

@@ -70,5 +70,8 @@ int Thread::join( void )
 
 void Thread::kill( void )
 {
-  PTHREAD_ASSERT( pthread_cancel( _id ) );
+  // Can't use pthread_cancel, as Mutex needs pthread_cleanup_push/_pop() but, being do/while macros, they are
+  // inherently un-Object Orientable.  So, next best thing, set a flag and wait for exec() to check it and quit.
+  _running = false;
+  join();
 }

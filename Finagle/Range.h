@@ -40,6 +40,8 @@ public:
   Type const &upper( Type const &upper );
 
   bool contains( Type const &val ) const;
+  void include( Type const &val );
+
   bool clamp( Type &val ) const;
   Type height( void ) const;
 
@@ -54,10 +56,10 @@ protected:
 ** \brief Represents a range of values.
 */
 
-//! Initializes the range to the full numeric range.
+//! Initializes the range to 0..0
 template <typename Type>
 inline Range<Type>::Range( void )
-: _lower( std::numeric_limits<Type>::min() ), _upper( std::numeric_limits<Type>::max() )
+: _lower(0), _upper(0)
 {}
 
 
@@ -101,6 +103,14 @@ template <typename Type>
 inline bool Range<Type>::contains( Type const &val ) const
 {
   return (val >= _lower) && (val <= _upper);
+}
+
+//! Expands the range to include \a val.
+template <typename Type>
+void inline Range<Type>::include( Type const &val )
+{
+       if ( val < _lower )  _lower = val;
+  else if ( val > _upper )  _upper = val;
 }
 
 //! If \a val is outside of the range, sets it such that it is within the range,

@@ -79,7 +79,7 @@ template <typename Type>
 void SizedQueue<Type>::push( Type const &el )
 {
   Queue<Type>::_guard.lock();
-  if ( Queue<Type>::_queue.size() >= _capacity ) {
+  while ( Queue<Type>::_queue.size() >= _capacity ) {
     _notFull.lock();
     Queue<Type>::_guard.unlock();
     _notFull.wait();

@@ -34,6 +34,10 @@ public:
   bool tug( Type &dest );
   bool tug( Type &dest, Time timeout );
 
+public: // STL conatiner accessors
+  void push_back( Type const &el );
+  void push_front( Type const &el );
+
 protected:
   virtual void pop_front( Type & );
 
@@ -86,7 +90,7 @@ Type Queue<Type>::pop( void )
 {
   _guard.lock();
 
-  if ( empty() ) {
+  while ( empty() ) {
     _notEmpty.lock();
     _guard.unlock();
     _notEmpty.wait();
@@ -125,7 +129,7 @@ bool Queue<Type>::tug( Type &dest, Time timeout )
     _notEmpty.lock();
     _guard.unlock();
 
-    if ( !_notEmpty.wait( timeout ) ) {
+    if ( !_notEmpty.wait( timeout ) || empty() ) {
       _notEmpty.unlock();
       return false;
     }
@@ -138,6 +142,20 @@ bool Queue<Type>::tug( Type &dest, Time timeout )
   _guard.unlock();
   return true;
 }
+
+
+template <typename Type>
+inline void Queue<Type>::push_back( Type const &el )
+{
+  push( el );
+}
+
+template <typename Type>
+inline void Queue<Type>::push_front( Type const &el )
+{
+  unpop( el );
+}
+
 
 template <typename Type>
 void Queue<Type>::pop_front( Type &dest )
