@@ -23,20 +23,20 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>/home/steve/src/product/branches/llama/appliance/libs/Finagle/debug</mainprogram>
+      <mainprogram></mainprogram>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle/>
+        <testFinagle></testFinagle>
       </runarguments>
       <debugarguments>
-        <testFinagle/>
+        <testFinagle></testFinagle>
       </debugarguments>
       <cwd>
-        <testFinagle>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./test</testFinagle>
+        <testFinagle></testFinagle>
       </cwd>
       <programargs/>
       <globaldebugarguments/>
-      <globalcwd>/home/steve/src/product/branches/llama/appliance/libs/Finagle/debug</globalcwd>
+      <globalcwd></globalcwd>
       <useglobalprogram>false</useglobalprogram>
       <autocompile>true</autocompile>
       <autoinstall>false</autoinstall>

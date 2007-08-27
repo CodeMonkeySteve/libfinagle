@@ -48,7 +48,7 @@ namespace AppLoop {
   bool Exit = false;
   int  ExitCode = 0;
 
-  Thread::ID const MainThread = Thread::current();
+  Thread::ID MainThreadId = Thread::self_id();
 
 }};
 
@@ -70,7 +70,7 @@ int AppLoop::exec( void )
 
 void AppLoop::wait( Time wait )
 {
-  if ( Thread::current() == MainThread )
+  if ( Thread::self_id() == MainThreadId )
     process( wait );
   else
     sleep( wait );

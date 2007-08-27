@@ -71,8 +71,8 @@ public:
   long long spaceFree( void ) const;
   long long spaceUsed( void ) const;
 
-  bool create( unsigned mode = 0700 );
-  bool erase( bool recursive = false );
+  bool create( unsigned mode = 0700 ) const;
+  bool erase( bool recursive = false ) const;
   bool sync( Dir &dest ) const;
 
   unsigned count( const char *Ext = 0 ) const;
@@ -104,7 +104,7 @@ inline Dir::Dir( const char *dirPath, const char *dirName )
 {}
 
 //! Creates the directory, if it doesn't exist, and returns \c true if successful.
-inline bool Dir::create( unsigned mode )
+inline bool Dir::create( unsigned mode ) const
 {
   return exists() || ((::mkdir( path(), mode ) == 0) && refresh( true ));
 }

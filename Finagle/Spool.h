@@ -36,10 +36,11 @@ namespace Finagle {
 ** \note Requires that Type implement the stream redirection operators (i.e. << and >> ).
 ** \note
 */
-template <typename Type, typename PtrType = ObjectRef<Type> >
-class Spool : public Finagle::SizedQueue<PtrType> {
+template <typename Type, typename PtrType = ObjectRef<Type>, typename Base = Finagle::SizedQueue<PtrType> >
+class Spool : public Base {
 public:
   Spool( FilePath const &spoolDir, unsigned numCached );
+  virtual ~Spool( void );
 
   unsigned size( void ) const;
 
@@ -57,16 +58,30 @@ protected:
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************
 
-template <typename Type, typename PtrType>
-Spool<Type, PtrType>::Spool( Finagle::FilePath const &spoolDir, unsigned numCached )
-: SizedQueue<Type>( numCached ), _dir( spoolDir ), _readIdx(0), _writeIdx(0), _despoolThread( this, &despool )
+template <typename Type, typename PtrType, typename Base>
+Spool<Type, PtrType, Base>::Spool( Finagle::FilePath const &spoolDir, unsigned numCached )
+: Base( numCached ), _dir( spoolDir ), _readIdx(0), _writeIdx(0),
+  _despoolThread( this, &Spool<Type, PtrType, Base>::despool )
 {
   loadSpool();
   _despoolThread.start();
 }
 
-template <typename Type, typename PtrType>
-void Spool<Type, PtrType>::loadSpool( void )
+
+template <typename Type, typename PtrType, typename Base>
+Spool<Type, PtrType, Base>::~Spool( void )
+{
+}
+
+template <typename Type, typename PtrType, typename Base>
+unsigned Spool<Type, PtrType, Base>::size( void ) const
+{
+  return Base::size() + (_writeIdx - _readIdx - 1);
+}
+
+
+template <typename Type, typename PtrType, typename Base>
+void Spool<Type, PtrType, Base>::loadSpool( void )
 {
   unsigned size = 0;
   for ( Dir::Iterator f = _dir.begin(); f != _dir.end(); ++f, ++size ) {
@@ -74,25 +89,25 @@ void Spool<Type, PtrType>::loadSpool( void )
     if ( x < _readIdx )  _readIdx = x;
     else if ( x > _writeIdx )  _writeIdx = x;
   }
-  _writeIdx++;
-
   if ( _writeIdx - _readIdx != size ) {
     throw Exception( "Spool directory (" + _dir + ") corrupted: " +
                      String(_readIdx) + "..." + String(_writeIdx) + " != " + String(size) );
   }
+
+  _writeIdx++;
 }
 
-template <typename Type, typename PtrType>
-void Spool<Type, PtrType>::saveSpool( void )
+template <typename Type, typename PtrType, typename Base>
+void Spool<Type, PtrType, Base>::saveSpool( void )
 {
 }
 
 //! Thread function to keep the SizedQueue full, loading messages from the spool as necessary (and available).
-template <typename Type, typename PtrType>
-void Spool<Type, PtrType>::despool( void )
+template <typename Type, typename PtrType, typename Base>
+void Spool<Type, PtrType, Base>::despool( void )
 {
-return;
-  while ( true ) {
+  while ( _despoolThread.running() ) {
+sleep(0.01);
 //    FilePath path = _spool.pop();
 //    PtrType
 //    std::ifstream f( String(_writeIdx) );

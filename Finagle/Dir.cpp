@@ -116,7 +116,7 @@ unsigned Dir::count( const char *Ext ) const
 
 //! Removes the directory.  If \a recursive is \c true, will first remove all
 //! files and subdirectories.  Returns \c true if successful.
-bool Dir::erase( bool recursive )
+bool Dir::erase( bool recursive ) const
 {
   if ( recursive ) {
     // Iterator through all files in directory and delete them
