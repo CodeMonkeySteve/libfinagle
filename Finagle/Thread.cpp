@@ -110,6 +110,7 @@ void Thread::stop( void )
   join();
 }
 
+
 //! Returns the Thread class for the currently-running thread.
 Thread *Thread::self( void )
 {

@@ -105,7 +105,6 @@ void ThreadTest::testCreateDestroy( void )
     CPPUNIT_ASSERT_EQUAL( 0, _count );
     Thread *t = new ClassFuncThread<ThreadTest>( this, &ThreadTest::eternalWait );;
     t->start();
-    t->stop();
     delete t;
     CPPUNIT_ASSERT_EQUAL( 1, _count );
   }

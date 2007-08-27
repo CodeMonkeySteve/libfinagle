@@ -70,8 +70,7 @@ Spool<Type, PtrType, Base>::Spool( Finagle::FilePath const &spoolDir, unsigned n
 
 template <typename Type, typename PtrType, typename Base>
 Spool<Type, PtrType, Base>::~Spool( void )
-{
-}
+{}
 
 template <typename Type, typename PtrType, typename Base>
 unsigned Spool<Type, PtrType, Base>::size( void ) const

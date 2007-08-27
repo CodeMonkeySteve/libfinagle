@@ -30,6 +30,7 @@ template <typename ClassType, typename FuncType = void (ClassType::*)(void)>
 class ClassFuncThread : public Thread {
 public:
   ClassFuncThread( ClassType *klass, FuncType func );
+  virtual ~ClassFuncThread( void );
 
 protected:
   int exec( void );
@@ -46,6 +47,11 @@ inline ClassFuncThread<ClassType, FuncType>::ClassFuncThread( ClassType *klass, 
 : _class(klass), _func(func)
 {}
 
+template <typename ClassType, typename FuncType>
+inline ClassFuncThread<ClassType, FuncType>::~ClassFuncThread( void )
+{
+  stop();
+}
 
 template <typename ClassType, typename FuncType>
 int ClassFuncThread<ClassType, FuncType>::exec( void )
