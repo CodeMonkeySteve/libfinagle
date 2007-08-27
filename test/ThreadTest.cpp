@@ -32,16 +32,18 @@ using namespace Finagle;
 class ThreadTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( ThreadTest );
+  CPPUNIT_TEST( testCreateDestroy );
   CPPUNIT_TEST( testClassThreadFunc );
-//  CPPUNIT_TEST( testCancel );
+  CPPUNIT_TEST( testStop );
   CPPUNIT_TEST_SUITE_END();
 
 public:
   void setUp( void );
   void tearDown( void );
 
+  void testCreateDestroy( void );
   void testClassThreadFunc( void );
-  void testCancel( void );
+  void testStop( void );
 
 protected:
   int _count;
@@ -85,12 +87,28 @@ void ThreadTest::countDown( void )
 
 void ThreadTest::eternalWait( void )
 {
-//  while ( current().running() )
+  _count++;
+
+  while ( Thread::self()->running() )
     sleep( 0.01 );
   return;
 
   // Should never get here!
   _count++;
+}
+
+
+void ThreadTest::testCreateDestroy( void )
+{
+  for ( unsigned i = 0; i < 100; ++i ) {
+    _count = 0;
+    CPPUNIT_ASSERT_EQUAL( 0, _count );
+    Thread *t = new ClassFuncThread<ThreadTest>( this, &ThreadTest::eternalWait );;
+    t->start();
+    t->stop();
+    delete t;
+    CPPUNIT_ASSERT_EQUAL( 1, _count );
+  }
 }
 
 
@@ -109,17 +127,16 @@ void ThreadTest::testClassThreadFunc( void )
 }
 
 
-void ThreadTest::testCancel( void )
+void ThreadTest::testStop( void )
 {
   _count = 0;
   ClassFuncThread<ThreadTest> t( this, &ThreadTest::eternalWait );
   CPPUNIT_ASSERT_NO_THROW( t.start() );
-  sleep(0.1);
+  sleep( 0.01 );
 
-  CPPUNIT_ASSERT_NO_THROW( t.kill() );
-  sleep(0.1);
+  CPPUNIT_ASSERT_NO_THROW( t.stop() );
 
-  CPPUNIT_ASSERT_EQUAL( 0, _count );
+  CPPUNIT_ASSERT_EQUAL( 1, _count );
   CPPUNIT_ASSERT_NO_THROW( delete _wait );
   _wait = 0;
 }

@@ -25,12 +25,44 @@
 
 using namespace Finagle;
 
-void *Thread::run( void *arg )
+static class ThreadData {
+public:
+  ThreadData( void ) {
+    PTHREAD_ASSERT( pthread_key_create( &threadClass, 0 ) );
+  }
+
+ ~ThreadData( void ) {
+    PTHREAD_ASSERT( pthread_key_delete( threadClass ) );
+  }
+
+  void setSelf( Thread *cur ) {
+    PTHREAD_ASSERT( pthread_setspecific( threadClass, cur ) );
+  }
+
+  Thread *getSelf( void ) {
+    return (Thread *) pthread_getspecific( threadClass );
+  }
+
+public:
+  static pthread_key_t threadClass;
+} __threadData;
+
+pthread_key_t ThreadData::threadClass;
+
+
+/*! \class Thread
+**
+*/
+
+void *Thread::run( void *This )
 {
-  Thread *t = (Thread *) arg;
-  t->_running = true;
+  Thread *t = (Thread *) This;
+
+  __threadData.setSelf( t );
   t->_exitVal = t->exec();
+  __threadData.setSelf( 0 );
   t->_running = false;
+
   return (void *) t->_exitVal;
 }
 
@@ -42,12 +74,11 @@ void Thread::start( void )
   pthread_attr_t attr;
   PTHREAD_ASSERT( pthread_attr_init( &attr ) );
   PTHREAD_ASSERT( pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_JOINABLE ) );
+  _running = true;
   PTHREAD_ASSERT( pthread_create( &_id, &attr, Thread::run, this ) );
   PTHREAD_ASSERT( pthread_attr_destroy( &attr ) );
 }
 
-#include <iostream>
-using namespace std;
 
 int Thread::join( void )
 {
@@ -60,7 +91,7 @@ int Thread::join( void )
   int join_res = pthread_join( id, &res );
   _id = 0;
   if ( ((join_res == ESRCH) && !running()) ||                      // Thread not running
-       ((join_res == EDEADLK) && (id == Thread::current())) )      // Thread is current
+       ((join_res == EDEADLK) && (id == Thread::self_id())) )      // Thread is current
     return _exitVal;
 
   PTHREAD_ASSERT( join_res );
@@ -68,10 +99,19 @@ int Thread::join( void )
 }
 
 
-void Thread::kill( void )
+void Thread::stop( void )
 {
+  if ( !running() )
+    return;
+
   // Can't use pthread_cancel, as Mutex needs pthread_cleanup_push/_pop() but, being do/while macros, they are
   // inherently un-Object Orientable.  So, next best thing, set a flag and wait for exec() to check it and quit.
   _running = false;
   join();
+}
+
+//! Returns the Thread class for the currently-running thread.
+Thread *Thread::self( void )
+{
+  return __threadData.getSelf();
 }

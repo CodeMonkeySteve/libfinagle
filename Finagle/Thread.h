@@ -40,10 +40,11 @@ public:
 
   void start( void );
   int  join( void );
-  void kill( void );
+  void stop( void );
 
 public:
-  static Thread::ID current( void );
+  static Thread *self( void );
+  static Thread::ID self_id( void );
   static void exit( int res );
 
 protected:
@@ -55,7 +56,8 @@ protected:
   int _exitVal;
 
 private:
-  static void *run( void *Arg );
+  static pthread_key_t _thread;
+  static void *run( void *This );
 };
 
 // INLINE IMPLEMENTATION ******************************************************
@@ -66,7 +68,7 @@ inline Thread::Thread( void )
 
 inline Thread::~Thread( void )
 {
-  join();
+  stop();
 }
 
 inline pthread_t const &Thread::id( void ) const
@@ -84,18 +86,17 @@ inline int Thread::exitVal( void ) const
   return running() ? 0 : _exitVal;
 }
 
-//! Returns the ID of the currently-running thread.
-inline Thread::ID Thread::current( void )
-{
-  return pthread_self();
-}
-
 //! Causes the currently running thread to exit, returning \a res.
 inline void Thread::exit( int res )
 {
   pthread_exit( (void *) res );
 }
 
+//! Returns the Thread id for the currently-running thread.
+inline Thread::ID Thread::self_id( void )
+{
+  return pthread_self();
+}
 
 }
 
