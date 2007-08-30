@@ -31,11 +31,11 @@ using namespace Finagle;
 class SizedQueueTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( SizedQueueTest );
-  CPPUNIT_TEST( testCreateDestroy );
+//  CPPUNIT_TEST( testCreateDestroy );
   CPPUNIT_TEST( testPush );
-  CPPUNIT_TEST( testPushPop );
-  CPPUNIT_TEST( testSynchronize );
-  CPPUNIT_TEST( testThreadFill );
+//  CPPUNIT_TEST( testPushPop );
+//  CPPUNIT_TEST( testSynchronize );
+//  CPPUNIT_TEST( testThreadFill );
   CPPUNIT_TEST_SUITE_END();
 
 public:

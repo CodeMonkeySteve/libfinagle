@@ -21,30 +21,42 @@ template <typename Type>
 class Queue {
 public:
   Queue( void ) {}
-  virtual ~Queue( void ) {}
 
   bool empty( void ) const;
   unsigned size( void ) const;
 
-  virtual void push( Type const &el );
+  void push( Type const &el );
   void unpop( Type const &el );
 
+public:
+  template <typename Functor>
+  bool ifNotEmpty( Functor &func, Time timeout = 0 );
+
+  template <typename Functor>
+  void whenNotEmpty( Functor &func );
+
+  bool tug( Type &dest, Time timeout = 0 );
   Type pop( void );
-
-  bool tug( Type &dest );
-  bool tug( Type &dest, Time timeout );
-
-public: // STL conatiner accessors
-  void push_back( Type const &el );
-  void push_front( Type const &el );
-
-protected:
-  virtual void pop_front( Type & );
 
 protected:
   mutable Mutex _guard;
   std::deque<Type> _queue;
   WaitCondition _notEmpty;
+
+protected:
+  class Popper {
+  public:
+    Popper( Type &dest ) : _dest(dest) {}
+    void operator()( Queue<Type> &queue )
+    {
+      _dest = queue._queue.front();
+      queue._queue.pop_front();
+    }
+
+  protected:
+    Type &_dest;
+  };
+  friend class Popper;
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************
@@ -84,44 +96,12 @@ void Queue<Type>::unpop( Type const &el )
   _notEmpty.signalOne();
 }
 
-//! Returns the item at the head of the queue.  If the queue is empty, blocks until an item has been added.
+
+//! Calls functor \a func (passing the queue reference) if the queue is not empty, or becomes non-empty before \a timeout, and returns \c true.
+//! If the queue is still empty, \a func is not called and \c false is returned.
 template <typename Type>
-Type Queue<Type>::pop( void )
-{
-  _guard.lock();
-
-  while ( empty() ) {
-    _notEmpty.lock();
-    _guard.unlock();
-    _notEmpty.wait();
-    _guard.lock();
-    _notEmpty.unlock();
-  }
-
-  Type t;
-  pop_front( t );
-  _guard.unlock();
-  return t;
-}
-
-
-//! Attempts to pop the head of the queue.  If the queue is empty, returns \c false immediately.
-//! Otherwise, stores the item in \a dest and returns \c true.
-template <typename Type>
-bool Queue<Type>::tug( Type &dest )
-{
-  Lock _( _guard );
-  if ( _queue.empty() )
-    return false;
-
-  pop_front( dest );
-  return true;
-}
-
-//! Attempts to pop the head of the queue, waiting up to \a timeout for an entry to appear.  If the queue is empty, returns \c false.
-//! Otherwise, stores the item in \a dest and returns \c true.
-template <typename Type>
-bool Queue<Type>::tug( Type &dest, Time timeout )
+template <typename Functor>
+bool Queue<Type>::ifNotEmpty( Functor &func, Time timeout )
 {
   _guard.lock();
 
@@ -138,30 +118,47 @@ bool Queue<Type>::tug( Type &dest, Time timeout )
     _notEmpty.unlock();
   }
 
-  pop_front( dest );
+  func( *this );
   _guard.unlock();
   return true;
 }
 
-
+//! Calls functor \a func (passing the queue reference).  If the queue is empty, blocks until an item has been added.
 template <typename Type>
-inline void Queue<Type>::push_back( Type const &el )
+template <typename Functor>
+void Queue<Type>::whenNotEmpty( Functor &func )
 {
-  push( el );
+  _guard.lock();
+
+  while ( empty() ) {
+    _notEmpty.lock();
+    _guard.unlock();
+    _notEmpty.wait();
+    _guard.lock();
+    _notEmpty.unlock();
+  }
+
+  func( *this );
+  _guard.unlock();
 }
 
+//! Attempts to pop the head of the queue, waiting up to \a timeout for an entry to appear.  If the queue is empty, returns \c false.
+//! Otherwise, stores the item in \a dest and returns \c true.
 template <typename Type>
-inline void Queue<Type>::push_front( Type const &el )
+bool Queue<Type>::tug( Type &dest, Time timeout )
 {
-  unpop( el );
+  Popper f( dest );
+  return ifNotEmpty( f, timeout );
 }
 
-
+//! Returns the item at the head of the queue.  If the queue is empty, blocks until an item has been added.
 template <typename Type>
-void Queue<Type>::pop_front( Type &dest )
+Type Queue<Type>::pop( void )
 {
-  dest = _queue.front();
-  _queue.pop_front();
+  Type dest;
+  Popper f( dest );
+  whenNotEmpty( f );
+  return dest;
 }
 
 }
