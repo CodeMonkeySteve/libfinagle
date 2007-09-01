@@ -91,14 +91,14 @@ void SpoolTest::tearDown( void )
 void SpoolTest::enqueue( void )
 {
   sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
-  CPPUNIT_ASSERT_NO_THROW( _spool->push( new unsigned(42) ) );
+  CPPUNIT_ASSERT_NO_THROW( _spool->push_back( new unsigned(42) ) );
 }
 
 void SpoolTest::fillSpool( void )
 {
   sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
   for ( unsigned i = 0; i < SpoolSize; ++i )
-    CPPUNIT_ASSERT_NO_THROW( _spool->push( new unsigned(i) ) );
+    CPPUNIT_ASSERT_NO_THROW( _spool->push_back( new unsigned(i) ) );
 }
 
 
@@ -117,9 +117,9 @@ void SpoolTest::testPush( void )
   for ( unsigned i = 0; i < 1000; ++i ) {
     CPPUNIT_ASSERT( _spool->empty() );
     unsigned *v = new unsigned(42);
-    CPPUNIT_ASSERT_NO_THROW( _spool->push( v ) );
+    CPPUNIT_ASSERT_NO_THROW( _spool->push_back( v ) );
     CPPUNIT_ASSERT_EQUAL( 1U, _spool->size() );
-    CPPUNIT_ASSERT_EQUAL( v, _spool->pop() );
+    CPPUNIT_ASSERT_EQUAL( v, _spool->pop_front() );
     delete v;
     CPPUNIT_ASSERT( _spool->empty() );
   }
@@ -131,14 +131,14 @@ void SpoolTest::testPushPop( void )
 
   for ( unsigned i = 0; i < FillSize; ++i ) {
     CPPUNIT_ASSERT_EQUAL( i, _spool->size() );
-    CPPUNIT_ASSERT_NO_THROW( _spool->push( new unsigned(i) ) );
+    CPPUNIT_ASSERT_NO_THROW( _spool->push_back( new unsigned(i) ) );
     CPPUNIT_ASSERT_EQUAL( i + 1, _spool->size() );
   }
 
   for ( unsigned i = FillSize; i > 0; --i ) {
     unsigned *v;
     CPPUNIT_ASSERT_EQUAL( i, _spool->size() );
-    CPPUNIT_ASSERT_NO_THROW( v = _spool->pop() );
+    CPPUNIT_ASSERT_NO_THROW( v = _spool->pop_front() );
     CPPUNIT_ASSERT_EQUAL( SpoolSize - i, *v );
     CPPUNIT_ASSERT_EQUAL( i - 1, _spool->size() );
     delete v;
@@ -153,7 +153,7 @@ void SpoolTest::testSynchronize( void )
   CPPUNIT_ASSERT_NO_THROW( enqueueThread.start() );
 
   unsigned *v;
-  CPPUNIT_ASSERT_NO_THROW( v = _spool->pop() );
+  CPPUNIT_ASSERT_NO_THROW( v = _spool->pop_front() );
   CPPUNIT_ASSERT_EQUAL( 42U, *v );
   delete v;
 
@@ -171,7 +171,7 @@ void SpoolTest::testThreadFill( void )
 
   for ( unsigned i = 0; i < SpoolSize; ++i ) {
     unsigned *v;
-    CPPUNIT_ASSERT_NO_THROW( v = _spool->pop() );
+    CPPUNIT_ASSERT_NO_THROW( v = _spool->pop_front() );
     CPPUNIT_ASSERT_EQUAL( i, *v );
     delete v;
   }

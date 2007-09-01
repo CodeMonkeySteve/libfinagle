@@ -87,7 +87,7 @@ protected: // functors
   friend class BackPopper;
 
   struct FrontPopper : public Queue<Type>::FrontPopper {
-    FrontPopper( Type &dest ) : BackPopper(dest) {}
+    FrontPopper( Type &dest ) : Queue<Type>::FrontPopper(dest) {}
     void operator()( Queue<Type> &queue ) {
       Queue<Type>::FrontPopper::operator()( queue );
       SizedQueue<Type> &q( (SizedQueue<Type> &) queue );

@@ -60,7 +60,7 @@ protected:
 
 template <typename Type, typename PtrType, typename Base>
 Spool<Type, PtrType, Base>::Spool( Finagle::FilePath const &spoolDir, unsigned numCached )
-: Base( numCached ), _dir( spoolDir ), _readIdx(0), _writeIdx(0),
+: _dir( spoolDir ), _readIdx(0), _writeIdx(0),
   _spoolThread( this, &Spool<Type, PtrType, Base>::spooler )
 {
   loadSpool();
