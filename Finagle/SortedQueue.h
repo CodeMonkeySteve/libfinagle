@@ -22,7 +22,7 @@
 #ifndef FINAGLE_SORTEDQUEUE_H
 #define FINAGLE_SORTEDQUEUE_H
 
-#include <multiset>
+#include <set>
 
 template <typename Type>
 class SortedQueue {

@@ -84,22 +84,22 @@ void QueueTest::tearDown( void )
 void QueueTest::enqueue( void )
 {
   sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
-  CPPUNIT_ASSERT_NO_THROW( _queue->push( 42 ) );
+  CPPUNIT_ASSERT_NO_THROW( _queue->push_back( 42 ) );
 }
 
 void QueueTest::fillQueue( void )
 {
   sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
   for ( unsigned i = 0; i < QueueSize; ++i )
-    CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
+    CPPUNIT_ASSERT_NO_THROW( _queue->push_back( i ) );
 }
 
 void QueueTest::squareQueue( void )
 {
   for ( unsigned i = 0; i < QueueSize; ++i ) {
     unsigned v;
-    CPPUNIT_ASSERT_NO_THROW( v = _queue->pop() );
-    CPPUNIT_ASSERT_NO_THROW( _squared->push( sqr(v) ) );
+    CPPUNIT_ASSERT_NO_THROW( v = _queue->pop_front() );
+    CPPUNIT_ASSERT_NO_THROW( _squared->push_back( sqr(v) ) );
   }
 }
 
@@ -112,7 +112,7 @@ void QueueTest::testCreateDestroy( void )
 void QueueTest::testPush( void )
 {
   CPPUNIT_ASSERT( _queue->empty() );
-  CPPUNIT_ASSERT_NO_THROW( _queue->push( 42 ) );
+  CPPUNIT_ASSERT_NO_THROW( _queue->push_back( 42 ) );
   CPPUNIT_ASSERT_EQUAL( 1U, _queue->size() );
 }
 
@@ -122,13 +122,13 @@ void QueueTest::testPushPop( void )
 
   for ( unsigned i = 0; i < QueueSize; ++i ) {
     CPPUNIT_ASSERT_EQUAL( i, _queue->size() );
-    CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
+    CPPUNIT_ASSERT_NO_THROW( _queue->push_back( i ) );
     CPPUNIT_ASSERT_EQUAL( i + 1, _queue->size() );
   }
 
   for ( unsigned i = QueueSize; i > 0; --i ) {
     CPPUNIT_ASSERT_EQUAL( i, _queue->size() );
-    CPPUNIT_ASSERT_EQUAL( QueueSize - i, _queue->pop() );
+    CPPUNIT_ASSERT_EQUAL( QueueSize - i, _queue->pop_front() );
     CPPUNIT_ASSERT_EQUAL( i - 1, _queue->size() );
   }
 
@@ -141,7 +141,7 @@ void QueueTest::testSynchronize( void )
   CPPUNIT_ASSERT_NO_THROW( enqueueThread.start() );
 
   unsigned v;
-  CPPUNIT_ASSERT_NO_THROW( v = _queue->pop() );
+  CPPUNIT_ASSERT_NO_THROW( v = _queue->pop_front() );
   CPPUNIT_ASSERT_EQUAL( 42U, v );
 
   CPPUNIT_ASSERT_NO_THROW( enqueueThread.join() );
@@ -157,7 +157,7 @@ void QueueTest::testThreadFill( void )
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.start() );
 
   for ( unsigned i = 0; i < QueueSize; ++i )
-    CPPUNIT_ASSERT_EQUAL( i, _queue->pop() );
+    CPPUNIT_ASSERT_EQUAL( i, _queue->pop_front() );
 
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.join() );
   CPPUNIT_ASSERT( _queue->empty() );
@@ -172,8 +172,8 @@ void QueueTest::testCoprocess( void )
   CPPUNIT_ASSERT_NO_THROW( squareQueueThread.start() );
 
   for ( unsigned i = 0; i < QueueSize; ++i ) {
-    CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
-    CPPUNIT_ASSERT_EQUAL( sqr(i), _squared->pop() );
+    CPPUNIT_ASSERT_NO_THROW( _queue->push_back( i ) );
+    CPPUNIT_ASSERT_EQUAL( sqr(i), _squared->pop_front() );
   }
 
   CPPUNIT_ASSERT_NO_THROW( squareQueueThread.join() );

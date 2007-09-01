@@ -80,13 +80,13 @@ void SizedQueueTest::tearDown( void )
 void SizedQueueTest::enqueue( void )
 {
   sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
-  CPPUNIT_ASSERT_NO_THROW( _queue->push( 42 ) );
+  CPPUNIT_ASSERT_NO_THROW( _queue->push_back( 42 ) );
 }
 
 void SizedQueueTest::fillQueue( void )
 {
   for ( unsigned i = 0; i < FillSize; ++i )
-    CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
+    CPPUNIT_ASSERT_NO_THROW( _queue->push_back( i ) );
 }
 
 
@@ -98,7 +98,7 @@ void SizedQueueTest::testCreateDestroy( void )
 void SizedQueueTest::testPush( void )
 {
   CPPUNIT_ASSERT( _queue->empty() );
-  CPPUNIT_ASSERT_NO_THROW( _queue->push( 42 ) );
+  CPPUNIT_ASSERT_NO_THROW( _queue->push_back( 42 ) );
   CPPUNIT_ASSERT_EQUAL( 1U, _queue->size() );
 }
 
@@ -108,13 +108,13 @@ void SizedQueueTest::testPushPop( void )
 
   for ( unsigned i = 0; i < QueueSize; ++i ) {
     CPPUNIT_ASSERT_EQUAL( i, _queue->size() );
-    CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
+    CPPUNIT_ASSERT_NO_THROW( _queue->push_back( i ) );
     CPPUNIT_ASSERT_EQUAL( i + 1, _queue->size() );
   }
 
   for ( unsigned i = QueueSize; i > 0; --i ) {
     CPPUNIT_ASSERT_EQUAL( i, _queue->size() );
-    CPPUNIT_ASSERT_EQUAL( QueueSize - i, _queue->pop() );
+    CPPUNIT_ASSERT_EQUAL( QueueSize - i, _queue->pop_front() );
     CPPUNIT_ASSERT_EQUAL( i - 1, _queue->size() );
   }
 
@@ -127,7 +127,7 @@ void SizedQueueTest::testSynchronize( void )
   CPPUNIT_ASSERT_NO_THROW( enqueueThread.start() );
 
   unsigned v;
-  CPPUNIT_ASSERT_NO_THROW( v = _queue->pop() );
+  CPPUNIT_ASSERT_NO_THROW( v = _queue->pop_front() );
   CPPUNIT_ASSERT_EQUAL( 42U, v );
 
   CPPUNIT_ASSERT_NO_THROW( enqueueThread.join() );
@@ -145,12 +145,12 @@ void SizedQueueTest::testThreadFill( void )
 
   for ( unsigned i = FillSize; i > QueueSize; --i ) {
     CPPUNIT_ASSERT( _queue->size() <= QueueSize );
-    CPPUNIT_ASSERT_EQUAL( FillSize - i, _queue->pop() );
+    CPPUNIT_ASSERT_EQUAL( FillSize - i, _queue->pop_front() );
   }
 
   for ( unsigned i = QueueSize; i > 0; --i ) {
     CPPUNIT_ASSERT( _queue->size() <= i );
-    CPPUNIT_ASSERT_EQUAL( FillSize - i, _queue->pop() );
+    CPPUNIT_ASSERT_EQUAL( FillSize - i, _queue->pop_front() );
   }
 
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.join() );

@@ -17,46 +17,61 @@
 
 namespace Finagle {
 
+using std::deque;
+
 template <typename Type>
-class Queue {
+class Queue : protected deque<Type> {
 public:
   Queue( void ) {}
 
   bool empty( void ) const;
   unsigned size( void ) const;
 
-  void push( Type const &el );
-  void unpop( Type const &el );
+  void push_back( Type const &el );
+  void push_front( Type const &el );
+
+  Type pop_back( void );
+  Type pop_front( void );
+
+  bool pop_back( Type &dest, Time timeout = 0 );
+  bool pop_front( Type &dest, Time timeout = 0 );
 
 public:
   template <typename Functor>
-  bool ifNotEmpty( Functor &func, Time timeout = 0 );
-
-  template <typename Functor>
   void whenNotEmpty( Functor &func );
 
-  bool tug( Type &dest, Time timeout = 0 );
-  Type pop( void );
+  template <typename Functor>
+  bool ifNotEmpty( Functor &func, Time timeout = 0 );
 
 protected:
   mutable Mutex _guard;
-  std::deque<Type> _queue;
   WaitCondition _notEmpty;
 
-protected:
-  class Popper {
+protected:  // functors
+  class BackPopper {
   public:
-    Popper( Type &dest ) : _dest(dest) {}
-    void operator()( Queue<Type> &queue )
-    {
-      _dest = queue._queue.front();
-      queue._queue.pop_front();
+    BackPopper( Type &dest ) : _dest(dest) {}
+    void operator()( Queue<Type> &queue ) {
+      deque<Type> &q( (deque<Type> &) queue );
+      _dest = q.back();
+      q.pop_back();
     }
 
   protected:
     Type &_dest;
   };
-  friend class Popper;
+  friend class BackPopper;
+
+  class FrontPopper : protected BackPopper {
+  public:
+    FrontPopper( Type &dest ) : BackPopper(dest) {}
+    void operator()( Queue<Type> &queue ) {
+      deque<Type> &q( (deque<Type> &) queue );
+      BackPopper::_dest = q.front();
+      q.pop_front();
+    }
+  };
+  friend class FrontPopper;
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************
@@ -66,7 +81,7 @@ template <typename Type>
 inline bool Queue<Type>::empty( void ) const
 {
   Lock _( _guard );
-  return _queue.empty();
+  return deque<Type>::empty();
 }
 
 //! Returns the number of items in the queue.
@@ -74,28 +89,86 @@ template <typename Type>
 inline unsigned Queue<Type>::size( void ) const
 {
   Lock _( _guard );
-  return _queue.size();
+  return deque<Type>::size();
 }
 
 
 //! Adds an item to the tail of the queue
 template <typename Type>
-void Queue<Type>::push( Type const &el )
+inline void Queue<Type>::push_back( Type const &el )
 {
   Lock _( _guard );
-  _queue.push_back( el );
+  deque<Type>::push_back( el );
   _notEmpty.signalOne();
 }
 
 //! Adds an item to the head of the queue
 template <typename Type>
-void Queue<Type>::unpop( Type const &el )
+inline void Queue<Type>::push_front( Type const &el )
 {
   Lock _( _guard );
-  _queue.push_front( el );
+  deque<Type>::push_front( el );
   _notEmpty.signalOne();
 }
 
+//! Returns the item at the tail of the queue.  If the queue is empty, blocks until an item has been added.
+template <typename Type>
+inline Type Queue<Type>::pop_back( void )
+{
+  Type dest;
+  BackPopper p( dest );
+  whenNotEmpty( p );
+  return dest;
+}
+
+//! Returns the item at the head of the queue.  If the queue is empty, blocks until an item has been added.
+template <typename Type>
+inline Type Queue<Type>::pop_front( void )
+{
+  Type dest;
+  FrontPopper p( dest );
+  whenNotEmpty( p );
+  return dest;
+}
+
+//! Attempts to pop the tail of the queue, waiting up to \a timeout for an entry to appear.  If the queue is empty, returns \c false.
+//! Otherwise, stores the item in \a dest and returns \c true.
+template <typename Type>
+inline bool Queue<Type>::pop_back( Type &dest, Time timeout )
+{
+  BackPopper p( dest );
+  return ifNotEmpty( p, timeout );
+}
+
+
+//! Attempts to pop the head of the queue, waiting up to \a timeout for an entry to appear.  If the queue is empty, returns \c false.
+//! Otherwise, stores the item in \a dest and returns \c true.
+template <typename Type>
+inline bool Queue<Type>::pop_front( Type &dest, Time timeout )
+{
+  FrontPopper p( dest );
+  return ifNotEmpty( p, timeout );
+}
+
+
+//! Calls functor \a func (passing the queue reference).  If the queue is empty, blocks until an item has been added.
+template <typename Type>
+template <typename Functor>
+void Queue<Type>::whenNotEmpty( Functor &func )
+{
+  _guard.lock();
+
+  while ( empty() ) {
+    _notEmpty.lock();
+    _guard.unlock();
+    _notEmpty.wait();
+    _guard.lock();
+    _notEmpty.unlock();
+  }
+
+  func( *this );
+  _guard.unlock();
+}
 
 //! Calls functor \a func (passing the queue reference) if the queue is not empty, or becomes non-empty before \a timeout, and returns \c true.
 //! If the queue is still empty, \a func is not called and \c false is returned.
@@ -121,44 +194,6 @@ bool Queue<Type>::ifNotEmpty( Functor &func, Time timeout )
   func( *this );
   _guard.unlock();
   return true;
-}
-
-//! Calls functor \a func (passing the queue reference).  If the queue is empty, blocks until an item has been added.
-template <typename Type>
-template <typename Functor>
-void Queue<Type>::whenNotEmpty( Functor &func )
-{
-  _guard.lock();
-
-  while ( empty() ) {
-    _notEmpty.lock();
-    _guard.unlock();
-    _notEmpty.wait();
-    _guard.lock();
-    _notEmpty.unlock();
-  }
-
-  func( *this );
-  _guard.unlock();
-}
-
-//! Attempts to pop the head of the queue, waiting up to \a timeout for an entry to appear.  If the queue is empty, returns \c false.
-//! Otherwise, stores the item in \a dest and returns \c true.
-template <typename Type>
-bool Queue<Type>::tug( Type &dest, Time timeout )
-{
-  Popper f( dest );
-  return ifNotEmpty( f, timeout );
-}
-
-//! Returns the item at the head of the queue.  If the queue is empty, blocks until an item has been added.
-template <typename Type>
-Type Queue<Type>::pop( void )
-{
-  Type dest;
-  Popper f( dest );
-  whenNotEmpty( f );
-  return dest;
 }
 
 }

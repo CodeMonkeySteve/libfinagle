@@ -36,10 +36,10 @@ namespace Finagle {
 ** \note Requires that Type implement the stream redirection operators (i.e. << and >> ).
 ** \note
 */
-template <typename Type, typename PtrType = ObjectRef<Type>, typename Base = Finagle::SizedQueue<PtrType> >
+template <typename Type, typename PtrType = ObjectRef<Type>, typename Base = Finagle::Queue<PtrType> >
 class Spool : public Base {
 public:
-  Spool( FilePath const &spoolDir, unsigned numCached );
+  Spool( FilePath const &spoolDir, unsigned minCached );
   virtual ~Spool( void );
 
   unsigned size( void ) const;
@@ -48,12 +48,12 @@ protected:
   void loadSpool( void );
   void saveSpool( void );
 
-  void despool( void );
+  void spooler( void );
 
 protected:
   Dir _dir;
   unsigned _readIdx, _writeIdx;
-  ClassFuncThread<Spool> _despoolThread;
+  ClassFuncThread<Spool> _spoolThread;
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************
@@ -61,10 +61,10 @@ protected:
 template <typename Type, typename PtrType, typename Base>
 Spool<Type, PtrType, Base>::Spool( Finagle::FilePath const &spoolDir, unsigned numCached )
 : Base( numCached ), _dir( spoolDir ), _readIdx(0), _writeIdx(0),
-  _despoolThread( this, &Spool<Type, PtrType, Base>::despool )
+  _spoolThread( this, &Spool<Type, PtrType, Base>::spooler )
 {
   loadSpool();
-  _despoolThread.start();
+  _spoolThread.start();
 }
 
 
@@ -103,9 +103,10 @@ void Spool<Type, PtrType, Base>::saveSpool( void )
 
 //! Thread function to keep the SizedQueue full, loading messages from the spool as necessary (and available).
 template <typename Type, typename PtrType, typename Base>
-void Spool<Type, PtrType, Base>::despool( void )
+void Spool<Type, PtrType, Base>::spooler( void )
 {
-  while ( _despoolThread.running() ) {
+  while ( _spoolThread.running() ) {
+
 sleep(0.01);
 //    FilePath path = _spool.pop();
 //    PtrType

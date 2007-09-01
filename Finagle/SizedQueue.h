@@ -35,44 +35,67 @@ public:
   unsigned capacity( unsigned capacity );
   bool full( void ) const;
 
-  template <typename Functor>
-  bool ifNotFull( Functor &func, Time timeout = 0 );
+public:
+  void push_back( Type const &el );
+  void push_front( Type const &el );
 
+  Type pop_back( void );
+  Type pop_front( void );
+
+  bool pop_back( Type &dest, Time timeout = 0 );
+  bool pop_front( Type &dest, Time timeout = 0 );
+
+
+public:
   template <typename Functor>
   void whenNotFull( Functor &func );
 
-  void push( Type const &el );
-
-public:
-  Type pop( void );
-  bool tug( Type &dest, Time timeout = 0 );
+  template <typename Functor>
+  bool ifNotFull( Functor &func, Time timeout = 0 );
 
 protected:
   unsigned _capacity;
   WaitCondition _notFull;
 
 protected: // functors
-  class Pusher {
+  class BackPusher {
   public:
-    Pusher( Type const &src ) : _src(src) {}
-    void operator()( SizedQueue<Type> &queue ) {  queue._queue.push_back( _src );  }
+    BackPusher( Type const &src ) : _src(src) {}
+    void operator()( SizedQueue<Type> &queue ) {  ((deque<Type> &) queue).push_back( _src );  }
 
   protected:
     Type const &_src;
   };
-  friend class Pusher;
+  friend class BackPusher;
 
-  struct Popper : public Queue<Type>::Popper {
-    Popper( Type &dest ) : Queue<Type>::Popper(dest) {}
-    void operator()( Queue<Type> &queue )
-    {
-      Queue<Type>::Popper::operator()( queue );
+  class FrontPusher : protected BackPusher {
+  public:
+    FrontPusher( Type const &src ) : BackPusher(src) {}
+    void operator()( SizedQueue<Type> &queue ) {  ((std::deque<Type> &) queue).push_front( BackPusher::_src );  }
+  };
+  friend class FrontPusher;
+
+  struct BackPopper : public Queue<Type>::BackPopper {
+    BackPopper( Type &dest ) : Queue<Type>::BackPopper(dest) {}
+    void operator()( Queue<Type> &queue ) {
+      Queue<Type>::BackPopper::operator()( queue );
       SizedQueue<Type> &q( (SizedQueue<Type> &) queue );
       if ( !q.full() )
        q._notFull.signalOne();
     }
   };
-  friend class Popper;
+  friend class BackPopper;
+
+  struct FrontPopper : public Queue<Type>::FrontPopper {
+    FrontPopper( Type &dest ) : BackPopper(dest) {}
+    void operator()( Queue<Type> &queue ) {
+      Queue<Type>::FrontPopper::operator()( queue );
+      SizedQueue<Type> &q( (SizedQueue<Type> &) queue );
+      if ( !q.full() )
+       q._notFull.signalOne();
+    }
+  };
+  friend class FrontPopper;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
@@ -99,9 +122,80 @@ template <typename Type>
 inline bool SizedQueue<Type>::full( void ) const
 {
   Lock _( Queue<Type>::_guard );
-  return Queue<Type>::_queue.size() >= _capacity;
+  return Queue<Type>::size() >= _capacity;
 }
 
+
+//! Adds an item \a el to the tail of the queue.  Will block while the queue is full.
+template <typename Type>
+inline void SizedQueue<Type>::push_back( Type const &el )
+{
+  BackPusher p( el );
+  whenNotFull( p );
+}
+
+//! Adds an item \a el to the head of the queue.  Will block while the queue is full.
+template <typename Type>
+inline void SizedQueue<Type>::push_front( Type const &el )
+{
+  FrontPusher p( el );
+  whenNotFull( p );
+}
+
+//! Overridden to use our functor.
+template <typename Type>
+inline Type SizedQueue<Type>::pop_back( void )
+{
+  Type dest;
+  BackPopper p( dest );
+  whenNotEmpty( p );
+  return dest;
+}
+
+//! Overridden to use our functor.
+template <typename Type>
+inline Type SizedQueue<Type>::pop_front( void )
+{
+  Type dest;
+  FrontPopper p( dest );
+  whenNotEmpty( p );
+  return dest;
+}
+
+//! Overridden to use our functor.
+template <typename Type>
+inline bool SizedQueue<Type>::pop_back( Type &dest, Time timeout )
+{
+  BackPopper p( dest );
+  return ifNotEmpty( p, timeout );
+}
+
+//! Overridden to use our functor.
+template <typename Type>
+inline bool SizedQueue<Type>::pop_front( Type &dest, Time timeout )
+{
+  FrontPopper p( dest );
+  return ifNotEmpty( p, timeout );
+}
+
+
+//! If the queue is full, blocks until an item has been removed.  Then calls functor \a func (passing the queue reference).
+template <typename Type>
+template <typename Functor>
+void SizedQueue<Type>::whenNotFull( Functor &func )
+{
+  Queue<Type>::_guard.lock();
+  while ( full() ) {
+    _notFull.lock();
+    Queue<Type>::_guard.unlock();
+    _notFull.wait();
+    Queue<Type>::_guard.lock();
+    _notFull.unlock();
+  }
+
+  func( *this );
+  Queue<Type>::_guard.unlock();
+}
 
 //! Calls functor \a func (passing the queue reference) if the queue is not empty, or becomes non-empty before \a timeout, and returns \c true.
 //! If the queue is still empty, \a func is not called and \c false is returned.
@@ -126,51 +220,6 @@ bool SizedQueue<Type>::ifNotFull( Functor &func, Time timeout )
   func( *this );
   Queue<Type>::_guard.unlock();
   return true;
-}
-
-//! If the queue is full, blocks until an item has been removed.  Then calls functor \a func (passing the queue reference).
-template <typename Type>
-template <typename Functor>
-void SizedQueue<Type>::whenNotFull( Functor &func )
-{
-  Queue<Type>::_guard.lock();
-  while ( full() ) {
-    _notFull.lock();
-    Queue<Type>::_guard.unlock();
-    _notFull.wait();
-    Queue<Type>::_guard.lock();
-    _notFull.unlock();
-  }
-
-  func( *this );
-  Queue<Type>::_guard.unlock();
-}
-
-//! Adds an item \a el to the tail of the queue.  Will block while the queue is full.
-template <typename Type>
-void SizedQueue<Type>::push( Type const &el )
-{
-  Pusher p( el );
-  whenNotFull( p );
-}
-
-
-//! Overridden to use our Popper functor.
-template <typename Type>
-Type SizedQueue<Type>::pop( void )
-{
-  Type dest;
-  Popper p( dest );
-  whenNotEmpty( p );
-  return dest;
-}
-
-//! Overridden to use our Popper functor.
-template <typename Type>
-bool SizedQueue<Type>::tug( Type &dest, Time timeout )
-{
-  Popper f( dest );
-  return ifNotEmpty( f, timeout );
 }
 
 }
