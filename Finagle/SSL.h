@@ -104,7 +104,7 @@ Socket<SockType>::Socket( typename SockType::Addr const &addr, int sockDesc, Fin
 
   int res  = SSL_accept(_ssl);
   if ( res < 1 ) {
-    LOG_ERR << "SSL accept error (" << (String) SockType::addr() << "): " << ERR_error_string( SSL_get_error( _ssl, res ), 0 );
+    LOG_ERROR << "SSL accept error (" << (String) SockType::addr() << "): " << ERR_error_string( SSL_get_error( _ssl, res ), 0 );
     disconnect();
   }
 }
@@ -159,7 +159,7 @@ void Socket<SockType>::disconnect( void )
     int res = SSL_shutdown( _ssl );
     if ( res == -1 ) {
       _sslError = SSL_get_error( _ssl, res );
-      LOG_ERR << "SSL Socket disconnect error (" << (String) SockType::addr() << "): " << errorStr();
+      LOG_ERROR << "SSL Socket disconnect error (" << (String) SockType::addr() << "): " << errorStr();
       return;
     }
 
@@ -196,7 +196,7 @@ int Socket<SockType>::send( const char *data, unsigned len )
 //    _error = SystemEx::sysErrCode();
 
   _sslError = SSL_get_error( _ssl, res );
-  LOG_ERR << "SSL Socket write error (" << (String) SockType::addr() << "): " << errorStr();
+  LOG_ERROR << "SSL Socket write error (" << (String) SockType::addr() << "): " << errorStr();
   return -1;
 }
 
@@ -219,7 +219,7 @@ int Socket<SockType>::receive( char *data, unsigned len )
   }
 
   disconnect();
-  LOG_ERR << "SSL Socket read error (" << (String) SockType::addr() << "): " << errorStr();
+  LOG_ERROR << "SSL Socket read error (" << (String) SockType::addr() << "): " << errorStr();
   return -1;
 }
 

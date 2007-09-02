@@ -42,6 +42,36 @@ protected:
   pthread_cond_t _cond;
 };
 
+// INLINE IMPLEMENTATION **********************************************************************************************************
+
+inline WaitCondition::WaitCondition( void )
+{
+  PTHREAD_ASSERT( pthread_cond_init( &_cond, 0 ) );
+}
+
+inline WaitCondition::~WaitCondition( void )
+{
+  PTHREAD_ASSERT( pthread_cond_destroy( &_cond ) );
+}
+
+//! Waits for another thread to #signal this WaitCondition.
+inline void WaitCondition::wait( void )
+{
+  Lock _( *this );
+  PTHREAD_ASSERT( pthread_cond_wait( &_cond, &_mutex ) );
+}
+
+//! Wakes one of the threads waiting on this condition.  If no threads are currently waiting, does nothing.
+inline void WaitCondition::signalOne( void )
+{
+  PTHREAD_ASSERT( pthread_cond_signal( &_cond ) );
+}
+
+//! Wakes all threads waiting on this condition.  If no threads are currently waiting, does nothing.
+inline void WaitCondition::signalAll( void )
+{
+  PTHREAD_ASSERT( pthread_cond_broadcast( &_cond ) );
+}
 
 }
 

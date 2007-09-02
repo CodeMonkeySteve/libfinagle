@@ -167,13 +167,13 @@ inline FilePath const &LogToFile::base( FilePath const &base )
   return _base = base;
 }
 
-#define LOG_DEBUG       Finagle::Log() += Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_DEBUGM( m ) Finagle::Log() += Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__, m )
-#define LOG_INFO        Finagle::Log() += Finagle::LogInfo()
-#define LOG_WARN        Finagle::Log() += Finagle::LogWarn( __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_WARNL( l )  Finagle::Log() += Finagle::LogWarn( l, __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_ERR         Finagle::Log() += Finagle::LogErr( __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_ERRL( l )   Finagle::Log() += Finagle::LogErr( l, __FILE__, __LINE__, __FUNCTION__ )
+#define LOG_DEBUG        Finagle::Log() += Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__ )
+#define LOG_DEBUGM( m )  Finagle::Log() += Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__, m )
+#define LOG_INFO         Finagle::Log() += Finagle::LogInfo()
+#define LOG_WARN         Finagle::Log() += Finagle::LogWarn( __FILE__, __LINE__, __FUNCTION__ )
+#define LOG_WARNL( l )   Finagle::Log() += Finagle::LogWarn( l, __FILE__, __LINE__, __FUNCTION__ )
+#define LOG_ERROR        Finagle::Log() += Finagle::LogErr( __FILE__, __LINE__, __FUNCTION__ )
+#define LOG_ERRORL( l )  Finagle::Log() += Finagle::LogErr( l, __FILE__, __LINE__, __FUNCTION__ )
 
 #define FINAGLE_ASSERT( e ) \
   if ( !(e) ) {  Finagle::Log() += Finagle::LogAssert( #e, __FILE__, __LINE__, __FUNCTION__ );  }

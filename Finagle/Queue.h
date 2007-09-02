@@ -43,10 +43,6 @@ public:
   template <typename Functor>
   bool ifNotEmpty( Functor &func, Time timeout = 0 );
 
-protected:
-  mutable Mutex _guard;
-  WaitCondition _notEmpty;
-
 protected:  // functors
   class BackPopper {
   public:
@@ -72,6 +68,10 @@ protected:  // functors
     }
   };
   friend class FrontPopper;
+
+protected:
+  mutable Mutex _guard;
+  WaitCondition _notEmpty;
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************

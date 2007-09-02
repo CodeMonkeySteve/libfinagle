@@ -20,7 +20,6 @@
 */
 
 #include "WaitCondition.h"
-#include "MemTrace.h"
 
 using namespace Finagle;
 
@@ -29,26 +28,6 @@ using namespace Finagle;
 ** This object can be used to have threads wait for an event (signalled from
 ** another thread).
 */
-
-WaitCondition::WaitCondition( void )
-{
-  PTHREAD_ASSERT( pthread_cond_init( &_cond, 0 ) );
-}
-
-
-WaitCondition::~WaitCondition( void )
-{
-  PTHREAD_ASSERT( pthread_cond_destroy( &_cond ) );
-}
-
-
-//! Waits for another thread to #signal this WaitCondition.
-void WaitCondition::wait( void )
-{
-  Lock _( *this );
-  PTHREAD_ASSERT( pthread_cond_wait( &_cond, &_mutex ) );
-}
-
 
 //! Waits for another thread to #signal this WaitCondition, or for .
 bool WaitCondition::wait( Time timeout )
@@ -70,16 +49,4 @@ bool WaitCondition::wait( Time timeout )
     throw PThreadEx( "pthread_cond_timedwait( &_cond, &_mutex, &end )", res );
 
   return false;
-}
-
-
-void WaitCondition::signalOne( void )
-{
-  PTHREAD_ASSERT( pthread_cond_signal( &_cond ) );
-}
-
-
-void WaitCondition::signalAll( void )
-{
-  PTHREAD_ASSERT( pthread_cond_broadcast( &_cond ) );
 }

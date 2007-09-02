@@ -49,6 +49,27 @@ public:
   typedef mode_t Mode;
 
 public:
+  class Ex : public SystemEx {
+  public:
+    ~Ex( void ) throw() {}
+
+  protected:
+    Ex( FilePath const &path, std::ios::openmode mode = std::ios::in );
+  };
+
+  class OpenEx : public Ex {
+  public:
+    OpenEx( FilePath const &path, std::ios::openmode mode = std::ios::in );
+   ~OpenEx( void ) throw() {}
+  };
+
+  class IOEx : public Ex {
+  public:
+    IOEx( FilePath const &path, std::ios::openmode mode );
+   ~IOEx( void ) throw() {}
+  };
+
+public:
   File( const char *Path = "" );
   File( String const &Path );
   File( FilePath const &Path );
@@ -86,27 +107,6 @@ public:
   bool rename( File dest, bool force = true );
   bool copy( File &dest, Finagle::MD5 *MD = 0 ) const;
   bool sync( File &dest ) const;
-
-public:
-  class Ex : public SystemEx {
-  public:
-    ~Ex( void ) throw() {}
-
-  protected:
-    Ex( FilePath const &path, std::ios::openmode mode = std::ios::in );
-  };
-
-  class OpenEx : public Ex {
-  public:
-    OpenEx( FilePath const &path, std::ios::openmode mode = std::ios::in );
-   ~OpenEx( void ) throw() {}
-  };
-
-  class IOEx : public Ex {
-  public:
-    IOEx( FilePath const &path, std::ios::openmode mode );
-   ~IOEx( void ) throw() {}
-  };
 
 protected:
   mutable struct stat FileInfo;

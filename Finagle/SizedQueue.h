@@ -45,17 +45,12 @@ public:
   bool pop_back( Type &dest, Time timeout = 0 );
   bool pop_front( Type &dest, Time timeout = 0 );
 
-
 public:
   template <typename Functor>
   void whenNotFull( Functor &func );
 
   template <typename Functor>
   bool ifNotFull( Functor &func, Time timeout = 0 );
-
-protected:
-  unsigned _capacity;
-  WaitCondition _notFull;
 
 protected: // functors
   class BackPusher {
@@ -96,6 +91,10 @@ protected: // functors
     }
   };
   friend class FrontPopper;
+
+protected:
+  unsigned _capacity;
+  WaitCondition _notFull;
 };
 
 // INLINE IMPLEMENTATION ******************************************************

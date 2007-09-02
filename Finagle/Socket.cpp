@@ -143,7 +143,7 @@ int Socket::send( const char *Data, unsigned Len )
     disconnected();
   } else {
     _error = SystemEx::sysErrCode();
-    LOG_ERR << "Socket write error (" << (String) addr() << "): " << SystemEx::sysErrStr();
+    LOG_ERROR << "Socket write error (" << (String) addr() << "): " << SystemEx::sysErrStr();
   }
   return -1;
 }
@@ -175,7 +175,7 @@ int Socket::receive( char *Data, unsigned Len )
     disconnected();
   } else {
     _error = SystemEx::sysErrCode();
-    LOG_ERR << "Socket read error (" << (String) addr() << "): " << SystemEx::sysErrStr() << " (" << _error << ")";
+    LOG_ERROR << "Socket read error (" << (String) addr() << "): " << SystemEx::sysErrStr() << " (" << _error << ")";
   }
   return -1;
 }

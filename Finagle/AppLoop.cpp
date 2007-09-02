@@ -145,7 +145,7 @@ void AppLoop::process( Time maxTime )
       res = select( (int) maxFD + 1, &ReadFDs, &WriteFDs, &ExceptFDs, &Timeout );
 
       if ( res == -1 ) {
-        LOG_ERR << "Error in select(2): " << SystemEx::sysErrStr();
+        LOG_ERROR << "Error in select(2): " << SystemEx::sysErrStr();
         return;
       }
     }
@@ -161,7 +161,7 @@ void AppLoop::process( Time maxTime )
         res = select( (int) maxFD + 1, &ReadFDs, &WriteFDs, &ExceptFDs, &Timeout );
 
         if ( res == -1 ) {
-          LOG_ERR << "Error in select(2): " << SystemEx::sysErrStr();
+          LOG_ERROR << "Error in select(2): " << SystemEx::sysErrStr();
           return;
         }
       } else

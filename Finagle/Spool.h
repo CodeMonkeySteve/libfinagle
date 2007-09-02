@@ -34,7 +34,6 @@ namespace Finagle {
 ** A specialized Queue that conserves memory by writing (i.e. spooling) entries to disk
 ** when the size becomes too large, and automatically reads them in again as needed.
 ** \note Requires that Type implement the stream redirection operators (i.e. << and >> ).
-** \note
 */
 template <typename Type, typename PtrType = ObjectRef<Type>, typename Base = Finagle::Queue<PtrType> >
 class Spool : public Base {
