@@ -19,7 +19,6 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
 #include <Finagle/UUID.h>
 
@@ -35,55 +34,40 @@ class UUIDTest : public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  void setUp( void );
-  void tearDown( void );
-
   void testGenerate( void );
   void testImport( void );
   void testExport( void );
-
-protected:
-  UUID *_uuid;
 };
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION( UUIDTest );
 
-void UUIDTest::setUp( void )
-{
-  CPPUNIT_ASSERT_NO_THROW( _uuid = new UUID );
-
-}
-
-
-void UUIDTest::tearDown( void )
-{
-  CPPUNIT_ASSERT_NO_THROW( delete _uuid );
-}
-
 
 void UUIDTest::testGenerate( void )
 {
-  CPPUNIT_ASSERT( _uuid->isNull() );
-  _uuid->generate();
-  CPPUNIT_ASSERT( !_uuid->isNull() );
+  UUID id;
+  CPPUNIT_ASSERT( id.isNull() );
+  id.generate();
+  CPPUNIT_ASSERT( !id.isNull() );
+
+  CPPUNIT_ASSERT(  UUID().isNull() );
+  CPPUNIT_ASSERT( !UUID().generate().isNull() );
 }
 
 
 void UUIDTest::testImport( void )
 {
   String s("da19ba02-3fcd-11dc-aa5c-0090278776b7");
-  UUID uuid( s );
-  CPPUNIT_ASSERT_EQUAL( s, String(s) );
+  UUID id( s );
+  CPPUNIT_ASSERT( !id.isNull() );
+  CPPUNIT_ASSERT_EQUAL( s, String(id) );
 }
 
 
 void UUIDTest::testExport( void )
 {
-  testGenerate();
-  
-  String s( *_uuid );
-  CPPUNIT_ASSERT_EQUAL( 37, (int) s.length() );
+  String s( UUID().generate() );
+  CPPUNIT_ASSERT_EQUAL( 36, (int) s.length() );
   CPPUNIT_ASSERT_EQUAL( '-', s(8) );
   CPPUNIT_ASSERT_EQUAL( '-', s(13) );
   CPPUNIT_ASSERT_EQUAL( '-', s(18) );

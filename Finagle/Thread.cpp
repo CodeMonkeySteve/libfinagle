@@ -20,6 +20,7 @@
 */
 
 #include "Thread.h"
+#include "AppLog.h"
 #include "AppLoop.h"
 #include "MemTrace.h"
 
@@ -59,7 +60,18 @@ void *Thread::run( void *This )
   Thread *t = (Thread *) This;
 
   __threadData.setSelf( t );
-  t->_exitVal = t->exec();
+  try {
+    t->_exitVal = t->exec();
+  }
+  catch ( Finagle::Exception &ex ) {
+    Finagle::Log() += ex;
+  }
+  catch ( std::exception &ex ) {
+    LOG_ERROR << "Unhandled exception: " << ex.what();
+  }
+  catch ( ... ) {
+    LOG_ERROR << "Unhandled exception: <unknown>";
+  }
   __threadData.setSelf( 0 );
   t->_running = false;
 

@@ -29,7 +29,8 @@ using namespace Finagle;
 ** another thread).
 */
 
-//! Waits for another thread to #signal this WaitCondition, or for .
+//! Waits for another thread to #signal this WaitCondition, and returns \c true.  If the thread has not been signaled after
+//! \a timeout seconds, returns \c false.
 bool WaitCondition::wait( Time timeout )
 {
   Time t( Time::now() + timeout );

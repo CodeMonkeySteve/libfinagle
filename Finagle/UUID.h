@@ -49,7 +49,7 @@ public:
   bool isNull( void ) const;
   operator String( void ) const;
 
-  void generate( void );
+  UUID &generate( void );
 
 protected:
   uuid_t *_uuid;
@@ -119,17 +119,18 @@ inline bool UUID::isNull( void ) const
 
 inline UUID::operator String( void ) const
 {
-  String str(UUID_LEN_STR + 1, 0 );
-  char *strp = (char *) str.data();
-  size_t strl = str.length();
-  UUID_ASSERT( uuid_export( _uuid, UUID_FMT_STR, (void **) &strp, &strl ) );
-  return str;
+  char tmp[UUID_LEN_STR + 1];
+  char *tmpp = tmp;
+  size_t tmpl = sizeof(tmp);
+  UUID_ASSERT( uuid_export( _uuid, UUID_FMT_STR, (void **) &tmpp, &tmpl ) );
+  return String( tmp, UUID_LEN_STR );
 }
 
 
-inline void UUID::generate( void )
+inline UUID &UUID::generate( void )
 {
   UUID_ASSERT( uuid_make( _uuid, UUID_MAKE_V1 ) );
+  return *this;
 }
 
 inline std::ostream &operator <<( std::ostream &out, UUID const &uuid )
