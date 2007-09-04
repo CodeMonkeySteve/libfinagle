@@ -57,6 +57,7 @@ public:
   template <typename OtherType>  explicit ObjectRef( ObjectRef<OtherType> const &ref );
  ~ObjectRef( void );
 
+  ObjectRef &operator =( PType ptr );
   ObjectRef &operator =( ObjectRef<Type,RType,PType> ref );
 
   bool operator ==( PtrType ptr ) const;
@@ -217,6 +218,19 @@ ObjectRef<Type, RType, PType>::ObjectRef( ObjectRef<OtherType> const &ref )
 : _ptr( dynamic_cast<PtrType>( typename ObjectRef<OtherType>::PtrType( const_cast<ObjectRef<OtherType> &>( ref ) ) ) )
 {
   if ( _ptr )  _ptr->ref();
+}
+
+template <typename Type, typename RType, typename PType>
+ObjectRef<Type, RType, PType> &ObjectRef<Type, RType, PType>::operator =( PType ptr )
+{
+  if ( ptr )
+    ptr->ref();
+
+  if ( _ptr && _ptr->deref() )
+    delete _ptr;
+
+  _ptr = ptr;
+  return *this;
 }
 
 template <typename Type, typename RType, typename PType>

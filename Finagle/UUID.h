@@ -39,12 +39,13 @@ public:
 public:
   UUID( void );
   UUID( String const &str );
-  UUID( UUID const &uuid );
+  UUID( UUID const &id );
+  UUID &operator =( UUID const &id );
  ~UUID( void );
 
-  bool operator ==( UUID const &uuid );
-  bool operator !=( UUID const &uuid );
-  bool operator <( UUID const &uuid );
+  bool operator ==( UUID const &id );
+  bool operator !=( UUID const &id );
+  bool operator <( UUID const &id );
 
   bool isNull( void ) const;
   operator String( void ) const;
@@ -79,36 +80,40 @@ inline UUID::UUID( String const &str )
   UUID_ASSERT( uuid_import( _uuid, UUID_FMT_STR, str.c_str(), str.length() ) );
 }
 
-inline UUID::UUID( UUID const &uuid )
+inline UUID::UUID( UUID const &id )
 {
-  UUID_ASSERT( uuid_clone( uuid._uuid, &_uuid ) );
+  UUID_ASSERT( uuid_clone( id._uuid, &_uuid ) );
+}
+
+inline UUID &UUID::operator =( UUID const &id )
+{
+  UUID_ASSERT( uuid_destroy( _uuid ) );
+  UUID_ASSERT( uuid_clone( id._uuid, &_uuid ) );
+  return *this;
 }
 
 inline UUID::~UUID( void )
 {
-  if ( _uuid ) {
-    UUID_ASSERT( uuid_destroy( _uuid ) );
-    _uuid = 0;
-  }
+  UUID_ASSERT( uuid_destroy( _uuid ) );
 }
 
 
-inline bool UUID::operator ==( UUID const &uuid )
+inline bool UUID::operator ==( UUID const &id )
 {
   int res = 0;
-  UUID_ASSERT( uuid_compare( _uuid, uuid._uuid, &res ) );
+  UUID_ASSERT( uuid_compare( _uuid, id._uuid, &res ) );
   return res == 0;
 }
 
-inline bool UUID::operator !=( UUID const &uuid )
+inline bool UUID::operator !=( UUID const &id )
 {
-  return ! operator==(uuid);
+  return ! operator==(id);
 }
 
-inline bool UUID::operator <( UUID const &uuid )
+inline bool UUID::operator <( UUID const &id )
 {
   int res = 0;
-  UUID_ASSERT( uuid_compare( _uuid, uuid._uuid, &res ) );
+  UUID_ASSERT( uuid_compare( _uuid, id._uuid, &res ) );
   return res < 0;
 }
 
@@ -136,9 +141,9 @@ inline UUID &UUID::generate( void )
   return *this;
 }
 
-inline std::ostream &operator <<( std::ostream &out, UUID const &uuid )
+inline std::ostream &operator <<( std::ostream &out, UUID const &id )
 {
-  return out << (String) uuid;
+  return out << (String) id;
 }
 
 
