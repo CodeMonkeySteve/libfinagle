@@ -86,7 +86,10 @@ inline UUID::UUID( UUID const &uuid )
 
 inline UUID::~UUID( void )
 {
-  UUID_ASSERT( uuid_destroy( _uuid ) );
+  if ( _uuid ) {
+    UUID_ASSERT( uuid_destroy( _uuid ) );
+    _uuid = 0;
+  }
 }
 
 

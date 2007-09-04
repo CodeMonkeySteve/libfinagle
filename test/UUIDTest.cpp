@@ -28,12 +28,14 @@ using namespace Finagle;
 class UUIDTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( UUIDTest );
+  CPPUNIT_TEST( testCreateDestroy );
   CPPUNIT_TEST( testGenerate );
   CPPUNIT_TEST( testImport );
   CPPUNIT_TEST( testExport );
   CPPUNIT_TEST_SUITE_END();
 
 public:
+  void testCreateDestroy( void );
   void testGenerate( void );
   void testImport( void );
   void testExport( void );
@@ -41,6 +43,17 @@ public:
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION( UUIDTest );
+
+void UUIDTest::testCreateDestroy( void )
+{
+  UUID *id = 0;
+  CPPUNIT_ASSERT_NO_THROW( id = new UUID );
+  CPPUNIT_ASSERT_NO_THROW( delete id );
+
+  CPPUNIT_ASSERT_NO_THROW( id = new UUID );
+  CPPUNIT_ASSERT_NO_THROW( id->generate() );
+  CPPUNIT_ASSERT_NO_THROW( delete id );
+}
 
 
 void UUIDTest::testGenerate( void )
