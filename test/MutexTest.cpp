@@ -19,7 +19,6 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
 #include <Finagle/Mutex.h>
 #include <Finagle/ThreadFunc.h>

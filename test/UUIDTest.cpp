@@ -47,11 +47,23 @@ CPPUNIT_TEST_SUITE_REGISTRATION( UUIDTest );
 void UUIDTest::testCreateDestroy( void )
 {
   UUID *id = 0;
+  // Default constructor/destructor
   CPPUNIT_ASSERT_NO_THROW( id = new UUID );
   CPPUNIT_ASSERT_NO_THROW( delete id );
 
   CPPUNIT_ASSERT_NO_THROW( id = new UUID );
   CPPUNIT_ASSERT_NO_THROW( id->generate() );
+
+  UUID *id2 = 0;
+  // Copy constructor
+  CPPUNIT_ASSERT_NO_THROW( id2 = new UUID( *id ) );
+  CPPUNIT_ASSERT_NO_THROW( delete id2 );
+
+  // Assignment operator
+  CPPUNIT_ASSERT_NO_THROW( id2 = new UUID );
+  CPPUNIT_ASSERT_NO_THROW( *id2 = *id );
+  CPPUNIT_ASSERT_NO_THROW( delete id2 );
+
   CPPUNIT_ASSERT_NO_THROW( delete id );
 }
 

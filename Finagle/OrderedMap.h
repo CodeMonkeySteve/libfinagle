@@ -62,32 +62,6 @@ public:
   ConstIterator begin( void ) const;
 };
 
-
-/*! \brief Provides an ordered multi-map
-**
-** This class behaves similarly to the STL \c multimap class, except the elements
-** are stored in order of insertion.  Normal multimaps hash the elements, and the
-** order is lost.
-**
-** This class differs from OrderedMap in that a single key can have multiple
-** values.
-*/
-
-template <typename KeyType, typename DataType>
-class OrderedMultiMap : public OrderedMap<KeyType, DataType> {
-public:
-  typedef typename OrderedMap<KeyType, DataType>::Iterator Iterator;
-  typedef typename OrderedMap<KeyType, DataType>::ConstIterator ConstIterator;
-
-public:
-  OrderedMultiMap( void );
-
-  unsigned count( KeyType const &Key ) const;
-  DataType &insert( KeyType const &Key, DataType const &Data );
-  DataType &insert( KeyType const &Key );
-};
-
-
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
 
 //! Constructor
@@ -242,54 +216,6 @@ template <typename KeyType, typename DataType>
 inline typename OrderedMap<KeyType, DataType>::ConstIterator OrderedMap<KeyType, DataType>::begin( void ) const
 {
   return( ConstIterator( List<std::pair<KeyType, DataType> >::begin() ) );
-}
-
-//! Constructor
-template <typename KeyType, typename DataType>
-inline OrderedMultiMap<KeyType, DataType>::OrderedMultiMap( void )
-{
-}
-
-//! Returns the number of elements with key \a Key.
-template <typename KeyType, typename DataType>
-unsigned OrderedMultiMap<KeyType, DataType>::count( KeyType const &Key ) const
-{
-  unsigned Count = 0;
-  for ( ConstIterator i = OrderedMap<KeyType, DataType>::begin(); i != OrderedMap<KeyType, DataType>::end(); ++i )
-    if ( i.key() == Key )
-      Count++;
-
-  return( Count );
-}
-
-/*
-template <typename KeyType, typename DataType>
-DataType const &OrderedMultiMap<KeyType, DataType>::operator[]( KeyType const &Key ) const
-{
-  return( Map<KeyType, DataType>::operator[]( Key ) );
-}
-
-template <typename KeyType, typename DataType>
-DataType &OrderedMultiMap<KeyType, DataType>::operator[]( KeyType const &Key )
-{
-  return( Map<KeyType, DataType>::operator[]( Key ) );
-}
-*/
-
-//! Adds an element to the end of the map.
-template <typename KeyType, typename DataType>
-DataType &OrderedMultiMap<KeyType, DataType>::insert( KeyType const &Key, DataType const &Data )
-{
-  push_back( std::pair<KeyType, DataType>( Key, Data ) );
-  return( OrderedMap<KeyType, DataType>::back() );
-}
-
-//! Adds an element, with empty data, to the end of the map.
-template <typename KeyType, typename DataType>
-DataType &OrderedMultiMap<KeyType, DataType>::insert( KeyType const &Key )
-{
-  push_back( std::pair<KeyType, DataType>( Key, DataType() ) );
-  return( OrderedMap<KeyType, DataType>::back() );
 }
 
 }

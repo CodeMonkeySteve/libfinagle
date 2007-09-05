@@ -44,75 +44,78 @@ public:
   Iterator begin( void );
   Iterator end( void );
 
-  bool contains( KeyType const &Key ) const;
-  DataType const &operator[]( KeyType const &Key ) const;
-  DataType &operator[]( KeyType const &Key );
-  DataType &insert( KeyType const &Key, DataType const &Data );
-  DataType &insert( KeyType const &Key );
+  bool contains( KeyType const &key ) const;
+  DataType const &operator[]( KeyType const &key ) const;
+  DataType &operator[]( KeyType const &key );
+  DataType &insert( KeyType const &key, DataType const &val );
+  DataType &insert( KeyType const &key );
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
 inline MultiMap<KeyType, DataType, CompareType, AllocType>::MultiMap( void )
-{
-}
+{}
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
 inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::ConstIterator MultiMap<KeyType, DataType, CompareType, AllocType>::begin( void ) const
 {
-  return( std::multimap<KeyType, DataType, CompareType, AllocType>::begin() );
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::begin();
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
 inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::ConstIterator MultiMap<KeyType, DataType, CompareType, AllocType>::end( void ) const
 {
-  return( std::multimap<KeyType, DataType, CompareType, AllocType>::end() );
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::end();
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
 inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::Iterator MultiMap<KeyType, DataType, CompareType, AllocType>::begin( void )
 {
-  return( std::multimap<KeyType, DataType, CompareType, AllocType>::begin() );
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::begin();
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
 inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::Iterator MultiMap<KeyType, DataType, CompareType, AllocType>::end( void )
 {
-  return( std::multimap<KeyType, DataType, CompareType, AllocType>::end() );
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::end();
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
-inline bool MultiMap<KeyType, DataType, CompareType, AllocType>::contains( KeyType const &Key ) const
+inline bool MultiMap<KeyType, DataType, CompareType, AllocType>::contains( KeyType const &key ) const
 {
-  return( find(Key) != MultiMap::end() );
+  return find(key) != MultiMap::end();
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
-inline DataType const &MultiMap<KeyType, DataType, CompareType, AllocType>::operator[]( KeyType const &Key ) const
+inline DataType const &MultiMap<KeyType, DataType, CompareType, AllocType>::operator[]( KeyType const &key ) const
 {
   static DataType null;
-  ConstIterator i = find( Key );
-  return( (i != MultiMap::end()) ? i.val() : null );
+  ConstIterator i = find( key );
+  return (i != MultiMap::end()) ? i.val() : null;
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
-inline DataType &MultiMap<KeyType, DataType, CompareType, AllocType>::operator[]( KeyType const &Key )
+inline DataType &MultiMap<KeyType, DataType, CompareType, AllocType>::operator[]( KeyType const &key )
 {
-  Iterator i = find( Key );
-  return (i != MultiMap::end()) ? i.val() : insert( Key );
+  Iterator i = find( key );
+  return (i != MultiMap::end()) ? i.val() : insert( key );
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
-inline DataType &MultiMap<KeyType, DataType, CompareType, AllocType>::insert( KeyType const &Key, DataType const &Data )
+inline DataType &MultiMap<KeyType, DataType, CompareType, AllocType>::insert( KeyType const &key, DataType const &val )
 {
-  return( std::multimap<KeyType, DataType, CompareType, AllocType>::insert( std::pair<KeyType, DataType>( Key, Data ) )->second );
+  // To preserve ordering
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::insert(
+           std::multimap<KeyType, DataType, CompareType, AllocType>::upper_bound(key),
+           std::pair<KeyType, DataType>( key, val )
+         )->second;
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
-inline DataType &MultiMap<KeyType, DataType, CompareType, AllocType>::insert( KeyType const &Key )
+inline DataType &MultiMap<KeyType, DataType, CompareType, AllocType>::insert( KeyType const &key )
 {
-  return( insert( Key, DataType() ) );
+  return insert( key, DataType() );
 }
 
 }

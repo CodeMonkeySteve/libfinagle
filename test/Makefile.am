@@ -1,8 +1,8 @@
 INCLUDES = -I$(top_srcdir)/.
 METASOURCES = AUTO
 check_PROGRAMS = testFinagle
-testFinagle_SOURCES = FilePathTest.cpp MutexTest.cpp QueueTest.cpp \
-	SizedQueueTest.cpp SpoolTest.cpp StringTest.cpp TestFinagle.cpp ThreadTest.cpp \
+testFinagle_SOURCES = FilePathTest.cpp MultiMapTest.cpp MutexTest.cpp \
+	QueueTest.cpp SizedQueueTest.cpp StringTest.cpp TestFinagle.cpp ThreadTest.cpp \
 	UUIDTest.cpp UtilTest.cpp WaitConditionTest.cpp
 testFinagle_LDADD = $(top_builddir)/Finagle/libFinagle.la
 
