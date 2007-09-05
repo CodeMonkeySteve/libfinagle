@@ -13,7 +13,6 @@
 
 #include <deque>
 #include <Finagle/WaitCondition.h>
-#include <Finagle/Mutex.h>
 
 namespace Finagle {
 
