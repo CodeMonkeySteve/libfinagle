@@ -29,7 +29,7 @@
 namespace Finagle {
 
 template <typename Type, typename PriType = double>
-class PriorityQueue : protected MultiMap<PriType, Type> {
+class PriorityQueue : protected MultiMap<PriType, Type, std::greater<PriType> > {
 public:
   PriorityQueue( void ) {}
 
@@ -48,11 +48,13 @@ public:
   bool ifNotEmpty( Functor &func, Time timeout = 0 );
 
 protected:  // functors
+  typedef MultiMap<PriType, Type, std::greater<PriType> > Map;
+
   class FrontPopper {
   public:
     FrontPopper( Type &dest ) : _dest(dest) {}
     void operator()( PriorityQueue<Type, PriType> &queue ) {
-      typename MultiMap<PriType, Type>::Iterator i( queue.begin() );
+      typename Map::Iterator i( queue.begin() );
       _dest = *i;
       queue.erase( i );
     }
@@ -74,7 +76,7 @@ template <typename Type, typename PriType>
 inline bool PriorityQueue<Type, PriType>::empty( void ) const
 {
   Lock _( _guard );
-  return MultiMap<PriType, Type>::empty();
+  return Map::empty();
 }
 
 //! Returns the number of items in the queue.
@@ -82,7 +84,7 @@ template <typename Type, typename PriType>
 inline unsigned PriorityQueue<Type, PriType>::size( void ) const
 {
   Lock _( _guard );
-  return MultiMap<PriType, Type>::size();
+  return Map::size();
 }
 
 
@@ -91,7 +93,7 @@ template <typename Type, typename PriType>
 inline void PriorityQueue<Type, PriType>::push( Type const &el, PriType const &pri )
 {
   Lock _( _guard );
-  MultiMap<PriType, Type>::insert( pri, el );
+  Map::insert( pri, el );
   _notEmpty.signalOne();
 }
 

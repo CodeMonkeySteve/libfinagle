@@ -108,19 +108,19 @@ void PriorityQueueTest::testCreateDestroy( void )
 
 void PriorityQueueTest::testOrder( void )
 {
-  _queue->push( 2, 2.0 );
-  _queue->push( 1, 2.0 );
-  _queue->push( 4, 1.0 );
-  _queue->push( 3, 1.0 );
-  _queue->push( 6, 0.0 );
   _queue->push( 5, 0.0 );
+  _queue->push( 6, 0.0 );
+  _queue->push( 3, 1.0 );
+  _queue->push( 4, 1.0 );
+  _queue->push( 1, 2.0 );
+  _queue->push( 2, 2.0 );
 
-  CPPUNIT_ASSERT_EQUAL( 6U, _queue->pop() );
-  CPPUNIT_ASSERT_EQUAL( 5U, _queue->pop() );
-  CPPUNIT_ASSERT_EQUAL( 4U, _queue->pop() );
-  CPPUNIT_ASSERT_EQUAL( 3U, _queue->pop() );
-  CPPUNIT_ASSERT_EQUAL( 2U, _queue->pop() );
   CPPUNIT_ASSERT_EQUAL( 1U, _queue->pop() );
+  CPPUNIT_ASSERT_EQUAL( 2U, _queue->pop() );
+  CPPUNIT_ASSERT_EQUAL( 3U, _queue->pop() );
+  CPPUNIT_ASSERT_EQUAL( 4U, _queue->pop() );
+  CPPUNIT_ASSERT_EQUAL( 5U, _queue->pop() );
+  CPPUNIT_ASSERT_EQUAL( 6U, _queue->pop() );
 }
 
 void PriorityQueueTest::testPush( void )
