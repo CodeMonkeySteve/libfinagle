@@ -311,9 +311,21 @@ inline ObjectRef<Type, RType, PType>::operator PType( void )
 // PASS-THROUGH OPERATORS ---------------------------------------------------------------------------------------------------------
 
 template <typename Type>
-inline bool operator <( ObjectRef<Type> const &A, ObjectRef<Type> const &B )
+inline bool operator <( ObjectRef<Type> const &a, ObjectRef<Type> const &b )
 {
-  return *A < *B;
+  return *a < *b;
+}
+
+template <typename Type>
+inline std::ostream operator <<( std::ostream &out, ObjectRef<Type> const &obj )
+{
+  return out << *obj;
+}
+
+template <typename Type>
+inline std::istream operator >>( std::ostream &in, ObjectRef<Type> &obj )
+{
+  return in >> *obj;
 }
 
 // REFERENCE COUNT ----------------------------------------------------------------------------------------------------------------
