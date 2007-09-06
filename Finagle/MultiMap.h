@@ -34,15 +34,21 @@ class MultiMap : public std::multimap<KeyType, DataType, CompareType, AllocType>
 public:
   typedef MapIterator<typename std::multimap<KeyType, DataType, CompareType, AllocType>::iterator> Iterator;
   typedef MapConstIterator<typename std::multimap<KeyType, DataType, CompareType, AllocType>::const_iterator> ConstIterator;
+  typedef MapIterator<typename std::multimap<KeyType, DataType, CompareType, AllocType>::reverse_iterator> ReverseIterator;
+  typedef MapConstIterator<typename std::multimap<KeyType, DataType, CompareType, AllocType>::const_reverse_iterator> ConstReverseIterator;
 
 public:
   MultiMap( void );
 
   ConstIterator begin( void ) const;
   ConstIterator end( void ) const;
+  ConstReverseIterator rbegin( void ) const;
+  ConstReverseIterator rend( void ) const;
 
   Iterator begin( void );
   Iterator end( void );
+  ReverseIterator rbegin( void );
+  ReverseIterator rend( void );
 
   bool contains( KeyType const &key ) const;
   DataType const &operator[]( KeyType const &key ) const;
@@ -70,6 +76,18 @@ inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::ConstIterat
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
+inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::ConstReverseIterator MultiMap<KeyType, DataType, CompareType, AllocType>::rbegin( void ) const
+{
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::rbegin();
+}
+
+template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
+inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::ConstReverseIterator MultiMap<KeyType, DataType, CompareType, AllocType>::rend( void ) const
+{
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::rend();
+}
+
+template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
 inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::Iterator MultiMap<KeyType, DataType, CompareType, AllocType>::begin( void )
 {
   return std::multimap<KeyType, DataType, CompareType, AllocType>::begin();
@@ -79,6 +97,18 @@ template <typename KeyType, typename DataType, typename CompareType, typename Al
 inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::Iterator MultiMap<KeyType, DataType, CompareType, AllocType>::end( void )
 {
   return std::multimap<KeyType, DataType, CompareType, AllocType>::end();
+}
+
+template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
+inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::ReverseIterator MultiMap<KeyType, DataType, CompareType, AllocType>::rbegin( void )
+{
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::rbegin();
+}
+
+template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
+inline typename MultiMap<KeyType, DataType, CompareType, AllocType>::ReverseIterator MultiMap<KeyType, DataType, CompareType, AllocType>::rend( void )
+{
+  return std::multimap<KeyType, DataType, CompareType, AllocType>::rend();
 }
 
 template <typename KeyType, typename DataType, typename CompareType, typename AllocType>

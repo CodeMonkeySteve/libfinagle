@@ -47,9 +47,14 @@ public:
   template <typename Functor>
   bool ifNotEmpty( Functor &func, Time timeout = 0 );
 
-protected:  // functors
+protected:
   typedef MultiMap<PriType, Type, std::greater<PriType> > Map;
+  typedef typename Map::ConstIterator ConstIterator;
+  typedef typename Map::Iterator Iterator;
+  typedef typename Map::ConstReverseIterator ConstReverseIterator;
+  typedef typename Map::ReverseIterator ReverseIterator;
 
+protected:  // functors
   class FrontPopper {
   public:
     FrontPopper( Type &dest ) : _dest(dest) {}
