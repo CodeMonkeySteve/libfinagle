@@ -19,7 +19,6 @@
 ** http://www.gnu.org/copyleft/gpl.html
 */
 
-#include "Configure.h"
 #include "Constructable.h"
 
 using namespace Finagle;
@@ -30,24 +29,24 @@ using namespace XML;
 **
 */
 
-void Configurable::configure( XML::Element const &El )
+void Configurable::configure( XML::Element const &el )
 {
-  if ( !Tag.empty() && (Tag != El.tag()) )
-    throw InvalidTagEx( El.tag(), Tag );
+  if ( !_tag.empty() && (_tag != el.tag()) )
+    throw InvalidTagEx( el.tag(), _tag );
 }
 
 
 XML::Element::Ref Configurable::configuration( void ) const
 {
-  return( new XML::Element( Tag ) );
+  return new XML::Element( _tag );
 }
 
 
-Configurable::Ref Configurable::deserialize( XML::Element const &El )
+Configurable::Ref Configurable::deserialize( XML::Element const &el )
 {
-  if ( El.tag().empty() || !(Factories().contains( El.tag() )) )
-    return( 0 );
+  if ( el.tag().empty() || !(Factories().contains( el.tag() )) )
+    return 0;
 
-  Configurable::Ref New = Factories()[El.tag()]->construct( El );
-  return( New );
+  Configurable::Ref obj = Factories()[el.tag()]->construct( el );
+  return obj;
 }

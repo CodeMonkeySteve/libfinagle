@@ -30,8 +30,7 @@ static XML::ObjectFactory<Schedule> Factory( Schedule::Tag );
 
 Schedule::Schedule( void )
 : Configurable( Tag )
-{
-}
+{}
 
 
 bool Schedule::operator ()( DateTime const &When ) const

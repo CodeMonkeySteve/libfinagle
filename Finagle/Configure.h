@@ -34,49 +34,46 @@ public:
 public:
   typedef Finagle::Exception Exception;
   struct InvalidTagEx : public Exception {
-    InvalidTagEx( const char *Tag, const char *WrongTag );
+    InvalidTagEx( const char *tag, const char *wrongTag );
   };
   struct InvalidAttribEx : public Exception {
-    InvalidAttribEx( const char *Tag, const char *Attrib, const char *WrongVal, const char *RightVal );
+    InvalidAttribEx( const char *tag, const char *attrib, const char *wrongVal, const char *rightVal );
   };
 
 public:
-  Configurable( String const &Tag );
+  Configurable( String const &tag );
   virtual ~Configurable( void ) {}
 
   String const &tag( void ) const;
 
-  virtual void configure( XML::Element const &El );
+  virtual void configure( XML::Element const &el );
   virtual XML::Element::Ref configuration( void ) const;
 
 public:
-  static Configurable::Ref deserialize( XML::Element const &El );
+  static Configurable::Ref deserialize( XML::Element const &el );
 
 protected:
-  String Tag;
+  String _tag;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
-inline Configurable::Configurable( String const &Tag )
-: Tag( Tag )
-{
-}
+inline Configurable::Configurable( String const &tag )
+: _tag( tag )
+{}
 
 inline String const &Configurable::tag( void ) const
 {
-  return Tag;
+  return _tag;
 }
 
-inline Configurable::InvalidTagEx::InvalidTagEx( const char *Tag, const char *WrongTag )
-: Exception( String( "Wrong tag for type " ) + Tag + ": \"" + WrongTag + "\"" )
-{
-}
+inline Configurable::InvalidTagEx::InvalidTagEx( const char *tag, const char *wrongTag )
+: Exception( String( "Wrong tag for type " ) + tag + ": \"" + wrongTag + "\"" )
+{}
 
-inline Configurable::InvalidAttribEx::InvalidAttribEx( const char *Tag, const char *Attrib, const char *WrongVal, const char *RightVal )
-: Exception( String( Tag ) + " has invalid attribute \"" + Attrib + "\" -- \"" + WrongVal + "\" should be " + RightVal )
-{
-}
+inline Configurable::InvalidAttribEx::InvalidAttribEx( const char *tag, const char *attrib, const char *wrongVal, const char *rightVal )
+: Exception( String( tag ) + " has invalid attribute \"" + attrib + "\" -- \"" + wrongVal + "\" should be " + rightVal )
+{}
 
 } }
 
