@@ -29,52 +29,51 @@ namespace Finagle {  namespace XML {
 
 class Constructable {
 public:
-  Constructable( const char *Tag );
+  Constructable( String const &tag );
   virtual ~Constructable( void ) {}
 
   String const &tag( void ) const;
 
-  virtual Configurable::Ref construct( XML::Element const &El ) = 0;
+  virtual Configurable::Ref construct( XML::Element const &el ) = 0;
 
 protected:
-  String Tag;
+  String _tag;
 };
 
 template <typename Class>
 class ObjectFactory : public Constructable {
 public:
-  ObjectFactory( String const &Tag );
-  Configurable::Ref construct( XML::Element const &El );
+  ObjectFactory( String const &tag );
+  Configurable::Ref construct( XML::Element const &el );
 };
 
 static Singleton<Map<String, Constructable *> > Factories;
 
 // INLINE IMPLEMENTATION ******************************************************
 
-inline Constructable::Constructable( const char *Tag )
-: Tag( Tag )
+inline Constructable::Constructable( String const &tag )
+: _tag(tag)
 {
-  Factories()[Tag] = this;
+  Factories()[tag] = this;
 }
 
 inline String const &Constructable::tag( void ) const
 {
-  return Tag;
+  return _tag;
 }
 
 
 template <typename Class>
-inline ObjectFactory<Class>::ObjectFactory( String const &Tag )
-: Constructable( Tag )
-{
-}
+inline ObjectFactory<Class>::ObjectFactory( String const &tag )
+: Constructable( tag )
+{}
 
 template <typename Class>
-inline Configurable::Ref ObjectFactory<Class>::construct( XML::Element const &El )
+inline Configurable::Ref ObjectFactory<Class>::construct( XML::Element const &el )
 {
-  Configurable::Ref New = new Class;
-  New->configure( El );
-  return New;
+  Configurable::Ref obj = new Class;
+  obj->configure( el );
+  return obj;
 }
 
 } }
