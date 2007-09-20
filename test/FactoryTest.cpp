@@ -21,7 +21,6 @@
 
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/Map.h>
 #include <Finagle/Factory.h>
 
 using namespace std;

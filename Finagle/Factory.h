@@ -22,6 +22,7 @@
 #ifndef FINAGLE_FACTORY_H
 #define FINAGLE_FACTORY_H
 
+#include <Finagle/Map.h>
 #include <Finagle/ReferencedObject.h>
 
 namespace Finagle {
@@ -44,7 +45,7 @@ public:
 };
 
 template <typename Name, typename Base>
-class FactoryMap: public Map<Name, Factory<Base> *> {
+class FactoryMap : public Map<Name, Factory<Base> *> {
 public:
   FactoryMap( void ) {}
 };
