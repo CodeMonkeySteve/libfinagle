@@ -31,11 +31,13 @@ class FactoryTest : public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE( FactoryTest );
   CPPUNIT_TEST( testCreate );
   CPPUNIT_TEST( testMultiCreate );
+  CPPUNIT_TEST( testUnknown );
   CPPUNIT_TEST_SUITE_END();
 
 public:
   void testCreate( void );
   void testMultiCreate( void );
+  void testUnknown( void );
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( FactoryTest );
@@ -71,9 +73,14 @@ void FactoryTest::testCreate( void )
 void FactoryTest::testMultiCreate( void )
 {
   Base::Ref b = 0;
-  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory["Foo"]->create() );
+  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory( Foo().name() )->create() );
   CPPUNIT_ASSERT_EQUAL( String("Foo"), String(b->name()) );
 
-  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory["Bar"]->create() );
+  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory( Bar().name() )->create() );
   CPPUNIT_ASSERT_EQUAL( String("Bar"), String(b->name()) );
+}
+
+void FactoryTest::testUnknown( void )
+{
+  CPPUNIT_ASSERT( !_multiFactory( "Unknown" ) );
 }
