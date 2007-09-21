@@ -36,13 +36,13 @@ public:
 public:
   Rectangle( double Left = 0.0, double Top = 0.0, double Right = 1.0, double Bottom = 1.0 );
 
-  Rectangle &operator=( Rectangle const &That );
+  Rectangle &operator=( Rectangle const &that );
 
-  bool operator==( Rectangle const &That );
-  bool operator!=( Rectangle const &That );
+  bool operator==( Rectangle const &that );
+  bool operator!=( Rectangle const &that );
 
-  Rectangle &operator *=( Rectangle const &That );
-  Rectangle  operator *( Rectangle const &That ) const;
+  Rectangle &operator *=( Rectangle const &that );
+  Rectangle  operator *( Rectangle const &that ) const;
 
   bool full( void ) const;
   bool empty( void ) const;
@@ -83,84 +83,84 @@ inline Rectangle::Rectangle( double Left, double Top, double Right, double Botto
 {
 }
 
-inline Rectangle &Rectangle::operator=( Rectangle const &That )
+inline Rectangle &Rectangle::operator=( Rectangle const &that )
 {
-  if ( *this == That )
+  if ( *this == that )
     return *this;
 
-  Left = That.Left;
-  Top = That.Top;
-  Right = That.Right;
-  Bottom = That.Bottom;
+  Left = that.Left;
+  Top = that.Top;
+  Right = that.Right;
+  Bottom = that.Bottom;
   Changed();
 
   return *this;
 }
 
-inline bool Rectangle::operator==( Rectangle const &That )
+inline bool Rectangle::operator==( Rectangle const &that )
 {
-  return( (Left == That.Left) && (Top == That.Top) && (Right == That.Right) && (Bottom == That.Bottom) );
+  return (Left == that.Left) && (Top == that.Top) && (Right == that.Right) && (Bottom == that.Bottom);
 }
 
-inline bool Rectangle::operator!=( Rectangle const &That )
+inline bool Rectangle::operator!=( Rectangle const &that )
 {
-  return( !operator==( That ) );
+  return !operator==( that );
 }
 
-inline Rectangle Rectangle::operator *( Rectangle const &That ) const
+inline Rectangle Rectangle::operator *( Rectangle const &that ) const
 {
   Rectangle r( *this );
-  return( r *= That );
+  return r *= that;
 }
 
 inline bool Rectangle::full( void ) const
 {
-  return( (width() == 1.0) && (height() == 1.0) );
+  return (width() == 1.0) && (height() == 1.0);
 }
 
 inline bool Rectangle::empty( void ) const
 {
-  return( (width() == 0.0) || (height() == 0.0) );
+  return (width() == 0.0) || (height() == 0.0);
 }
 
 inline double const &Rectangle::x( void ) const
 {
-  return( Left );
+  return Left;
 }
 
 inline double const &Rectangle::y( void ) const
 {
-  return( Top );
+  return Top;
 }
 
 inline double Rectangle::width( void ) const
 {
-  return( Right - Left );
+  return Right - Left;
 }
 
 inline double Rectangle::height( void ) const
 {
-  return( Bottom - Top );
+  return Bottom - Top;
 }
 
 inline double const &Rectangle::left( void ) const
 {
-  return( Left );
+  return Left;
 }
 
 inline double const &Rectangle::top( void ) const
 {
-  return( Top );
+  return Top;
 }
 
 inline double const &Rectangle::right( void ) const
 {
-  return( Right );
+  return Right;
 }
 
 inline double const &Rectangle::bottom( void ) const
 {
-  return( Bottom );
+  return Bottom;
 }
 
 

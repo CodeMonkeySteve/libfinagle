@@ -62,12 +62,12 @@ typename CType::value_type pop_front( CType &container )
 {
   if ( container.empty() ) {
     typename CType::value_type dummy;
-    return( dummy );
+    return dummy;
   }
 
   typename CType::value_type item = container.front();
   container.erase( container.begin() );
-  return( item );
+  return item;
 }
 
 /*! \brief Pops the back-most item from \a container and returns it.
@@ -78,12 +78,12 @@ typename CType::value_type pop_back( CType &container )
 {
   if ( container.empty() ) {
     typename CType::value_type dummy;
-    return( dummy );
+    return dummy;
   }
 
   typename CType::value_type item = container.back();
   container.erase( container.end() - 1 );
-  return( item );
+  return item;
 }
 
 //! Returns the absolute value of \a Val.
@@ -91,9 +91,9 @@ template <typename Type>
 Type absVal( Type const &Val )
 {
   if ( !std::numeric_limits<Type>::is_signed )
-    return( Val );
+    return Val;
 
-  return( (Val < 0) ? -Val : Val );
+  return (Val < 0) ? -Val : Val;
 }
 
 #ifdef min

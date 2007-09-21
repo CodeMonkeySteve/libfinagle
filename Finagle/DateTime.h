@@ -43,14 +43,14 @@ public:
 
 public:
   static DateTime const now( void );
-  static bool setSysClock( DateTime const &NewTime );
+  static bool setSysClock( DateTime const &time );
 
 public:
   DateTime( void );
-  DateTime( const time_t &Time );
-  DateTime( unsigned Year, unsigned Month, unsigned Day, unsigned Hour = 0, unsigned Min = 0, unsigned Sec = 0 );
+  DateTime( time_t const &time );
+  DateTime( unsigned year, unsigned month, unsigned day, unsigned hour = 0, unsigned min = 0, unsigned sec = 0 );
 
-  bool parse( String Str );
+  bool parse( String str );
   operator bool( void ) const;
 
   time_t calTime( void ) const;
@@ -68,30 +68,30 @@ public:
   unsigned weekDay( void ) const; // 0-6  (0 = sunday)
   unsigned absHours( void ) const;
 
-  String format( const char *Format = "%Y/%m/%d %H:%M:%S %Z" ) const;
+  String format( const char *format = "%Y/%m/%d %H:%M:%S %Z" ) const;
 
-  bool operator <( const DateTime &That ) const;
-  bool operator <=( const DateTime &That ) const;
-  bool operator >( const DateTime &That ) const;
-  bool operator >=( const DateTime &That ) const;
-  bool operator ==( const DateTime &That ) const;
-  bool operator !=( const DateTime &That ) const;
+  bool operator <( const DateTime &that ) const;
+  bool operator <=( const DateTime &that ) const;
+  bool operator >( const DateTime &that ) const;
+  bool operator >=( const DateTime &that ) const;
+  bool operator ==( const DateTime &that ) const;
+  bool operator !=( const DateTime &that ) const;
 
-  DateTime &operator +=( const time_t &That );
-  DateTime &operator -=( const time_t &That );
-  DateTime  operator +( const time_t &That ) const;
-  DateTime  operator -( const time_t &That ) const;
+  DateTime &operator +=( const time_t &that );
+  DateTime &operator -=( const time_t &that );
+  DateTime  operator +( const time_t &that ) const;
+  DateTime  operator -( const time_t &that ) const;
 
-  long operator -( const DateTime &That ) const;
+  long operator -( const DateTime &that ) const;
 
-  friend std::istream &operator >>( std::istream &in, DateTime &Date );
-  friend std::ostream &operator <<( std::ostream &out, DateTime const &Date );
+  friend std::istream &operator >>( std::istream &in, DateTime &time );
+  friend std::ostream &operator <<( std::ostream &out, DateTime const &time );
 
 protected:
-  time_t Time;
+  time_t _time;
 
-  mutable bool HaveLocal;
-  mutable tm LocalTime;
+  mutable bool _haveLocal;
+  mutable tm _localTime;
 };
 
 
@@ -119,13 +119,13 @@ public:
   operator double &( void );
 
 /*
-  bool operator <( const Time &That ) const;
-  bool operator <=( const Time &That ) const;
+  bool operator <( const Time &that ) const;
+  bool operator <=( const Time &that ) const;
 
-  bool operator >( const Time &That ) const;
-  bool operator >=( const Time &That ) const;
+  bool operator >( const Time &that ) const;
+  bool operator >=( const Time &that ) const;
 
-  double operator -( const Time &That ) const;
+  double operator -( const Time &that ) const;
 */
 //protected:
 //  static const unsigned long _start;
@@ -139,180 +139,178 @@ protected:
 //! Initializes the date and time to "invalid".
 //! \sa isValid().
 inline DateTime::DateTime( void )
-: Time( 0 ), HaveLocal( false ), LocalTime()
-{
-}
+: _time(0), _haveLocal(false)
+{}
 
 //! Initializes the date and time from a standard \c time_t value.
 //! \sa ctime(3).
-inline DateTime::DateTime( const time_t &Time )
-: Time( Time ), HaveLocal( false ), LocalTime()
-{
-}
+inline DateTime::DateTime( time_t const &time )
+: _time(time), _haveLocal(false)
+{}
 
 //! Returns the current date/time.
 inline DateTime const DateTime::now( void )
 {
-  return( DateTime( ::time( 0 ) ) );
+  return DateTime( ::time(0) );
 }
 
 //! Returns \c true if the date/time holds a valid value.
 inline DateTime::operator bool( void ) const
 {
-  return Time != 0;
+  return _time != 0;
 }
 
 //! Returns the date/time as a standard \c time_t value.
 //! \sa ctime(3).
 inline time_t DateTime::calTime( void ) const
 {
-  return( Time );
+  return _time;
 }
 
 //! Returns the date/time as a standard \c tm structure.
 //! \sa ctime(3).
 inline const tm &DateTime::local( void ) const
 {
-  if ( !HaveLocal ) {
-    LocalTime = *(*LocalTimePtr)( &Time );
-    HaveLocal = true;
+  if ( !_haveLocal ) {
+    _localTime = *(*LocalTimePtr)( &_time );
+    _haveLocal = true;
   }
 
-  return( LocalTime );
+  return _localTime;
 }
 
 //! Returns the date/time as a standard \c tm structure, relative to UTC.
 inline tm DateTime::UTC( void ) const
 {
-  return( *(*GMTimePtr)( &Time ) );
+  return *(*GMTimePtr)( &_time );
 }
 
 inline bool DateTime::DST( void ) const
 {
-  return( local().tm_isdst != 0 );
+  return local().tm_isdst != 0;
 }
 
 //! Returns the year, with century.
 inline unsigned DateTime::year( void ) const
 {
-  return( local().tm_year + 1900 );
+  return local().tm_year + 1900;
 }
 
 //! Returns the month (e.g. \c 1..12).
 //! \note This differs from \c localtime(3), which is 0-based.
 inline unsigned DateTime::month( void ) const
 {
-  return( local().tm_mon + 1 );
+  return local().tm_mon + 1;
 }
 
 //! Returns the day of the month (e.g. \c 1..31)
 inline unsigned DateTime::day( void ) const
 {
-  return( local().tm_mday );
+  return local().tm_mday;
 }
 
 //! Returns the hour of the day (e.g. \c 0..23)
 inline unsigned DateTime::hour( void ) const
 {
-  return( local().tm_hour );
+  return local().tm_hour;
 }
 
 //! Returns the minute of the hour (e.g. \c 0..59)
 inline unsigned DateTime::minute( void ) const
 {
-  return( local().tm_min );
+  return local().tm_min;
 }
 
 //! Returns the second of the minute (e.g. \c 0..59)
 inline unsigned DateTime::second( void ) const
 {
-  return( local().tm_sec );
+  return local().tm_sec;
 }
 
 //! Returns the day of the week (e.g. \c 0..6), where \c 0 is Sunday.
 inline unsigned DateTime::weekDay( void ) const
 {
-  return( local().tm_wday );
+  return local().tm_wday;
 }
 
 //! Returns the number of hours since the epoch.
 inline unsigned DateTime::absHours( void ) const
 {
-  return( calTime() / 3600 );
+  return calTime() / 3600;
 }
 
-inline bool DateTime::operator <( const DateTime &That ) const
+inline bool DateTime::operator <( const DateTime &that ) const
 {
-  return( Time < That.Time );
+  return _time < that._time;
 }
 
-inline bool DateTime::operator <=( const DateTime &That ) const
+inline bool DateTime::operator <=( const DateTime &that ) const
 {
-  return( Time <= That.Time );
+  return _time <= that._time;
 }
 
-inline bool DateTime::operator >( const DateTime &That ) const
+inline bool DateTime::operator >( const DateTime &that ) const
 {
-  return( Time > That.Time );
+  return _time > that._time;
 }
 
-inline bool DateTime::operator >=( const DateTime &That ) const
+inline bool DateTime::operator >=( const DateTime &that ) const
 {
-  return( Time >= That.Time );
+  return _time >= that._time;
 }
 
-inline bool DateTime::operator ==( const DateTime &That ) const
+inline bool DateTime::operator ==( const DateTime &that ) const
 {
-  return( Time == That.Time );
+  return _time == that._time;
 }
 
-inline bool DateTime::operator !=( const DateTime &That ) const
+inline bool DateTime::operator !=( const DateTime &that ) const
 {
-  return( Time != That.Time );
+  return _time != that._time;
 }
 
-inline DateTime &DateTime::operator +=( const time_t &That )
+inline DateTime &DateTime::operator +=( const time_t &that )
 {
-  Time += That;
-  HaveLocal = false;
+  _time += that;
+  _haveLocal = false;
   return *this;
 }
 
-inline DateTime &DateTime::operator -=( const time_t &That )
+inline DateTime &DateTime::operator -=( const time_t &that )
 {
-  Time -= That;
-  HaveLocal = false;
+  _time -= that;
+  _haveLocal = false;
   return *this;
 }
 
-inline DateTime DateTime::operator +( const time_t &That ) const
+inline DateTime DateTime::operator +( const time_t &that ) const
 {
-  return( DateTime( Time + That ) );
+  return DateTime( _time + that );
 }
 
-inline DateTime DateTime::operator -( const time_t &That ) const
+inline DateTime DateTime::operator -( const time_t &that ) const
 {
-  return( DateTime( Time - That ) );
+  return DateTime( _time - that );
 }
 
-inline long DateTime::operator -( const DateTime &That ) const
+inline long DateTime::operator -( const DateTime &that ) const
 {
-  return( (long) Time - (long) That.Time );
+  return (long) _time - (long) that._time;
 }
 
 inline std::istream &operator >>( std::istream &in, DateTime &date )
 {
-  date.HaveLocal = false;
-  return in >> date.Time;
+  date._haveLocal = false;
+  return in >> date._time;
 }
 
 inline std::ostream &operator <<( std::ostream &out, DateTime const &Date )
 {
-  return out << Date.Time;
+  return out << Date._time;
 }
 
 
-//! Initializes the time to a \a Time second interval.  A zero-length interval is
+//! Initializes the time to a \a time second interval.  A zero-length interval is
 //! invalid.
 //! \sa #isValid().
 inline Time::Time( double time )
@@ -393,29 +391,29 @@ inline Time::operator double &( void )
 }
 
 /*
-inline bool Time::operator <( const Time &That ) const
+inline bool Time::operator <( const Time &that ) const
 {
-  return( Secs < That.Secs );
+  return Secs < that.Secs;
 }
 
-inline bool Time::operator <=( const Time &That ) const
+inline bool Time::operator <=( const Time &that ) const
 {
-  return( Secs <= That.Secs );
+  return Secs <= that.Secs;
 }
 
-inline bool Time::operator >( const Time &That ) const
+inline bool Time::operator >( const Time &that ) const
 {
-  return( Secs > That.Secs );
+  return Secs > that.Secs;
 }
 
-inline bool Time::operator >=( const Time &That ) const
+inline bool Time::operator >=( const Time &that ) const
 {
-  return( Secs >= That.Secs );
+  return Secs >= that.Secs;
 }
 
-inline double Time::operator -( const Time &That ) const
+inline double Time::operator -( const Time &that ) const
 {
-  return( Secs - That.Secs );
+  return Secs - that.Secs;
 }
 */
 }

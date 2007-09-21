@@ -319,7 +319,7 @@ static  AllocUnit  *findAllocUnit(const void *reportedAddress)
   AllocUnit *ptr = HashTable[HashIndex];
   while(ptr) {
     if ( ptr->reportedAddress == reportedAddress)
-      return( ptr );
+      return ptr;
 
     ptr = ptr->next;
   }
@@ -622,7 +622,7 @@ void *operator new( size_t reportedSize )
     // Try the allocation
     void *ptr = allocator( SrcFile, SrcLine, SrcFunc, ALLOC_NEW, reportedSize );
     if ( ptr )
-      return( ptr );
+      return ptr;
 
     // There isn't a way to determine the new handler, except through setting it. So we'll just set it to NULL, then
     // set it back again.
@@ -649,7 +649,7 @@ void *operator new[]( size_t reportedSize )
     // Try the allocation
     void  *ptr = allocator( SrcFile, SrcLine, SrcFunc, ALLOC_NEW_ARRAY, reportedSize );
     if ( ptr )
-      return( ptr );
+      return ptr;
 
     // There isn't a way to determine the new handler, except through setting it. So we'll just set it to NULL, then
     // set it back again.
@@ -684,7 +684,7 @@ void *operator new( size_t reportedSize, const char *SrcFile, int SrcLine )
     // Try the allocation
     void  *ptr = allocator( SrcFile, SrcLine, "??", ALLOC_NEW, reportedSize );
     if ( ptr )
-      return( ptr );
+      return ptr;
 
     // There isn't a way to determine the new handler, except through setting it. So we'll just set it to NULL, then
     // set it back again.
@@ -711,7 +711,7 @@ void *operator new[]( size_t reportedSize, const char *SrcFile, int SrcLine )
     // Try the allocation
     void  *ptr = allocator( SrcFile, SrcLine, "??", ALLOC_NEW_ARRAY, reportedSize );
     if ( ptr )
-      return( ptr );
+      return ptr;
 
     // There isn't a way to determine the new handler, except through setting it. So we'll just set it to NULL, then
     // set it back again.
@@ -886,7 +886,7 @@ void *MemTrace::allocator( const char *SrcFile, unsigned SrcLine, const char *Sr
 
     // Return the (reported) address of the new allocation unit
 
-    return( au->reportedAddress );
+    return au->reportedAddress;
   }
 
   catch ( const char *err ) {
@@ -904,7 +904,7 @@ void *MemTrace::reallocator( const char *SrcFile, unsigned SrcLine, const char *
   try {
     // Calling realloc with a NULL should force same operations as a malloc
     if ( !reportedAddress )
-      return( MemTrace::allocator( SrcFile, SrcLine, SrcFunc, Type, reportedSize ) );
+      return MemTrace::allocator( SrcFile, SrcLine, SrcFunc, Type, reportedSize );
 
     // Increase our allocation count
     currentAllocationCount++;
@@ -1052,7 +1052,7 @@ void *MemTrace::reallocator( const char *SrcFile, unsigned SrcLine, const char *
     resetGlobals();
 
     // Return the (reported) address of the new allocation unit
-    return( au->reportedAddress );
+    return au->reportedAddress;
   }
 
   catch ( const char *err ) {
@@ -1156,7 +1156,7 @@ void MemTrace::deallocator( const char *SrcFile, unsigned SrcLine, const char *S
 inline bool validateAddress( const void *reportedAddress )
 {
   // Just see if the address exists in our allocation routines
-  return( findAllocUnit( reportedAddress ) != 0 );
+  return findAllocUnit( reportedAddress ) != 0;
 }
 
 
@@ -1193,7 +1193,7 @@ bool validateAllocUnit( const AllocUnit *Alloc )
   }
 
   // Return the error status (we invert it, because a return of 'false' means error)
-  return( !Err );
+  return !Err;
 }
 
 
@@ -1236,7 +1236,7 @@ bool validateAllAllocUnits( void )
     log( "While validting all allocation units, %d allocation unit(s) were found to have problems", Errors );
 
   // Return the error status
-  return( Errors != 0 );
+  return Errors != 0;
 }
 
 
@@ -1250,7 +1250,7 @@ unsigned calcUnused( AllocUnit const *Alloc )
     if ( *ptr == unusedPattern )
       Count += sizeof( long );
 
-  return( Count );
+  return Count;
 }
 
 
@@ -1264,7 +1264,7 @@ unsigned calcAllUnused( void )
       Total += calcUnused( ptr );
   }
 
-  return( Total );
+  return Total;
 }
 
 
@@ -1344,7 +1344,7 @@ void dumpMemReport( const char *FileName, const bool Overwrite )
 
 MemStats getMemStats( void )
 {
-  return( stats );
+  return stats;
 }
 
 #endif

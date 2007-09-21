@@ -29,21 +29,21 @@ Range<double> const Rectangle::Arg( 0.0, 1.0 );
 ** \brief A normalized rectangle
 */
 
-Rectangle &Rectangle::operator *=( Rectangle const &That )
+Rectangle &Rectangle::operator *=( Rectangle const &that )
 {
-  if ( That.full() )
+  if ( that.full() )
     return *this;
 
-  if ( That.empty() ) {
+  if ( that.empty() ) {
     Left = Top = Right = Bottom = 0.0;
     return *this;
   }
 
   double w = width(), h = height();
-  Left += That.Left * w;
-  Top += That.Top * h;
-  Right = Left + (w * That.width());
-  Bottom = Top + (h * That.height());
+  Left += that.Left * w;
+  Top += that.Top * h;
+  Right = Left + (w * that.width());
+  Bottom = Top + (h * that.height());
 
   return *this;
 }

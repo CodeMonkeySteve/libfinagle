@@ -83,14 +83,14 @@ inline String FilePath::path( void ) const
 inline String FilePath::dir( void ) const
 {
   const size_type i = rfind( DirDelim );
-  return( (i == npos) ? "" : substr( 0, i ) );
+  return (i == npos) ? "" : substr( 0, i );
 }
 
 //! Returns the filename portion of the path, including extension.
 inline String FilePath::name( void ) const
 {
   const size_type i = rfind( DirDelim );
-  return( (i != npos) ? String( substr( i + 1 ) ) : String( *this ) );
+  return (i != npos) ? String( substr( i + 1 ) ) : String( *this );
 }
 
 /*!
@@ -100,7 +100,7 @@ inline String FilePath::name( void ) const
 inline String FilePath::ext( void ) const
 {
   const size_type i = rfind( ExtDelim );
-  return( (i == npos) ? "" : substr( i + 1 ) );
+  return (i == npos) ? "" : substr( i + 1 );
 }
 
 //! Returns the title of the file, i.e. the filename without extension.
@@ -108,7 +108,7 @@ inline String FilePath::title( void ) const
 {
   String Name( name() );
   const size_type i = Name.rfind( ExtDelim );
-  return( (i != npos) ? String( Name, 0, i ) : Name );
+  return (i != npos) ? String( Name, 0, i ) : Name;
 }
 
 //! Returns \c true iff the path is absolute (i.e. begins with DirDelim).

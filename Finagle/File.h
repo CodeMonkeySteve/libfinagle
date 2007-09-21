@@ -98,8 +98,8 @@ public:
   bool readable( bool State );
   bool writeable( bool State );
 
-  bool operator ==( File const &That ) const;
-  bool operator !=( File const &That ) const;
+  bool operator ==( File const &that ) const;
+  bool operator !=( File const &that ) const;
 
 public:
   bool touch( void );
@@ -177,7 +177,7 @@ inline bool File::refresh( bool Force ) const
 */
 inline bool File::exists( void ) const
 {
-  return( refresh( true ) );
+  return refresh( true );
 }
 
 
@@ -188,7 +188,7 @@ inline bool File::exists( void ) const
 inline bool File::isRegularFile( void ) const
 {
   refresh();
-  return( (FileInfo.st_mode & S_IFREG) != 0 );
+  return (FileInfo.st_mode & S_IFREG) != 0;
 }
 
 
@@ -199,7 +199,7 @@ inline bool File::isRegularFile( void ) const
 inline bool File::isDir( void ) const
 {
   refresh();
-  return( (FileInfo.st_mode & S_IFDIR) != 0 );
+  return (FileInfo.st_mode & S_IFDIR) != 0;
 }
 
 /*!
@@ -227,47 +227,47 @@ inline bool File::createSymLink( FilePath const &toFile, bool force )
 inline DateTime File::createTime( void ) const
 {
   refresh();
-  return( FileInfo.st_ctime );
+  return FileInfo.st_ctime;
 }
 
 //! Returns the file's last access time.
 inline DateTime File::accessTime( void ) const
 {
   refresh();
-  return( FileInfo.st_atime );
+  return FileInfo.st_atime;
 }
 
 //! Returns the file's last modification time.
 inline DateTime File::modifyTime( void ) const
 {
   refresh();
-  return( FileInfo.st_mtime );
+  return FileInfo.st_mtime;
 }
 
 //! Returns the file's size (in bytes).
 inline File::Size File::size( void ) const
 {
   refresh();
-  return( FileInfo.st_size );
+  return FileInfo.st_size;
 }
 
 //! Returns the file's permission mode.
 inline File::Mode File::mode( void ) const
 {
   refresh();
-  return( FileInfo.st_mode );
+  return FileInfo.st_mode;
 }
 
 //! Returns \c true if the file has read permission.
 inline bool File::readable( void ) const
 {
-  return( access( path(), AccessReadBit ) == 0 );
+  return access( path(), AccessReadBit ) == 0;
 }
 
 //! Returns \c true if the file has write permission.
 inline bool File::writeable( void ) const
 {
-  return( access( path(), AccessWriteBit ) == 0 );
+  return access( path(), AccessWriteBit ) == 0;
 }
 
 /*! \brief Sets the read permission on the file to \a State
@@ -288,12 +288,12 @@ inline bool File::writeable( bool State )
                          (State      ? ChmodWriteBit : 0) ) == 0 );
 }
 
-/*! \brief Compares the contents of the file with another file (\a That).
+/*! \brief Compares the contents of the file with another file (\a that).
 ** \return \c true, if the files have the same contents.
 */
-inline bool File::operator !=( File const &That ) const
+inline bool File::operator !=( File const &that ) const
 {
-  return( !operator==( That ) );
+  return !operator==( that );
 }
 
 /*! \brief Updates the access and modification times to the current time.
@@ -304,7 +304,7 @@ inline bool File::operator !=( File const &That ) const
 inline bool File::touch( void )
 {
   std::ofstream Stream( path(), std::ios::out );
-  return( Stream.is_open() );
+  return Stream.is_open();
 }
 
 /*! Renames the file to \a dest.

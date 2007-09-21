@@ -118,7 +118,7 @@ DateTimeMask::operator String( void ) const
   if ( minuteValid() )
     s.push_back( ":" + String( minute() ) );
 
-  return( String::join(s, ' ') );
+  return String::join(s, ' ');
 }
 
 
@@ -137,23 +137,23 @@ bool DateTimeMask::operator()( DateTime const &When ) const
 DateTime DateTimeMask::prev( DateTime When ) const
 {
   if ( yearValid() && (year() != When.year()) )
-    return( (When.year() > year()) ? prev( DateTime( year(), 12, 31, 23, 59 ) ) : DateTime() );
+    return (When.year() > year()) ? prev( DateTime( year(), 12, 31, 23, 59 ) ) : DateTime();
 
   if ( monthValid() && (month() != When.month())) {
     if ( When.month() > month() )
-      return( prev( DateTime( When.year(), month(), 31, 23, 59 ) ) );
+      return prev( DateTime( When.year(), month(), 31, 23, 59 ) );
 
-    return( prev( DateTime(  When.year() - 1, 12, 31, 23, 59 ) ) );
+    return prev( DateTime(  When.year() - 1, 12, 31, 23, 59 ) );
   }
 
   if ( dayValid() && (day() != When.day() ) ) {
     if ( When.day() > day() )
-      return( prev( DateTime( When.year(), When.month(), day(), 23, 59 ) ) );
+      return prev( DateTime( When.year(), When.month(), day(), 23, 59 ) );
 
     if ( When.month() == 1 )
-      return( prev( DateTime( When.year() - 1, 12, day(), 23, 59 ) ) );
+      return prev( DateTime( When.year() - 1, 12, day(), 23, 59 ) );
 
-    return( prev( DateTime( When.year(), When.month() - 1, day(), 23, 59 ) ) );
+    return prev( DateTime( When.year(), When.month() - 1, day(), 23, 59 ) );
   }
 
   if ( weekDayValid() && (weekDay() != When.weekDay() ) ) {
@@ -162,25 +162,25 @@ DateTime DateTimeMask::prev( DateTime When ) const
     else
       When -= (7 - (weekDay() - When.weekDay())) * (24 * 60 * 60);
 
-    return( prev( DateTime( When.year(), When.month(), When.day(), 23, 59 ) ) );
+    return prev( DateTime( When.year(), When.month(), When.day(), 23, 59 ) );
   }
 
   if ( hourValid() && (hour() != When.hour()) ) {
     if ( When.hour() < hour() )
       When -= (24 * 60 * 60);
 
-    return( prev( DateTime( When.year(), When.month(), When.day(), hour(), 59 ) ) );
+    return prev( DateTime( When.year(), When.month(), When.day(), hour(), 59 ) );
   }
 
   if ( minuteValid() && (minute() != When.minute())) {
     if ( When.minute() > minute() )
-      return( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) );
+      return DateTime( When.year(), When.month(), When.day(), When.hour(), minute() );
 
     When -= (60 * 60);
-    return( prev( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) ) );
+    return prev( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) );
   }
 
-  return( When );
+  return When;
 }
 
 
@@ -188,23 +188,23 @@ DateTime DateTimeMask::prev( DateTime When ) const
 DateTime DateTimeMask::next( DateTime When ) const
 {
   if ( yearValid() && (year() != When.year()) )
-    return( (When.year() < year()) ? next( DateTime( year() ) ) : DateTime() );
+    return (When.year() < year()) ? next( DateTime( year() ) ) : DateTime();
 
   if ( monthValid() && (month() != When.month())) {
     if ( When.month() < month() )
-      return( next( DateTime( When.year(), month(), 1 ) ) );
+      return next( DateTime( When.year(), month(), 1 ) );
 
-    return( next( DateTime( When.year() + 1, 1, 1 ) ) );
+    return next( DateTime( When.year() + 1, 1, 1 ) );
   }
 
   if ( dayValid() && (day() != When.day() ) ) {
     if ( When.day() < day() )
-      return( next( DateTime( When.year(), When.month(), day() ) ) );
+      return next( DateTime( When.year(), When.month(), day() ) );
 
     if ( When.month() == 12 )
-      return( next( DateTime( When.year() + 1, 1, day() ) ) );
+      return next( DateTime( When.year() + 1, 1, day() ) );
 
-    return( next( DateTime( When.year(), When.month() + 1, day() ) ) );
+    return next( DateTime( When.year(), When.month() + 1, day() ) );
   }
 
   if ( weekDayValid() && (weekDay() != When.weekDay() ) ) {
@@ -213,23 +213,23 @@ DateTime DateTimeMask::next( DateTime When ) const
     else
       When += (7 - (When.weekDay() - weekDay())) * (24 * 60 * 60);
 
-    return( next( DateTime( When.year(), When.month(), When.day() ) ) );
+    return next( DateTime( When.year(), When.month(), When.day() ) );
   }
 
   if ( hourValid() && (hour() != When.hour()) ) {
     if ( When.hour() > hour() )
       When += (24 * 60 * 60);
 
-    return( next( DateTime( When.year(), When.month(), When.day(), hour() ) ) );
+    return next( DateTime( When.year(), When.month(), When.day(), hour() ) );
   }
 
   if ( minuteValid() && (minute() != When.minute())) {
     if ( When.minute() < minute() )
-      return( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) );
+      return DateTime( When.year(), When.month(), When.day(), When.hour(), minute() );
 
     When += (60 * 60);
-    return( next( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) ) );
+    return next( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) );
   }
 
-  return( When );
+  return When;
 }

@@ -64,7 +64,7 @@ int AppLoop::exec( void )
   while ( !Exit )
     process( ProcessTime );
 
-  return( ExitCode );
+  return ExitCode;
 }
 
 

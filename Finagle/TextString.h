@@ -58,7 +58,7 @@ public:
   String( long num );
   String( double num );
 
-  String &operator=( const String &That );
+  String &operator=( const String &that );
   operator const char *( void ) const;
   operator bool( void ) const;
 
@@ -99,7 +99,7 @@ public: // Class methods
   static String join( Container const &strs, String const &sep );
 
 public:
-  static const String null;
+  static const String nil;
 
 private:
   void throwConversionEx( String const &src, std::type_info const &dest ) const;
@@ -121,7 +121,7 @@ public:
   NoCase( const char *Str, unsigned Len ) : std::basic_string<char, NoCaseChar>( Str, Len ) {}
   NoCase( String const &Str ) : std::basic_string<char, NoCaseChar>( Str ) {}
 
-  operator const char *( void ) {  return( c_str() );  }
+  operator const char *( void ) {  return c_str();  }
 };
 
 template <> bool String::to<bool>( bool &val ) const;
@@ -193,9 +193,9 @@ inline String::String( double num )
 : std::string( String::format( "%f", num ) )
 {}
 
-inline String &String::operator=( const String &That )
+inline String &String::operator=( const String &that )
 {
-  std::string::operator=( (const std::string &) That );
+  std::string::operator=( (const std::string &) that );
   return *this;
 }
 
@@ -225,49 +225,49 @@ inline bool String::endsWith( String const &substr ) const
 //! to \a digits length.
 inline String String::hex( unsigned num, unsigned digits )
 {
-  return( String::format( "0x%0*X", digits, num ) );
+  return String::format( "0x%0*X", digits, num );
 }
 
 inline String String::substr( size_type Pos, size_type Len ) const
 {
-  return( std::string::substr( Pos, Len ) );
+  return std::string::substr( Pos, Len );
 }
 
 //! Alternate index operator
 inline String::reference String::operator()( size_type n )
 {
-  return( std::string::operator[]( n ) );
+  return std::string::operator[]( n );
 }
 
 //! Alternate index operator
 inline String::const_reference String::operator()( size_type n ) const
 {
-  return( std::string::operator[]( n ) );
+  return std::string::operator[]( n );
 }
 
 inline String operator +( String const &Left, String const &Right )
 {
-  return( String( Left ) += Right );
+  return String( Left ) += Right;
 }
 
 inline String operator +( const char *Left, String const &Right )
 {
-  return( String( Left ) += Right );
+  return String( Left ) += Right;
 }
 
 inline String operator +( String const &Left, const char *Right )
 {
-  return( String( Left ) += Right );
+  return String( Left ) += Right;
 }
 
 inline String operator +( const char Left, const String &Right )
 {
-  return( String( &Left, 1 ) += Right );
+  return String( &Left, 1 ) += Right;
 }
 
 inline String operator +( String const &Left, const char Right )
 {
-  return( String( Left ) += Right );
+  return String( Left ) += Right;
 }
 
 

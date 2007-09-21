@@ -49,7 +49,7 @@ public:
   void restart( void );
 
   Time const &nextAlarm( void ) const;
-  bool operator <( Timer const &That ) const;
+  bool operator <( Timer const &that ) const;
 
 protected:
   void trigger( void );

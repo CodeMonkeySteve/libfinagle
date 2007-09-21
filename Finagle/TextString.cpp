@@ -29,7 +29,7 @@
 using namespace std;
 using namespace Finagle;
 
-const String String::null;
+const String String::nil;
 
 class String::ConversionEx : public Exception {
 public:
@@ -43,8 +43,8 @@ void String::throwConversionEx( String const &src, std::type_info const &dest ) 
 }
 
 // These are necessary, as std::tolower()/::toupper() are ambiguous.
-static char ToLower( char Ch ) {  return( std::tolower( Ch, locale::classic() ) );  }
-static char ToUpper( char Ch ) {  return( std::toupper( Ch, locale::classic() ) );  }
+static char ToLower( char Ch ) {  return std::tolower( Ch, locale::classic() );  }
+static char ToUpper( char Ch ) {  return std::toupper( Ch, locale::classic() );  }
 
 /*! \class Finagle::String
 ** \brief An extended version of the standard string class.
@@ -129,7 +129,7 @@ String String::format( const char *form, ... )
   va_start( args, form );
 
   if ( vsnprintf( buff, sizeof(buff) - 1, form, args ) != -1 )
-    return( buff );
+    return buff;
 
   // Too big for static buffer -- dynamically allocate a buffer.
   unsigned len = sizeof(buff);
@@ -145,7 +145,7 @@ String String::format( const char *form, ... )
   delete dynBuff;
   va_end( args );
 
-  return( str );
+  return str;
 }
 
 
@@ -183,17 +183,17 @@ bool String::to<bool>( bool &val ) const
 
 bool NoCaseChar::eq( char c1, char c2 )
 {
-  return( tolower( c1 ) == tolower( c2 ) );
+  return tolower( c1 ) == tolower( c2 );
 }
 
 bool NoCaseChar::ne( char c1, char c2 )
 {
-  return( !eq( c1, c2 ) );
+  return !eq( c1, c2 );
 }
 
 bool NoCaseChar::lt( char c1, char c2 )
 {
-  return( tolower( c1 ) < tolower( c2 ) );
+  return tolower( c1 ) < tolower( c2 );
 }
 
 int NoCaseChar::compare( const char* s1, const char* s2, size_t n )

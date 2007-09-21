@@ -81,19 +81,19 @@ CompressBuff *CompressBuff::open( FilePath const &Path, std::ios::openmode Mode 
 
   CompressBuff::Mode = Mode;
 
-  return( this );
+  return this;
 }
 
 
 CompressBuff *CompressBuff::close( void )
 {
   if ( !is_open() )
-    return( this );
+    return this;
 
   sync();
   gzclose( File );
 
-  return( this );
+  return this;
 }
 
 
@@ -104,12 +104,12 @@ CompressBuff::int_type CompressBuff::sync( void )
     return( 0 );
 
   if ( !is_open() || !(Mode & ios::out) )
-    return( traits::eof() );
+    return traits::eof();
 
   while ( BytesOut ) {
     const streamsize BytesWritten = gzwrite( File, pbase(), BytesOut );
     if ( !BytesWritten || (BytesWritten == -1) )
-      return( -1 );
+      return -1;
 
     if ( BytesWritten < BytesOut )
       memmove( pbase(), pbase() + BytesWritten, BytesOut - BytesWritten );
@@ -126,16 +126,16 @@ CompressBuff::int_type CompressBuff::sync( void )
 CompressBuff::int_type CompressBuff::overflow( int_type Ch )
 {
   if ( !is_open() || !(Mode & ios::out) )
-    return( traits::eof() );
+    return traits::eof();
 
   streamsize n = pptr() - pbase();
 
   if ( n && (sync() == -1) )
-    return( traits::eof() );
+    return traits::eof();
 
   if ( (epptr() - pptr()) == 0 ) {
     char_type c = traits::to_char_type( Ch );
-    return( (gzwrite( File, &c, sizeof( c ) ) == sizeof( c )) ? 0 : -1 );
+    return (gzwrite( File, &c, sizeof( c ) ) == sizeof( c )) ? 0 : -1;
   }
 
   *pptr() = traits::to_char_type( Ch );
@@ -147,30 +147,30 @@ CompressBuff::int_type CompressBuff::overflow( int_type Ch )
 CompressBuff::int_type CompressBuff::underflow( void )
 {
   if ( !is_open() || !(Mode & ios::in) )
-    return( traits::eof() );
+    return traits::eof();
 
   if ( gptr() < egptr() )
-    return( traits::to_int_type( *gptr() ) );
+    return traits::to_int_type( *gptr() );
 
   streamsize n = gptr() - eback();
 
   if ( !n ) {
     char_type c;
     if ( gzread( File, &c, sizeof( c ) ) != sizeof( c ) )
-      return( traits::eof() );
+      return traits::eof();
 
-    return( traits::to_int_type( c ) );
+    return traits::to_int_type( c );
   }
 
   streamsize BytesIn = gzread( File, eback(), n );
   if ( BytesIn < 1 )
-    return( traits::eof() );
+    return traits::eof();
 
   if ( BytesIn < n )
     memmove( eback() + n - BytesIn, eback(), BytesIn );
 
   gbump( -BytesIn );
-  return( traits::to_int_type( *gptr() ) );
+  return traits::to_int_type( *gptr() );
 }
 
 

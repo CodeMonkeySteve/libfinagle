@@ -74,7 +74,7 @@ inline OrderedMap<KeyType, DataType>::OrderedMap( void )
 template <typename KeyType, typename DataType>
 inline bool OrderedMap<KeyType, DataType>::contains( KeyType const &Key ) const
 {
-  return( find( Key ) != OrderedMap<KeyType, DataType>::end() );
+  return find( Key ) != OrderedMap<KeyType, DataType>::end();
 }
 
 //! Returns the first element with key \a Key.
@@ -83,7 +83,7 @@ inline DataType const &OrderedMap<KeyType, DataType>::operator[]( KeyType const 
 {
   static DataType null;
   ConstIterator i = find( Key );
-  return( (i != OrderedMap<KeyType, DataType>::end()) ? i : null );
+  return (i != OrderedMap<KeyType, DataType>::end()) ? i : null;
 }
 
 //! Returns the data for the first element with key \a Key.
@@ -95,7 +95,7 @@ inline DataType &OrderedMap<KeyType, DataType>::operator[]( KeyType const &Key )
     return( i );
 
   push_back( std::pair<KeyType, DataType>( Key, DataType() ) );
-  return( back() );
+  return back();
 }
 
 /*! \brief Inserts an element \a Data with key \a Key at then end of the map.
@@ -108,10 +108,10 @@ inline DataType &OrderedMap<KeyType, DataType>::insert( KeyType const &Key, Data
 {
   Iterator i = find( Key );
   if ( i != OrderedMap<KeyType, DataType>::end() )
-    return( *i = Data );
+    return *i = Data;
 
   push_back( std::pair<KeyType, DataType>( Key, Data ) );
-  return( back() );
+  return back();
 }
 
 /*! \brief Inserts an empty element with key \a Key at then end of the map.
@@ -122,35 +122,35 @@ inline DataType &OrderedMap<KeyType, DataType>::insert( KeyType const &Key, Data
 template <typename KeyType, typename DataType>
 inline DataType &OrderedMap<KeyType, DataType>::insert( KeyType const &Key )
 {
-  return( operator[]( Key ) );
+  return operator[]( Key );
 }
 
 //! Returns the first element in the map.
 template <typename KeyType, typename DataType>
 DataType const &OrderedMap<KeyType, DataType>::front( void ) const
 {
-  return( List<std::pair<KeyType, DataType> >::front().second );
+  return List<std::pair<KeyType, DataType> >::front().second;
 }
 
 //! Returns the last element in the map.
 template <typename KeyType, typename DataType>
 DataType const &OrderedMap<KeyType, DataType>::back( void ) const
 {
-  return( List<std::pair<KeyType, DataType> >::back().second );
+  return List<std::pair<KeyType, DataType> >::back().second;
 }
 
 //! Returns the first element in the map.
 template <typename KeyType, typename DataType>
 DataType &OrderedMap<KeyType, DataType>::front( void )
 {
-  return( List<std::pair<KeyType, DataType> >::front().second );
+  return List<std::pair<KeyType, DataType> >::front().second;
 }
 
 //! Returns the last element in the map.
 template <typename KeyType, typename DataType>
 DataType &OrderedMap<KeyType, DataType>::back( void )
 {
-  return( List<std::pair<KeyType, DataType> >::back().second );
+  return List<std::pair<KeyType, DataType> >::back().second;
 }
 
 /*! \brief Searches for the first element with key \a Key, starting at position \a Start.
@@ -165,7 +165,7 @@ typename OrderedMap<KeyType, DataType>::ConstIterator
     if ( Start.key() == Key )
       break;
 
-  return( Start );
+  return Start;
 }
 
 /*! \brief Searches for the first element with key \a Key, starting at position \a Start.
@@ -180,7 +180,7 @@ typename OrderedMap<KeyType, DataType>::Iterator
     if ( Start.key() == Key )
       break;
 
-  return( Start );
+  return Start;
 }
 
 /*! \brief Searches for the first element with key \a Key.
@@ -191,7 +191,7 @@ template <typename KeyType, typename DataType>
 inline typename OrderedMap<KeyType, DataType>::ConstIterator
                   OrderedMap<KeyType, DataType>::find( KeyType const &Key ) const
 {
-  return( find( Key, OrderedMap<KeyType, DataType>::begin() ) );
+  return find( Key, OrderedMap<KeyType, DataType>::begin() );
 }
 
 /*! \brief Searches for an element with key \a Key.
@@ -202,20 +202,20 @@ template <typename KeyType, typename DataType>
 inline typename OrderedMap<KeyType, DataType>::Iterator
                   OrderedMap<KeyType, DataType>::find( KeyType const &Key )
 {
-  return( find( Key, OrderedMap<KeyType, DataType>::begin() ) );
+  return find( Key, OrderedMap<KeyType, DataType>::begin() );
 }
 
 
 template <typename KeyType, typename DataType>
 inline typename OrderedMap<KeyType, DataType>::Iterator OrderedMap<KeyType, DataType>::begin( void )
 {
-  return( Iterator( List<std::pair<KeyType, DataType> >::begin() ) );
+  return Iterator( List<std::pair<KeyType, DataType> >::begin() );
 }
 
 template <typename KeyType, typename DataType>
 inline typename OrderedMap<KeyType, DataType>::ConstIterator OrderedMap<KeyType, DataType>::begin( void ) const
 {
-  return( ConstIterator( List<std::pair<KeyType, DataType> >::begin() ) );
+  return ConstIterator( List<std::pair<KeyType, DataType> >::begin() );
 }
 
 }

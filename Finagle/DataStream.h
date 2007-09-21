@@ -168,85 +168,85 @@ inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::wri
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( bool &Bool )
 {
-  return( readByte( &Bool ) );
+  return readByte( &Bool );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( char &Char )
 {
-  return( readByte( &Char ) );
+  return readByte( &Char );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( signed char &SChar )
 {
-  return( readByte( (Byte *) &SChar ) );
+  return readByte( (Byte *) &SChar );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( unsigned char &UChar )
 {
-  return( readByte( (Byte *) &UChar ) );
+  return readByte( (Byte *) &UChar );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( signed short &SShort )
 {
-  return( readWord( (Word *) &SShort ) );
+  return readWord( (Word *) &SShort );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( unsigned short &UShort )
 {
-  return( readWord( (Word *) &UShort ) );
+  return readWord( (Word *) &UShort );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( signed int &SInt )
 {
-  return( readDWord( (DWord *) &SInt ) );
+  return readDWord( (DWord *) &SInt );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( unsigned int &UInt )
 {
-  return( readDWord( (DWord *) &UInt ) );
+  return readDWord( (DWord *) &UInt );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( signed long &SLong )
 {
-  return( readDWord( (DWord *) &SLong ) );
+  return readDWord( (DWord *) &SLong );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( unsigned long &ULong )
 {
-  return( readDWord( (DWord *) &ULong ) );
+  return readDWord( (DWord *) &ULong );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( float &Float )
 {
-  return( readDWord( (DWord *) &Float ) );
+  return readDWord( (DWord *) &Float );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( double &Double )
 {
-  return( readQWord( (QWord *) &Double ) );
+  return readQWord( (QWord *) &Double );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( signed long long &SLLong )
 {
-  return( readQWord( (QWord *) &SLLong ) );
+  return readQWord( (QWord *) &SLLong );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >>( unsigned long long &ULLong )
 {
-  return( readQWord( (QWord *) &ULLong ) );
+  return readQWord( (QWord *) &ULLong );
 }
 
 template <typename StreamType, typename ByteOrder>
@@ -260,85 +260,85 @@ DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator >
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( bool const &Bool )
 {
-  return( writeByte( (Byte *) &Bool ) );
+  return writeByte( (Byte *) &Bool );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( char const &Char )
 {
-  return( writeByte( (Byte *) &Char ) );
+  return writeByte( (Byte *) &Char );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( signed char const &SChar )
 {
-  return( writeByte( (Byte *) &SChar ) );
+  return writeByte( (Byte *) &SChar );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( unsigned char const &UChar )
 {
-  return( writeByte( (Byte *) &UChar ) );
+  return writeByte( (Byte *) &UChar );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( signed short const &SShort )
 {
-  return( writeWord( (Word *) &SShort ) );
+  return writeWord( (Word *) &SShort );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( unsigned short const &UShort )
 {
-  return( writeWord( (Word *) &UShort ) );
+  return writeWord( (Word *) &UShort );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( signed int const &SInt )
 {
-  return( writeDWord( (DWord *) &SInt ) );
+  return writeDWord( (DWord *) &SInt );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( unsigned int const &UInt )
 {
-  return( writeDWord( (DWord *) &UInt ) );
+  return writeDWord( (DWord *) &UInt );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( signed long const &SLong )
 {
-  return( writeDWord( (DWord *) &SLong ) );
+  return writeDWord( (DWord *) &SLong );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( unsigned long const &ULong )
 {
-  return( writeDWord( (DWord *) &ULong ) );
+  return writeDWord( (DWord *) &ULong );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( float const &Float )
 {
-  return( writeDWord( (DWord *) &Float ) );
+  return writeDWord( (DWord *) &Float );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( double const &Double )
 {
-  return( writeQWord( (QWord *) &Double ) );
+  return writeQWord( (QWord *) &Double );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( signed long long const &SLLong )
 {
-  return( writeQWord( (QWord *) &SLLong ) );
+  return writeQWord( (QWord *) &SLLong );
 }
 
 template <typename StreamType, typename ByteOrder>
 inline DataStream<StreamType, ByteOrder> &DataStream<StreamType, ByteOrder>::operator <<( unsigned long long const &ULLong )
 {
-  return( writeQWord( (QWord *) &ULLong ) );
+  return writeQWord( (QWord *) &ULLong );
 }
 
 template <typename StreamType, typename ByteOrder>

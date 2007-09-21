@@ -450,7 +450,7 @@ void MD5::processBlock( Byte const *Data )
   SET(b, c, d, a,  9, 21, T64);
   #undef SET
 
-  // Then perform the following additions. (That is increment each of the four
+  // Then perform the following additions. (that is increment each of the four
   // registers by the value it had before this block was started.)
   Buff[0] += a;
   Buff[1] += b;

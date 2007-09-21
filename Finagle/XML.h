@@ -36,8 +36,6 @@ public:
   typedef ObjectRef<const Element> ConstRef;
 
 public:
-//  class MissingAttribEx;
-//  class MissingElementEx;
   typedef Map<String, String> AttribMap;
 
   class List : public Finagle::List<Element::Ref> {
@@ -52,15 +50,9 @@ public:
   typedef List::Iterator Iterator;
   typedef List::ConstIterator ConstIterator;
 
-/*
-typedef Finagle::List<Element::Ref> List;
-typedef ObjectRefIterator<List::Iterator> Iterator;
-typedef ObjectRefConstIterator<List::ConstIterator> ConstIterator;
-*/
-
 public:
   explicit Element( String const &tag = String(), String const &text = String() );
-  Element( Element const &That );
+  Element( Element const &that );
   bool empty() const;
   operator bool( void ) const;
 
@@ -92,11 +84,11 @@ public:
 
 public:
   void render( std::ostream &out ) const;
-  void prettyRender( std::ostream &out, unsigned Indent = 0 ) const;
+  void prettyRender( std::ostream &out, unsigned indent = 0 ) const;
   void dump( unsigned indent = 0 ) const;
 
 public:
-  static const Element null;
+  static const Element nil;
 
 protected:
   String _tag;
@@ -138,13 +130,6 @@ inline Element::operator bool( void ) const
   return !empty();
 }
 
-
-/*
-inline bool Element::operator==( String const &tag )
-{
-  return _tag == tag;
-}
-*/
 
 inline String const &Element::tag( void ) const
 {

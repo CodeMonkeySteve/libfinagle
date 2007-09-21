@@ -89,7 +89,7 @@ inline RegEx::~RegEx( void )
 
 inline bool RegEx::operator()( const char *Text )
 {
-  return( search( Text ) );
+  return search( Text );
 }
 
 inline bool RegEx::search( const char *Text, unsigned Opts )
@@ -110,14 +110,14 @@ inline bool RegEx::search( const char *Text, unsigned Opts )
 inline String RegEx::operator[]( unsigned SubMatch )
 {
   if ( SubMatch >= (Offsets.size() / 3) )
-    return( String() );
+    return String();
 
   unsigned Offset = SubMatch * 2;
   int Start = Offsets[Offset], End = Offsets[Offset + 1];
   if ( (Start < 0) || (End <= Start) )
-    return( String() );
+    return String();
 
-  return( Text.substr( Start, End - Start ) );
+  return Text.substr( Start, End - Start );
 }
 
 }

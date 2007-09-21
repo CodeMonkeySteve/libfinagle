@@ -117,7 +117,7 @@ inline IPAddress const &InetSocket::Addr::host( void ) const
 inline void InetSocket::Addr::host( IPAddress const &host )
 {
   _host = host;
-  _domainAddr.sin_addr.s_addr = (host == IPAddress::null) ? INADDR_ANY : htonl(host.ip());
+  _domainAddr.sin_addr.s_addr = (host == IPAddress::nil) ? INADDR_ANY : htonl(host.ip());
 }
 
 inline unsigned short InetSocket::Addr::port( void ) const

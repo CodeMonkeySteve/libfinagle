@@ -89,13 +89,13 @@ inline Type const &Range<Type>::upper( void ) const
 template <typename Type>
 inline Type const &Range<Type>::lower( Type const &lower )
 {
-  return( _lower = lower );
+  return _lower = lower;
 }
 
 template <typename Type>
 inline Type const &Range<Type>::upper( Type const &upper )
 {
-  return( _upper = upper );
+  return _upper = upper;
 }
 
 //! Returns \c true if \a val is within [\a lower ... \a Higher], inclusively.

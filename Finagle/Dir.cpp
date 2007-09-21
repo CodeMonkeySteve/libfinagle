@@ -84,7 +84,7 @@ long long Dir::spaceFree( void ) const
 {
   struct statfs stats;
   if ( statfs( path(), &stats ) == -1 )
-    return( -1 );
+    return -1;
 
   return (long long) stats.f_bsize * stats.f_bavail;
 }

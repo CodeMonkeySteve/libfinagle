@@ -37,14 +37,14 @@ const int File::AccessWriteBit = W_OK;
 const int File::ChmodReadBit   = S_IRUSR;
 const int File::ChmodWriteBit  = S_IWUSR;
 
-//! Compares the contents of the file with another file (\a That).
-bool File::operator ==( File const &That ) const
+//! Compares the contents of the file with another file (\a that).
+bool File::operator ==( File const &that ) const
 {
   // Check size first
-  if ( refresh() && refresh() && (size() != That.size()) )
+  if ( refresh() && refresh() && (size() != that.size()) )
     return false;
 
-  ifstream StreamA( path() ), StreamB( That );
+  ifstream StreamA( path() ), StreamB( that );
   if ( !StreamA.is_open() || !StreamB.is_open() )
     return false;
 
@@ -77,7 +77,7 @@ bool File::erase( bool force )
 
   if ( force && (SystemEx::sysErrCode() == EACCES) ) {
     writeable( true );
-    return( ::remove( path() ) == 0 );
+    return ::remove( path() ) == 0;
   }
 
   return false;
@@ -150,7 +150,7 @@ String Finagle::sizeStr( unsigned long long Bytes )
   };
 
   if ( Bytes < 1024 )
-    return( String::format( "%dB", (int) Bytes ) );
+    return String::format( "%dB", (int) Bytes );
 
   double b = (double) Bytes;
   unsigned Mag = 0;
@@ -161,10 +161,10 @@ String Finagle::sizeStr( unsigned long long Bytes )
 
   if ( !Mag || (Mag >= sizeof( SIPrefix )) ) {
     // Unknown SI Prefix!
-    return( String::format( "%dB", (int) Bytes ) );
+    return String::format( "%dB", (int) Bytes );
   }
 
-  return( String::format( "%.1f%cB", b, SIPrefix[Mag - 1] ) );
+  return String::format( "%.1f%cB", b, SIPrefix[Mag - 1] );
 }
 
 

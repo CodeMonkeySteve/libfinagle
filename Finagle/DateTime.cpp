@@ -41,25 +41,24 @@ DateTime::MkTimeFunc    DateTime::MkTimePtr =    (DateTime::MkTimeFunc)   mktime
 DateTime::StrFTimeFunc  DateTime::StrFTimePtr =  (DateTime::StrFTimeFunc) strftime;
 
 
-//! Initializes the date from \a Year, \a Month, and \a Day, and initializes
-//! the time from \a Hour, \a Min, and \a Sec.
-DateTime::DateTime( unsigned Year, unsigned Month, unsigned Day,
-                    unsigned Hour, unsigned Min, unsigned Sec )
+//! Initializes the date from \a year, \a month, and \a day, and initializes
+//! the time from \a hour, \a min, and \a sec.
+DateTime::DateTime( unsigned year, unsigned month, unsigned day, unsigned hour, unsigned min, unsigned sec )
 {
-  LocalTime.tm_year = Year - 1900;
-  LocalTime.tm_mon = Month - 1;
-  LocalTime.tm_mday = Day;
-  LocalTime.tm_hour = Hour;
-  LocalTime.tm_min = Min;
-  LocalTime.tm_sec = Sec;
-  LocalTime.tm_isdst = -1;
+  _localTime.tm_year = year - 1900;
+  _localTime.tm_mon = month - 1;
+  _localTime.tm_mday = day;
+  _localTime.tm_hour = hour;
+  _localTime.tm_min = min;
+  _localTime.tm_sec = sec;
+  _localTime.tm_isdst = -1;
 
-  Time = (*MkTimePtr)( &LocalTime );
-  if ( Time == (time_t) -1 ) {
-    Time = 0;
-    HaveLocal = false;
+  _time = (*MkTimePtr)( &_localTime );
+  if ( _time == (time_t) -1 ) {
+    _time = 0;
+    _haveLocal = false;
   } else
-    HaveLocal = true;
+    _haveLocal = true;
 }
 
 
@@ -70,28 +69,28 @@ DateTime::DateTime( unsigned Year, unsigned Month, unsigned Day,
 */
 bool DateTime::parse( String Str )
 {
-  unsigned Year = 0, Mon = 0, Day = 0;
+  unsigned year = 0, Mon = 0, day = 0;
   if ( Str.length() >= 8 ) {
-    if ( !Str.substr( 0, 4 ).to( Year ) || !Str.substr( 4, 2 ).to( Mon ) || !Str.substr( 6, 2 ).to( Day ) )
+    if ( !Str.substr( 0, 4 ).to( year ) || !Str.substr( 4, 2 ).to( Mon ) || !Str.substr( 6, 2 ).to( day ) )
       return false;
 
     Str = Str.substr( 8 );
 
     if ( Str.empty() ) {
-      *this = DateTime( Year, Mon, Day );
+      *this = DateTime( year, Mon, day );
       return true;
     }
   }
 
-  unsigned Hour = 0, Min = 0, Sec = 0;
+  unsigned hour = 0, min = 0, sec = 0;
   if ( Str.length() == 6 ) {
-    if ( !Str.substr( 0, 2 ).to( Hour ) || !Str.substr( 2, 2 ).to( Min ) || !Str.substr( 4, 2 ).to( Sec ) )
+    if ( !Str.substr( 0, 2 ).to( hour ) || !Str.substr( 2, 2 ).to( min ) || !Str.substr( 4, 2 ).to( sec ) )
       return false;
 
     Str = Str.substr( 6 );
 
     if ( Str.empty() ) {
-      *this = DateTime( Year, Mon, Day, Hour, Min, Sec );
+      *this = DateTime( year, Mon, day, hour, min, sec );
       return true ;
     }
   }
@@ -107,7 +106,7 @@ String DateTime::format( const char *Format ) const
   tm LT = local();
 
   if ( (*StrFTimePtr)( Buff, sizeof( Buff ) - 1, Format, &LT ) != 0 )
-    return( String( Buff ) );
+    return String( Buff );
 
   // Too big for static buffer -- dynamically allocate a buffer.
   unsigned Len = sizeof( Buff );

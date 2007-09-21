@@ -75,8 +75,8 @@ PriorityLock::PriorityLock( PriorityMutex *LockMutex, unsigned Priority )
 }
 
 
-PriorityLock::PriorityLock( PriorityLock &That )
-: LockMutex( That.LockMutex ), Priority( That.Priority )
+PriorityLock::PriorityLock( PriorityLock &that )
+: LockMutex( that.LockMutex ), Priority( that.Priority )
 {
 }
 

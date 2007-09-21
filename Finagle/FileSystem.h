@@ -63,7 +63,7 @@ inline FileSystem::FileSystem( const char *path )
 */
 inline bool FileSystem::refresh( bool force ) const
 {
-  return( (info.f_bsize && !force) || (statvfs( path, &info ) == 0) );
+  return (info.f_bsize && !force) || (statvfs( path, &info ) == 0);
 }
 
 

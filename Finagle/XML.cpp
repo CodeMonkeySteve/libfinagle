@@ -25,23 +25,8 @@
 using namespace std;
 using namespace Finagle;
 using namespace XML;
-/*
-class Element::MissingAttribEx : public Exception {
-public:
-  MissingAttribEx( String const &tag, String const &attrib )
-  : Exception( tag + " missing required attribute \"" + attrib + "\"" )
-  {}
-};
 
-class Element::MissingElementEx : public Exception {
-public:
-  MissingElementEx( String const &parent, String const &element )
-  : Exception( parent + " missing required child element \"" + element + "\"" )
-  {}
-};
-*/
-
-const Element Element::null;
+const Element Element::nil;
 
 
 static String escape( String const &str )
@@ -64,8 +49,8 @@ static String escape( String const &str )
   return( s );
 }
 
+
 //! Returns the first child element with \a tag.
-//! Throws MissingElementEx if none found
 Element &Element::element( String const &tag )
 {
   String const &(XML::Element::*f)(void) const = &XML::Element::tag;
@@ -228,12 +213,12 @@ void XML::Element::prettyRender( ostream &out, unsigned indent ) const
 #include <iostream>
 #include "AppLog.h"
 
-void XML::Element::dump( unsigned Indent ) const
+void XML::Element::dump( unsigned indent ) const
 {
   if ( tag().empty() && text().empty() && elements().empty() )
     return;
 
-  cerr << String( Indent * 2, ' ' );
+  cerr << String( indent * 2, ' ' );
   if ( !tag().empty() ) {
     cerr << tag() << ":";
 
@@ -247,5 +232,5 @@ void XML::Element::dump( unsigned Indent ) const
   cerr << endl;
 
   for ( XML::Element::ConstIterator e = elements().begin(); e != elements().end(); ++e )
-    e->dump( Indent + 1 );
+    e->dump( indent + 1 );
 }

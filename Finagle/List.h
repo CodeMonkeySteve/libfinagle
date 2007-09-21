@@ -64,7 +64,7 @@ public:
 
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
 
-/*! \brief Returns a reference to the element at index \a Index
+/*! \brief Returns a reference to the element at \a index.
 **
 ** If no element exists at that location, returns a reference to a static
 ** element (i.e. \c null).
@@ -95,7 +95,7 @@ inline bool List<Type, Alloc>::contains( Type const &el ) const
   return std::find( List::begin(), List::end(), el ) != List::end();
 }
 
-/*! \brief Returns a reference to the element at index \a Index
+/*! \brief Returns a reference to the element at \a index.
 **
 ** If no element exists at that location, returns a reference to a static
 ** element (i.e. \c null).

@@ -69,7 +69,7 @@ Element::Ref XML::parse( istream &Stream, String SourceName )
   Element::Ref Root = Elements.front();
   Elements.clear();
 
-  return( Root );
+  return Root;
 }
 
 

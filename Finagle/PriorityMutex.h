@@ -49,7 +49,7 @@ protected:
 class PriorityLock {
 public:
   PriorityLock( PriorityMutex *LockMutex = 0, unsigned Priority = 0 );
-  PriorityLock( PriorityLock &That );
+  PriorityLock( PriorityLock &that );
  ~PriorityLock( void );
 
   PriorityMutex *mutex( void ) const;
@@ -62,7 +62,7 @@ public:
   bool lock( void );
   void unlock( void );
 
-  bool operator <( PriorityLock const &That );
+  bool operator <( PriorityLock const &that );
 
 public:
   signal0<> GainLock;
@@ -77,23 +77,23 @@ protected:
 
 inline PriorityLock *PriorityMutex::owner( void ) const
 {
-  return( Locks.empty() ? 0 : Locks.front() );
+  return Locks.empty() ? 0 : Locks.front();
 }
 
 
-inline bool PriorityLock::operator <( PriorityLock const &That )
+inline bool PriorityLock::operator <( PriorityLock const &that )
 {
-  return( Priority < That.Priority );
+  return Priority < that.Priority;
 }
 
 inline bool PriorityLock::locked( void ) const
 {
-  return( LockMutex && (LockMutex->owner() == this) );
+  return LockMutex && (LockMutex->owner() == this);
 }
 
 inline bool PriorityLock::lock( void )
 {
-  return( LockMutex && LockMutex->lock( *this ) );
+  return LockMutex && LockMutex->lock( *this );
 }
 
 inline void PriorityLock::unlock( void )
@@ -104,12 +104,12 @@ inline void PriorityLock::unlock( void )
 
 inline PriorityMutex *PriorityLock::mutex( void ) const
 {
-  return( LockMutex );
+  return LockMutex;
 }
 
 inline unsigned PriorityLock::priority( void ) const
 {
-  return( Priority );
+  return Priority;
 }
 
 };

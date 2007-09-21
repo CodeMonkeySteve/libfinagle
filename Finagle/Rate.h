@@ -79,14 +79,14 @@ inline Rate &Rate::operator +=( unsigned Counts )
 
 inline unsigned Rate::count( void ) const
 {
-  return( Count );
+  return Count;
 }
 
 
 inline double Rate::operator()( void ) const
 {
-//  return( Count ? ((double) Count / (double) (Time::now() - Start)) : 0.0 );
-  return( (double) Count / (double) (Time::now() - Start) );
+//  return Count ? ((double) Count / (double) (Time::now() - Start)) : 0.0;
+  return (double) Count / (double) (Time::now() - Start);
 }
 
 

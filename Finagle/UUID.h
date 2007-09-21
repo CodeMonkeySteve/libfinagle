@@ -35,6 +35,7 @@ public:
   public:
     Exception( uuid_rc_t res );
   };
+  static UUID nil;
 
 public:
   UUID( void );

@@ -249,7 +249,7 @@ Socket::int_type Socket::overflow( int_type Ch )
 
   if ( (epptr() - pptr()) == 0 ) {
     char_type c = traits::to_char_type( Ch );
-    return( (send( &c, sizeof( c ) ) == sizeof( c )) ? 0 : -1 );
+    return (send( &c, sizeof( c ) ) == sizeof( c )) ? 0 : -1;
   }
 
   *pptr() = traits::to_char_type( Ch );

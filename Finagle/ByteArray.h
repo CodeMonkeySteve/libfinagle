@@ -39,23 +39,23 @@ public:
 
 public:
   ByteArray( void );
-  ByteArray( ByteArray const &That );
+  ByteArray( ByteArray const &that );
 
-  ByteArray &operator =( ByteArray const &That );
+  ByteArray &operator =( ByteArray const &that );
 
-  bool operator ==( ByteArray const &That );
-  bool operator !=( ByteArray const &That );
+  bool operator ==( ByteArray const &that );
+  bool operator !=( ByteArray const &that );
 
   unsigned size( void ) const;
 
-  operator Byte const *( void ) const {  return( Bytes );  }
-  operator Byte *( void ) {  return( Bytes );  }
+  operator Byte const *( void ) const {  return bytes;  }
+  operator Byte *( void ) {  return bytes;  }
 
-  Byte operator[]( unsigned Index ) const;
-  Byte &operator[]( unsigned Index );
+  Byte operator[]( unsigned index ) const;
+  Byte &operator[]( unsigned index );
 
 protected:
-  Byte Bytes[N];
+  Byte bytes[N];
 };
 
 // INLINE/TEMPLATE IMPLEMENTATINO *********************************************
@@ -66,28 +66,28 @@ inline ByteArray<N>::ByteArray( void )
 }
 
 template <unsigned N>
-inline ByteArray<N>::ByteArray( ByteArray const &That )
+inline ByteArray<N>::ByteArray( ByteArray const &that )
 {
-  *this = That;
+  *this = that;
 }
 
 template <unsigned N>
-inline ByteArray<N> &ByteArray<N>::operator =( ByteArray<N> const &That )
+inline ByteArray<N> &ByteArray<N>::operator =( ByteArray<N> const &that )
 {
-  memcpy( Bytes, That.Bytes, N );
+  memcpy( bytes, that.bytes, N );
   return *this;
 }
 
 template <unsigned N>
-inline bool ByteArray<N>::operator ==( ByteArray const &That )
+inline bool ByteArray<N>::operator ==( ByteArray const &that )
 {
-  return( memcmp( Bytes, That.Bytes, N ) == 0 );
+  return memcmp( bytes, that.bytes, N ) == 0;
 }
 
 template <unsigned N>
-inline bool ByteArray<N>::operator !=( ByteArray const &That )
+inline bool ByteArray<N>::operator !=( ByteArray const &that )
 {
-  return( !ByteArray::operator ==( That ) );
+  return !ByteArray::operator ==( that );
 }
 
 template <unsigned N>
@@ -97,16 +97,16 @@ inline unsigned ByteArray<N>::size( void ) const
 }
 
 template <unsigned N>
-inline typename ByteArray<N>::Byte ByteArray<N>::operator[]( unsigned Index ) const
+inline typename ByteArray<N>::Byte ByteArray<N>::operator[]( unsigned index ) const
 {
-  return( (Index < N) ? Bytes[Index] : 0 );
+  return (index < N) ? bytes[index] : 0;
 }
 
 template <unsigned N>
-inline typename ByteArray<N>::Byte &ByteArray<N>::operator[]( unsigned Index )
+inline typename ByteArray<N>::Byte &ByteArray<N>::operator[]( unsigned index )
 {
-  static Byte null;
-  return( (Index < N) ? Bytes[Index] : null );
+  static Byte nil;
+  return (index < N) ? bytes[index] : nil;
 }
 
 //! Extracts a byte array stored in hex form

@@ -34,7 +34,7 @@ using namespace Finagle;
 ** \brief Represents an IPv4 network address.
 */
 
-const IPAddress IPAddress::null;
+const IPAddress IPAddress::nil;
 const IPAddress IPAddress::local( 127, 0, 0, 1 );
 
 /*!
@@ -48,7 +48,7 @@ const IPAddress IPAddress::local( 127, 0, 0, 1 );
 unsigned IPAddress::ip( void ) const
 {
   if ( _ip || _name.empty() )
-    return( _ip );
+    return _ip;
 
   // No IP.  Convert IP from host IP string.
   unsigned ip = inet_addr( _name );
@@ -66,7 +66,7 @@ unsigned IPAddress::ip( void ) const
     _name.clear();
   }
 
-  return( _ip );
+  return _ip;
 }
 
 
@@ -75,7 +75,7 @@ String IPAddress::ipStr( void ) const
 {
   in_addr Addr;
   Addr.s_addr = htonl( ip() );
-  return( String( inet_ntoa( Addr ) ) );
+  return String( inet_ntoa( Addr ) );
 }
 
 
@@ -89,17 +89,17 @@ String IPAddress::ipStr( void ) const
 String IPAddress::name( void ) const
 {
   if ( !_name.empty() )
-    return( _name );
+    return _name;
 
   // No hostname.  Do reverse-DNS lookup.
   unsigned ip = htonl( _ip );
   hostent *hostEntry = gethostbyaddr( (const char *) &ip, sizeof(ip), AF_INET );
   if ( hostEntry ) {
     _name = hostEntry->h_name;
-    return( _name );
+    return _name;
   }
 
   // Couldn't find hostname.  Return formatted IP address
-  return( ipStr() );
+  return ipStr();
 }
 

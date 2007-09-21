@@ -42,7 +42,7 @@ public:
   void configure( XML::Element const &El );
   XML::Element::Ref configuration( void ) const;
 
-  bool operator <( Schedule const &That ) const {  return( this < &That );  }
+  bool operator <( Schedule const &that ) const {  return this < &that;  }
 
 protected:
   DateTimeMask Begin, End;

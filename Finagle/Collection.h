@@ -130,7 +130,7 @@ template <typename Class, typename MapType>
 Configurable::Ref Collection<Class, MapType>::construct( XML::Element const &El )
 {
   if ( !El.attribs().contains( "id" ) )
-    return( ObjectFactory<Class>::construct( El ) );
+    return ObjectFactory<Class>::construct( El );
 
   Configurable::Ref Obj;
   if ( Map::contains( El.attrib("id") ) ) {
@@ -144,7 +144,7 @@ Configurable::Ref Collection<Class, MapType>::construct( XML::Element const &El 
     Changed();
   }
 
-  return( Obj );
+  return Obj;
 }
 
 
@@ -155,7 +155,7 @@ XML::Element::Ref Collection<Class, MapType>::configuration( void ) const
   for ( ConstIterator Obj = Map::begin(); Obj != Map::end(); ++Obj )
     *El += Obj->configuration();
 
-  return( El );
+  return El;
 }
 
 } }

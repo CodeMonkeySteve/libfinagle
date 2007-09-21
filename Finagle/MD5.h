@@ -118,13 +118,13 @@ inline MD5::MD5( FilePath const &File )
 
 inline bool MD5::isValid( void ) const
 {
-  return( HaveMD );
+  return HaveMD;
 }
 
 inline MD5::Digest const &MD5::operator()( void )
 {
   finish();
-  return( MD );
+  return MD;
 }
 
 }

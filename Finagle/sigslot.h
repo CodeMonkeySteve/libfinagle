@@ -533,7 +533,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void disconnect_all()
@@ -644,7 +644,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)
@@ -762,7 +762,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)
@@ -879,7 +879,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)
@@ -996,7 +996,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)
@@ -1115,7 +1115,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)
@@ -1234,7 +1234,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)
@@ -1353,7 +1353,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)
@@ -1473,7 +1473,7 @@ namespace sigslot {
 
     bool connected( void ) const
     {
-      return( !m_connected_slots.empty() );
+      return !m_connected_slots.empty();
     }
 
 		void slot_duplicate(const has_slots<mt_policy>* oldtarget, has_slots<mt_policy>* newtarget)

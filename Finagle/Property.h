@@ -40,7 +40,7 @@ public:
   operator Type const &( void ) const;
   Type const *operator ->( void ) const;
 
-  Type *operator ->( void ) {  return( &(*this)() );  }
+  Type *operator ->( void ) {  return &(*this)();  }
 
   Attribute<Type> &operator  =( Type const &Val );
   Attribute<Type> &operator +=( Type const &Val );
@@ -124,13 +124,13 @@ protected:
 template <typename ValType>
 inline Attribute<ValType>::operator ValType const &( void ) const
 {
-  return( (*this)() );
+  return (*this)();
 }
 
 template <typename ValType>
 inline ValType const *Attribute<ValType>::operator ->( void ) const
 {
-  return( &(*this)() );
+  return &(*this)();
 }
 
 
@@ -144,45 +144,45 @@ inline Attribute<ValType> &Attribute<ValType>::operator =( ValType const &Val )
 template <typename ValType>
 inline Attribute<ValType> &Attribute<ValType>::operator +=( ValType const &Val )
 {
-  return( *this = *this + Val );
+  return *this = *this + Val;
 }
 
 template <typename ValType>
 inline Attribute<ValType> &Attribute<ValType>::operator -=( ValType const &Val )
 {
-  return( *this = *this - Val );
+  return *this = *this - Val;
 }
 
 template <typename ValType>
 inline Attribute<ValType> &Attribute<ValType>::operator *=( ValType const &Val )
 {
-  return( *this = *this * Val );
+  return *this = *this * Val;
 }
 
 template <typename ValType>
 inline Attribute<ValType> &Attribute<ValType>::operator /=( ValType const &Val )
 {
-  return( *this = *this / Val );
+  return *this = *this / Val;
 }
 
 template <typename Type>
 inline std::ostream &operator <<( std::ostream &out, Attribute<Type> &Val )
 {
   Stream << (const Type &) Val;
-  return( Stream );
+  return Stream;
 }
 
 
 template <typename ValType>
 inline ValType const &Property<ValType>::operator()( void ) const
 {
-  return( Val );
+  return Val;
 }
 
 template <typename ValType>
 inline ValType &Property<ValType>::operator()( void )
 {
-  return( Val );
+  return Val;
 }
 
 template <typename ValType>
@@ -230,7 +230,7 @@ inline Property<ValType> &Property<ValType>::operator /=( ValType const &Val )
 template <typename ValType, class Class, void (Class::*SetFunc)( ValType & )>
 inline ValType const &ClassProperty<ValType,Class,SetFunc>::operator()( void ) const
 {
-  return( Val );
+  return Val;
 }
 
 template <class ValType, class Class, void (Class::*SetFunc)( ValType & )>
@@ -272,7 +272,7 @@ inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc
 template <class ValType, class Class, void (Class::*StoreFunc)( void )>
 inline ValType const &StoredProperty<ValType,Class,StoreFunc>::operator()( void ) const
 {
-  return( Val );
+  return Val;
 }
 
 template <class ValType, class Class, void (Class::*StoreFunc)( void )>

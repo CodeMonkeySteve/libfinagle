@@ -172,7 +172,7 @@ void Socket<SockType>::disconnect( void )
 template <class SockType>
 inline bool Socket<SockType>::isConnected( void ) const
 {
-  return( _ssl && SockType::isConnected() );
+  return _ssl && SockType::isConnected();
 }
 
 

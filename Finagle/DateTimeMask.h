@@ -47,19 +47,19 @@ public:
   bool operator()( DateTime const &When ) const;
   operator Finagle::String( void ) const;
 
-  bool yearValid( void ) const    {  return( Year != 0 );  }
-  bool monthValid( void ) const   {  return( Mon  != 0 );  }
-  bool dayValid( void ) const     {  return( Day  != 0 );  }
-  bool weekDayValid( void ) const {  return( WDay != 0 );  }
-  bool hourValid( void ) const    {  return( Hour != 0 );  }
-  bool minuteValid( void ) const  {  return( Min  != 0 );  }
+  bool yearValid( void ) const    {  return Year != 0;  }
+  bool monthValid( void ) const   {  return Mon  != 0;  }
+  bool dayValid( void ) const     {  return Day  != 0;  }
+  bool weekDayValid( void ) const {  return WDay != 0;  }
+  bool hourValid( void ) const    {  return Hour != 0;  }
+  bool minuteValid( void ) const  {  return Min  != 0;  }
 
-  unsigned year( void ) const    {  return( Year + 2000 );  }
-  unsigned month( void ) const   {  return( Mon );          }
-  unsigned day( void ) const     {  return( Day );          }
-  unsigned weekDay( void ) const {  return( WDay - 1 );     }
-  unsigned hour( void ) const    {  return( Hour - 1 );     }
-  unsigned minute( void ) const  {  return( Min - 1 );      }
+  unsigned year( void ) const    {  return Year + 2000;  }
+  unsigned month( void ) const   {  return Mon;          }
+  unsigned day( void ) const     {  return Day;          }
+  unsigned weekDay( void ) const {  return WDay - 1;     }
+  unsigned hour( void ) const    {  return Hour - 1;     }
+  unsigned minute( void ) const  {  return Min - 1;      }
 
   DateTime prev( DateTime When ) const;
   DateTime next( DateTime When ) const;

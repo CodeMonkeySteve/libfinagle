@@ -108,7 +108,7 @@ XML::Element::Ref Schedule::configuration( void ) const
   for ( List<Schedule::Ref>::const_reverse_iterator s = SubSched.rbegin(); s != SubSched.rend(); ++s )
     *El += (*s)->configuration();
 
-  return( El );
+  return El;
 }
 
 
@@ -151,14 +151,14 @@ XML::Element::Ref Schedulable::configuration( void ) const
   XML::Element::Ref El = Configurable::configuration();
 
   if ( !Master.contains( Ref( const_cast<Schedulable *>( this ) ) ) )
-    return( El );
+    return El;
 
   List<Schedule::ConstRef> &Sched = Master[Ref( const_cast<Schedulable *>( this ) )];
   List<Schedule::ConstRef>::const_reverse_iterator End = Sched.rend();
   for ( List<Schedule::ConstRef>::const_reverse_iterator s = Sched.rbegin(); s != End; ++s )
     *El += (*s)->configuration();
 
-  return( El );
+  return El;
 }
 
 

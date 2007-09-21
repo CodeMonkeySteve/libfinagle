@@ -61,13 +61,13 @@ inline Type &Array<Type, AllocType>::operator[]( size_type i )
   if ( i >= std::vector<Type, AllocType>::size() )
     resize( i + 1 );
 
-  return( std::vector<Type, AllocType>::operator[]( i ) );
+  return std::vector<Type, AllocType>::operator[]( i );
 }
 
 template <typename Type, typename AllocType>
 inline Type const &Array<Type, AllocType>::operator[]( size_type i ) const
 {
-  return( std::vector<Type, AllocType>::operator[]( i ) );
+  return std::vector<Type, AllocType>::operator[]( i );
 }
 
 //! Returns \c true iff the array contains an element equal to \a el.

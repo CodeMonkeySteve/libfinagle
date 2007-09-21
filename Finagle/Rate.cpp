@@ -60,9 +60,9 @@ void Rate::reset( void )
 double Rate::throttleTime( double RateLimit ) const
 {
   if ( (*this)() <= RateLimit )
-    return( 0.0 );
+    return 0.0;
 
-  return( ((Count + 1) / RateLimit) + Start - (const double &) Time::now() );
+  return ((Count + 1) / RateLimit) + Start - (const double &) Time::now();
 }
 
 

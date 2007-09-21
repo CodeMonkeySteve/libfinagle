@@ -37,8 +37,8 @@ public:
   IPAddress( unsigned ip );
   IPAddress( Byte IPA, Byte IPB, Byte IPC, Byte IPD );
 
-  bool operator ==( const IPAddress &That ) const;
-  bool operator !=( const IPAddress &That ) const;
+  bool operator ==( const IPAddress &that ) const;
+  bool operator !=( const IPAddress &that ) const;
 
   String name( void ) const;
   unsigned ip( void ) const;
@@ -52,7 +52,7 @@ protected:
   friend std::ostream &operator <<( std::ostream &out, IPAddress const &host );
 
 public:
-  static const IPAddress null, local;
+  static const IPAddress nil, local;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
@@ -60,37 +60,33 @@ public:
 //! Initializes with an invalide address (i.e. \c 0).
 inline IPAddress::IPAddress( void )
 : _ip(0)
-{
-}
+{}
 
 //! Initializes with a \a Host name or address in string form.
 inline IPAddress::IPAddress( String const &name )
 : _name(name), _ip(0)
-{
-}
+{}
 
 //! Initializes with an IP address, in the form \a IPA.IPB.IPC.IPD.
 inline IPAddress::IPAddress( Byte IPA, Byte IPB, Byte IPC, Byte IPD )
 : _ip( ((unsigned) IPA << 24) | ((unsigned) IPB << 16) | ((unsigned) IPC << 8) | ((unsigned) IPD) )
-{
-}
+{}
 
 //! Initializes with a packed IP address in host byte-order.
 inline IPAddress::IPAddress( unsigned ip )
 : _ip(ip)
-{
-}
+{}
 
-//! Returns \c true if the address is the same as \a That
+//! Returns \c true if the address is the same as \a that
 inline bool IPAddress::operator ==( const IPAddress &that ) const
 {
-  return( ip() == that.ip() );
+  return ip() == that.ip();
 }
 
-//! Returns \c true if the address is different from \a That
+//! Returns \c true if the address is different from \a that
 inline bool IPAddress::operator !=( const IPAddress &that ) const
 {
-  return( !(operator ==( that )) );
+  return !(operator ==( that ));
 }
 
 inline std::ostream &operator <<( std::ostream &out, IPAddress const &host )
