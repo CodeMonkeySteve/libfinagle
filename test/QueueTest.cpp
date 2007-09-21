@@ -96,7 +96,7 @@ void QueueTest::fillQueue( void )
 void QueueTest::squareQueue( void )
 {
   for ( unsigned i = 0; i < FillSize; ++i ) {
-    unsigned v;
+    unsigned v = 0;
     CPPUNIT_ASSERT_NO_THROW( v = _queue->pop_front() );
     CPPUNIT_ASSERT_NO_THROW( _squared->push_back( sqr(v) ) );
   }

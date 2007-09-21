@@ -27,10 +27,13 @@
 
 namespace Finagle {
 
+template <typename Name, typename Base>  class FactoryMap;
+
 template <typename Base>
 class Factory {
 public:
   Factory( void ) {}
+  template <typename Name>  Factory( Name const &name, FactoryMap<Name, Base> &map );
   virtual ~Factory( void ) {}
 
   virtual ObjectRef<Base> create( void ) const = 0;
@@ -40,6 +43,7 @@ template <typename Class, typename Base = Class>
 class ClassFactory : public Factory<Base> {
 public:
   ClassFactory( void ) {}
+  template <typename Name>  ClassFactory( Name const &name, class FactoryMap<Name, Base> &map );
 
   ObjectRef<Base> create( void ) const;
 };
@@ -51,6 +55,20 @@ public:
 };
 
 // INLINE IMPLEMENTATION ******************************************************
+
+template <typename Base>
+template <typename Name>
+inline Factory<Base>::Factory( Name const &name, FactoryMap<Name, Base> &map )
+{
+  map[name] = this;
+}
+
+template <typename Class, typename Base>
+template <typename Name>
+inline ClassFactory<Class, Base>::ClassFactory( Name const &name, class FactoryMap<Name, Base> &map )
+: Factory<Base>( name, map )
+{}
+
 
 template <typename Class, typename Base>
 inline ObjectRef<Base> ClassFactory<Class, Base>::create( void ) const

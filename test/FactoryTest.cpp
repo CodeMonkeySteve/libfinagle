@@ -36,30 +36,29 @@ class FactoryTest : public CppUnit::TestFixture
 public:
   void testCreate( void );
   void testMultiCreate( void );
-
-protected:
-  struct Base : public ReferenceCount {
-    typedef ObjectRef<Base> Ref;
-    virtual const char *name( void ) const = 0;
-  };
-  struct Foo : public Base {
-    typedef ObjectRef<Foo> Ref;
-    const char *name( void ) const {  return "Foo";  }
-  };
-  struct Bar : public Base {
-    typedef ObjectRef<Bar> Ref;
-    const char *name( void ) const {  return "Bar";  }
-  };
-
-  ClassFactory<Foo> _factory;
-
-  ClassFactory<Foo, Base> _fooFactory;
-  ClassFactory<Bar, Base> _barFactory;
-  FactoryMap<String, Base> _multiFactory;
 };
 
-
 CPPUNIT_TEST_SUITE_REGISTRATION( FactoryTest );
+
+
+struct Base : public ReferenceCount {
+  typedef ObjectRef<Base> Ref;
+  virtual const char *name( void ) const = 0;
+};
+struct Foo : public Base {
+  typedef ObjectRef<Foo> Ref;
+  const char *name( void ) const {  return "Foo";  }
+};
+struct Bar : public Base {
+  typedef ObjectRef<Bar> Ref;
+  const char *name( void ) const {  return "Bar";  }
+};
+
+static ClassFactory<Foo> _factory;
+
+static FactoryMap<String, Base> _multiFactory;
+static ClassFactory<Foo, Base>  _fooFactory( String(Foo().name()), _multiFactory );
+static ClassFactory<Bar, Base>  _barFactory( String(Bar().name()), _multiFactory );
 
 
 void FactoryTest::testCreate( void )
@@ -71,9 +70,6 @@ void FactoryTest::testCreate( void )
 
 void FactoryTest::testMultiCreate( void )
 {
-  _multiFactory[Foo().name()] = &_fooFactory;
-  _multiFactory[Bar().name()] = &_barFactory;
-
   Base::Ref b = 0;
   CPPUNIT_ASSERT_NO_THROW( b = _multiFactory["Foo"]->create() );
   CPPUNIT_ASSERT_EQUAL( String("Foo"), String(b->name()) );
