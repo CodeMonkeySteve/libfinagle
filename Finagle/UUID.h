@@ -47,7 +47,7 @@ public:
   bool operator !=( UUID const &id );
   bool operator <( UUID const &id );
 
-  bool isNull( void ) const;
+  bool isNil( void ) const;
   operator String( void ) const;
 
   UUID &generate( void );
@@ -118,7 +118,7 @@ inline bool UUID::operator <( UUID const &id )
 }
 
 
-inline bool UUID::isNull( void ) const
+inline bool UUID::isNil( void ) const
 {
   int res = 0;
   UUID_ASSERT( uuid_isnil( _uuid, &res ) );
@@ -127,6 +127,9 @@ inline bool UUID::isNull( void ) const
 
 inline UUID::operator String( void ) const
 {
+  if ( isNil() )
+    return String();
+
   char tmp[UUID_LEN_STR + 1];
   char *tmpp = tmp;
   size_t tmpl = sizeof(tmp);

@@ -71,12 +71,12 @@ void UUIDTest::testCreateDestroy( void )
 void UUIDTest::testGenerate( void )
 {
   UUID id;
-  CPPUNIT_ASSERT( id.isNull() );
+  CPPUNIT_ASSERT( id.isNil() );
   id.generate();
-  CPPUNIT_ASSERT( !id.isNull() );
+  CPPUNIT_ASSERT( !id.isNil() );
 
-  CPPUNIT_ASSERT(  UUID().isNull() );
-  CPPUNIT_ASSERT( !UUID().generate().isNull() );
+  CPPUNIT_ASSERT(  UUID().isNil() );
+  CPPUNIT_ASSERT( !UUID().generate().isNil() );
 }
 
 
@@ -84,7 +84,7 @@ void UUIDTest::testImport( void )
 {
   String s("da19ba02-3fcd-11dc-aa5c-0090278776b7");
   UUID id( s );
-  CPPUNIT_ASSERT( !id.isNull() );
+  CPPUNIT_ASSERT( !id.isNil() );
   CPPUNIT_ASSERT_EQUAL( s, String(id) );
 }
 
@@ -97,6 +97,8 @@ void UUIDTest::testExport( void )
   CPPUNIT_ASSERT_EQUAL( '-', s(13) );
   CPPUNIT_ASSERT_EQUAL( '-', s(18) );
   CPPUNIT_ASSERT_EQUAL( '-', s(23) );
+
+  CPPUNIT_ASSERT_EQUAL( String(), String(UUID()) );
 }
 
 
