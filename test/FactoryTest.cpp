@@ -66,7 +66,7 @@ static ClassFactory<Bar, Base>  _barFactory( String(Bar().name()), _multiFactory
 void FactoryTest::testCreate( void )
 {
   Foo::Ref foo = 0;
-  CPPUNIT_ASSERT_NO_THROW( foo = _factory.create() );
+  CPPUNIT_ASSERT_NO_THROW( foo = _factory() );
   CPPUNIT_ASSERT_EQUAL( String("Foo"), String(foo->name()) );
 }
 

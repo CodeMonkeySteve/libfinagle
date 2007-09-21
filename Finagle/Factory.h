@@ -36,7 +36,7 @@ public:
   template <typename Name>  Factory( Name const &name, FactoryMap<Name, Base> &map );
   virtual ~Factory( void ) {}
 
-  virtual ObjectRef<Base> create( void ) const = 0;
+  virtual ObjectRef<Base> operator()( void ) const = 0;
 };
 
 template <typename Class, typename Base = Class>
@@ -45,7 +45,7 @@ public:
   ClassFactory( void ) {}
   template <typename Name>  ClassFactory( Name const &name, class FactoryMap<Name, Base> &map );
 
-  ObjectRef<Base> create( void ) const;
+  ObjectRef<Base> operator()( void ) const;
 };
 
 template <typename Name, typename Base>
@@ -54,6 +54,7 @@ public:
   FactoryMap( void ) {}
 
   void insert( Name const &name, Factory<Base> &factory );
+
   ObjectRef<Base> operator()( Name const &name );
 
 protected:
@@ -77,7 +78,7 @@ inline ClassFactory<Class, Base>::ClassFactory( Name const &name, class FactoryM
 
 
 template <typename Class, typename Base>
-inline ObjectRef<Base> ClassFactory<Class, Base>::create( void ) const
+inline ObjectRef<Base> ClassFactory<Class, Base>::operator()( void ) const
 {
   return ObjectRef<Base>( (Base *) new Class );
 }
@@ -93,7 +94,7 @@ template <typename Name, typename Base>
 ObjectRef<Base> FactoryMap<Name, Base>::operator()( Name const &name )
 {
   typename Map<Name, Factory<Base> *>::Iterator it( _map.find( name ) );
-  return (it != _map.end()) ? (*it)->create() : 0;
+  return (it != _map.end()) ? (**it)() : 0;
 }
 
 }
