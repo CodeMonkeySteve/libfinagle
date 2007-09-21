@@ -73,10 +73,10 @@ void FactoryTest::testCreate( void )
 void FactoryTest::testMultiCreate( void )
 {
   Base::Ref b = 0;
-  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory( Foo().name() )->create() );
+  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory( Foo().name() ) );
   CPPUNIT_ASSERT_EQUAL( String("Foo"), String(b->name()) );
 
-  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory( Bar().name() )->create() );
+  CPPUNIT_ASSERT_NO_THROW( b = _multiFactory( Bar().name() ) );
   CPPUNIT_ASSERT_EQUAL( String("Bar"), String(b->name()) );
 }
 
