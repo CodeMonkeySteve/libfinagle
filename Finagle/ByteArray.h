@@ -105,7 +105,7 @@ inline typename ByteArray<N>::Byte ByteArray<N>::operator[]( unsigned index ) co
 template <unsigned N>
 inline typename ByteArray<N>::Byte &ByteArray<N>::operator[]( unsigned index )
 {
-  static Byte nil;
+  static const Byte nil;
   return (index < N) ? bytes[index] : nil;
 }
 
