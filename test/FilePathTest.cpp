@@ -1,5 +1,5 @@
 /*!
-** \file FinagleTest.cpp
+** \file FactoryPathTest.cpp
 ** \date Sat July 21 2007
 ** \author Steve Sloan <steve@finagle.org>
 ** Copyright (C) 2007 by Steve Sloan

@@ -1,5 +1,5 @@
 /*!
-** \file SizedSizedQueueTest.cpp
+** \file SizedQueueTest.cpp
 ** \date Mon Aug 20 2007
 ** \author Steve Sloan <steve@finagle.org>
 ** Copyright (C) 2007 by Steve Sloan

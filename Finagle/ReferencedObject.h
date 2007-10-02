@@ -101,7 +101,7 @@ public:
   bool deref( void ) const;
 
   //! Returns the reference count.
-  unsigned refCount( void ) const;
+  unsigned refs( void ) const;
 
 protected:
   mutable unsigned _refs;
@@ -303,15 +303,15 @@ inline bool operator <( ObjectRef<Type> const &a, ObjectRef<Type> const &b )
 }
 
 template <typename Type>
-inline std::ostream operator <<( std::ostream &out, ObjectRef<Type> const &obj )
+inline std::ostream &operator <<( std::ostream &out, ObjectRef<Type> const &obj )
 {
   return out << *obj;
 }
 
 template <typename Type>
-inline std::istream operator >>( std::ostream &in, ObjectRef<Type> &obj )
+inline std::istream &operator >>( std::ostream &in, ObjectRef<Type> &obj )
 {
-  return in >> *obj;
+  return operator >>( in, *obj );
 }
 
 // REFERENCE COUNT ----------------------------------------------------------------------------------------------------------------
@@ -334,7 +334,7 @@ inline bool ReferenceCount::deref( void ) const
   return --_refs == 0;
 }
 
-inline unsigned ReferenceCount::refCount( void ) const
+inline unsigned ReferenceCount::refs( void ) const
 {
   return _refs;
 }
