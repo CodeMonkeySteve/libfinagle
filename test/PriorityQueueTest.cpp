@@ -30,11 +30,11 @@ using namespace Finagle;
 class PriorityQueueTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( PriorityQueueTest );
-  CPPUNIT_TEST( testCreateDestroy );
+/*  CPPUNIT_TEST( testCreateDestroy );
   CPPUNIT_TEST( testOrder );
   CPPUNIT_TEST( testPush );
   CPPUNIT_TEST( testPushPop );
-  CPPUNIT_TEST( testSynchronize );
+  CPPUNIT_TEST( testSynchronize );*/
   CPPUNIT_TEST( testThreadFill );
   CPPUNIT_TEST_SUITE_END();
 
@@ -55,9 +55,32 @@ protected:
   void squareQueue( void );
 
 protected:
-  static const unsigned FillSize = 10;
+  class Dummy : public ReferenceCount {
+  public:
+    typedef ObjectRef<Dummy> Ref;
+
+    Dummy( unsigned val ) : _valid(0xdeadbeef), _val(val) {}
+    virtual ~Dummy( void ) { _valid = 0xbdbdbdbd;  }
+
+    bool isValid( void ) const {  return _valid == 0xdeadbeef;  }
+    unsigned val( void ) const {  return _val;  }
+
+  protected:
+    long _valid;
+    unsigned _val;
+  };
+
+  class Dummyer : public Dummy {
+  public:
+    typedef ObjectRef<Dummyer> Ref;
+    Dummyer( unsigned val ) : Dummy(val) {}
+  };
+
+protected:
+  static const unsigned FillSize = 1000000;
   PriorityQueue<unsigned> *_queue;
   PriorityQueue<unsigned> *_squared;
+  PriorityQueue<Dummy::Ref> *_dummies;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( PriorityQueueTest );
@@ -66,6 +89,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( PriorityQueueTest );
 void PriorityQueueTest::setUp( void )
 {
   CPPUNIT_ASSERT_NO_THROW( _queue = new PriorityQueue<unsigned> );
+  CPPUNIT_ASSERT_NO_THROW( _dummies = new PriorityQueue<Dummy::Ref> );
   _squared = 0;
 }
 
@@ -75,6 +99,8 @@ void PriorityQueueTest::tearDown( void )
   _queue = 0;
   CPPUNIT_ASSERT_NO_THROW( delete _squared );
   _squared = 0;
+  CPPUNIT_ASSERT_NO_THROW( delete _dummies );
+  _dummies = 0;
 }
 
 
@@ -82,13 +108,6 @@ void PriorityQueueTest::enqueue( void )
 {
   sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
   CPPUNIT_ASSERT_NO_THROW( _queue->push( 42 ) );
-}
-
-void PriorityQueueTest::fillQueue( void )
-{
-  sleep( 0.1 ); // Give parent thread a chance to block on the queue before we push to it.
-  for ( unsigned i = 0; i < FillSize; ++i )
-    CPPUNIT_ASSERT_NO_THROW( _queue->push( i ) );
 }
 
 void PriorityQueueTest::squareQueue( void )
@@ -151,6 +170,7 @@ void PriorityQueueTest::testPushPop( void )
   CPPUNIT_ASSERT( _queue->empty() );
 }
 
+
 void PriorityQueueTest::testSynchronize( void )
 {
   ClassFuncThread<PriorityQueueTest> enqueueThread( this, &PriorityQueueTest::enqueue );
@@ -172,9 +192,30 @@ void PriorityQueueTest::testThreadFill( void )
   ClassFuncThread<PriorityQueueTest> fillQueueThread( this, &PriorityQueueTest::fillQueue );
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.start() );
 
-  for ( unsigned i = 0; i < FillSize; ++i )
-    CPPUNIT_ASSERT_EQUAL( i, _queue->pop() );
+  for ( unsigned i = 0; i < FillSize; ++i ) {
+    Dummy::Ref d( _dummies->pop() );
+    CPPUNIT_ASSERT( d );
+    CPPUNIT_ASSERT( d->isValid() );
+
+    Dummyer::Ref d2( d );
+    CPPUNIT_ASSERT( d2 );
+    CPPUNIT_ASSERT( d2->isValid() );
+
+    CPPUNIT_ASSERT( d->refs() );
+    CPPUNIT_ASSERT_EQUAL( i, d->val() );
+    d = 0;
+    d2 = 0;
+  }
 
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.join() );
   CPPUNIT_ASSERT( _queue->empty() );
+}
+
+void PriorityQueueTest::fillQueue( void )
+{
+  for ( unsigned i = 0; i < FillSize; ++i ) {
+    Dummyer::Ref d( new Dummyer(i) );
+    _dummies->push( Dummy::Ref(d) );
+    d = 0;
+  }
 }
