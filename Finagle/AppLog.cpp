@@ -31,9 +31,16 @@ using namespace std;
 using namespace Finagle;
 
 /*! \class Finagle::AppLog
-** Application logging framework (using XML log messages)
+** \brief Application logging framework
+**
+** Implements generic application logging through a stream interface (i.e. the Log singleton).  All log messages (LogMsg) are
+** derived from XML::Element, although they can be simple strings.  One side effect of this is that exceptions, being XML
+** (see Exception) can be sent directly to Log.
+**
+** Logs are processed and delivered by subclasses of AppLog::Logger class.
 */
 
+//! Add an XML element (e.g. a \a msg) to the log.
 AppLog &AppLog::operator +=( XML::Element const &msg )
 {
   if ( msg.text().empty() && msg.elements().empty() )
@@ -48,19 +55,19 @@ AppLog &AppLog::operator +=( XML::Element const &msg )
   return *this;
 }
 
-/*! \class Finagle::AppLog:Logger
-** Object which outputs to a specific location.
+/*! \class Finagle::AppLog::Logger
+** \brief Base class for objects that direct log entries to a specific location.
 ** \sa Finagle::LogToStream, Finagle::LogToFile
 */
 
-/*!
-** Creates an AppLog Logger instance from a specification string (i.e. from the command line)
-** Spec:
+/*! \brief Creates an AppLog Logger instance from a specification string (e.g. from the command line or config file)
+** Where \a spec is one of:
 **  * [xml|text]:stdout
 **  * [xml|text]:stderr
 **  * [xml|text]:file:[PATH/]BASE
-**  * * BASE defaults to the executable name
-**  * * File has ".log" or ".xlog" appended
+** ... and ...
+**  * BASE defaults to the executable name
+**  * File has ".log" or ".xlog" appended
 */
 AppLog::Logger::Ref AppLog::Logger::fromSpec( String const &spec, bool debug )
 {
@@ -96,7 +103,7 @@ AppLog::Logger::Ref AppLog::Logger::fromSpec( String const &spec, bool debug )
 
 
 /*! \class Finagle::LogToStream
-** Message logger to write to output stream
+** \brief Sends log entries to a given \c std::ostream.
 */
 
 void LogToStream::onMsg( XML::Element const &msg )
@@ -138,9 +145,30 @@ void LogToStream::onMsg( XML::Element const &msg )
 
 
 /*! \class Finagle::LogToFile
-** Log message handler to write to a file
+** \brief Sends log entries to an output file.
+**
+** The filename is determined by taking the #base name and appending ".log" or ".xlog", depending on the value of \a asXML passed
+** to the constructor.
+
 */
 
+/*! Sets the output file base name, reopenning the file if necessary.
+*/
+FilePath const &LogToFile::base( FilePath const &base )
+{
+  if ( base == _base )
+    return _base;
+
+  if ( _buf.is_open() )
+    _buf.close();
+
+  return _base = base;
+}
+
+/*! Logs the given log entry
+**
+** This will open the file, if necessary.  It will also create leading components of the base path, as necessary.
+*/
 void LogToFile::onMsg( XML::Element const &msg )
 {
   if ( !_buf.is_open() ) {
@@ -148,7 +176,7 @@ void LogToFile::onMsg( XML::Element const &msg )
       return;
 
     Dir(_base.dir()).create();
-    (String &) _base += _asXML ? ".xlog" : ".log";
+    FilePath path( _base + (_asXML ? ".xlog" : ".log") );
 
     if ( !_buf.open( _base, ios::out | ios::app | ios::binary ) ) {
       File::OpenEx ex( _base, ios::out );
@@ -161,10 +189,9 @@ void LogToFile::onMsg( XML::Element const &msg )
 }
 
 
-/*! \class Finagle::LogToSysLog
+/* \class Finagle::LogToSysLog
 ** Log message handler to write to syslog(2)
 */
-
 /*
 //#include "Util.h"
 

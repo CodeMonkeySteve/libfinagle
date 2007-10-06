@@ -106,6 +106,7 @@ private:
 };
 
 
+//! Case-insensitive character traits
 struct NoCaseChar : public std::char_traits<char> {
   static bool eq( char c1, char c2 );
   static bool ne( char c1, char c2 );
@@ -114,6 +115,7 @@ struct NoCaseChar : public std::char_traits<char> {
   static const char *find( const char* s, int n, char a );
 };
 
+//! A %String variant that's inherently case-insensitive
 class NoCase : public std::basic_string<char, NoCaseChar> {
 public:
   NoCase( void ) {}
@@ -193,6 +195,7 @@ inline String::String( double num )
 : std::string( String::format( "%f", num ) )
 {}
 
+//! String assignment
 inline String &String::operator=( const String &that )
 {
   std::string::operator=( (const std::string &) that );
@@ -204,12 +207,13 @@ inline String::operator const char *( void ) const
   return c_str();
 }
 
+//! Returns \c true if the string is not empty
 inline String::operator bool( void ) const
 {
   return !empty();
 }
 
-//! Returns true iff the string contains \a substr at the beginning.
+//! Returns true if the string contains \a substr at the beginning.
 inline bool String::beginsWith( String const &substr ) const
 {
   return String::substr( 0, substr.size() ) == substr;
@@ -228,9 +232,10 @@ inline String String::hex( unsigned num, unsigned digits )
   return String::format( "0x%0*X", digits, num );
 }
 
-inline String String::substr( size_type Pos, size_type Len ) const
+//! Returns the substring of length \a len starting at \a pos
+inline String String::substr( size_type pos, size_type len ) const
 {
-  return std::string::substr( Pos, Len );
+  return std::string::substr( pos, len );
 }
 
 //! Alternate index operator
@@ -245,50 +250,55 @@ inline String::const_reference String::operator()( size_type n ) const
   return std::string::operator[]( n );
 }
 
-inline String operator +( String const &Left, String const &Right )
+//! Joins two strings
+inline String operator +( String const &left, String const &right )
 {
-  return String( Left ) += Right;
+  return String(left) += right;
 }
 
-inline String operator +( const char *Left, String const &Right )
+//! Joins two strings
+inline String operator +( const char *left, String const &right )
 {
-  return String( Left ) += Right;
+  return String(left) += right;
 }
 
-inline String operator +( String const &Left, const char *Right )
+//! Joins two strings
+inline String operator +( String const &left, const char *right )
 {
-  return String( Left ) += Right;
+  return String(left) += right;
 }
 
-inline String operator +( const char Left, const String &Right )
+//! Joins a character and a string
+inline String operator +( const char left, const String &right )
 {
-  return String( &Left, 1 ) += Right;
+  return String( &left, 1 ) += right;
 }
 
-inline String operator +( String const &Left, const char Right )
+//! Joins a string and a character
+inline String operator +( String const &left, const char right )
 {
-  return String( Left ) += Right;
+  return String(left) += right;
 }
 
-
-//! Returns the string \a Str with all characters in lowercase form.
+//! Returns the string \a str with all characters in lowercase form.
 inline String String::toLower( String const &str )
 {
   return String(str).makeLower();
 }
 
-//! Returns the string \a Str with all characters in uppercase form.
+//! Returns the string \a str with all characters in uppercase form.
 inline String String::toUpper( String const &str )
 {
   return String(str).makeUpper();
 }
 
-//! Returns the string \a Str without any leading or trailing occurances of \a Chars.
+//! Returns the string \a str without any leading or trailing occurances of \a chars.
 inline String String::trim( String const &str, const char *chars )
 {
   return String(str).trim(chars);
 }
 
+//! Stream output operator
 inline std::ostream &operator <<( std::ostream &out, NoCase const &str )
 {
   return out << str.c_str();
@@ -296,6 +306,7 @@ inline std::ostream &operator <<( std::ostream &out, NoCase const &str )
 
 // TEMPLATE IMPLEMENTATION ********************************************************************************************************
 
+//! Joins a container of strings (\a strs), separated by \a sep, into a single string.
 template <typename Container>
 String String::join( Container const &strs, String const &sep )
 {
@@ -309,9 +320,10 @@ String String::join( Container const &strs, String const &sep )
 
 // CONVERSIONS ********************************************************************************************************************
 
-/*!
-** Attempts to convert the string into an object of type \a Type.  If the string is empty, or if it cannot be converted to
-** \a Type, a ConversionEx exception is thrown.  Otherwise, the converted value is returned.
+/*! \brief Attempts to convert the string into an object of type \a Type.
+**
+** If the string is empty, or if it cannot be converted to \a Type, a ConversionEx exception is thrown.
+** Otherwise, the converted value is returned.
 */
 template <typename Type>
 inline Type String::as( void ) const
@@ -323,9 +335,10 @@ inline Type String::as( void ) const
   return val;
 }
 
-/*!
-** Attempts to convert the string into an object of type \a Type.  If the string is empty, returns \a defVal.  If the string
-** cannot be converted ** \a Type, a ConversionEx exception is thrown.  Otherwise, the converted value is returned.
+/*! \brief Attempts to convert the string into an object of type \a Type.
+**
+** If the string is empty, returns \a defVal.  If the string cannot be converted ** \a Type, a ConversionEx exception is thrown.
+** Otherwise, the converted value is returned.
 */
 template <typename Type>
 inline Type String::as( Type const &defVal ) const
@@ -333,10 +346,11 @@ inline Type String::as( Type const &defVal ) const
   return empty() ? defVal : as<Type>();
 }
 
-/*!
-** Attempts to convert the string into an object of type \a Type.  If the string is empty, sets \a val to defVal and returns
-** \c true.  Otherwise, if the conversion is succesfsul, sets \a val and returns \c true.  If the string cannot be converted to
-** \a Type, returns \c false (\a val is unchanged).
+/*! \brief Attempts to convert the string into an object of type \a Type, and stores it in \a val.
+**
+** If the string is empty, sets \a val to defVal and returns \c true.
+** Otherwise, if the conversion is succesfsul, sets \a val and returns \c true.
+** If the string cannot be converted to \a Type, returns \c false (\a val is unchanged).
 */
 template <typename Type>
 inline bool String::to( Type &val, Type const &defVal ) const
@@ -349,9 +363,9 @@ inline bool String::to( Type &val, Type const &defVal ) const
   return to<Type>( val );
 }
 
-/*!
-** Attempts to convert the string into an object of the type \a Type.  If the conversion
-** is succesfsul, returns \c true and sets \a val.  Returns \c false, otherwise,
+/*! \brief Attempts to convert the string into an object of the type \a Type, and stores it in \a val.
+**
+** If the conversion is succesfsul, sets \a val and returns \c true.  Otherwise, returns \c false,
 ** and \a val is unchanged.
 **
 ** Default template supports all integer and floating point types, using \c strto{l,ul,d}.
@@ -386,8 +400,7 @@ bool String::to( Type &val ) const
   return true;
 }
 
-
-//! Template partial-instantiation for conversion of strings (i.e. no conversion).
+//! \brief Template partial-instantiation for conversion of strings (i.e. no conversion).
 //! \note always returns \c true.
 template <>
 inline bool String::to<String>( String &val ) const
@@ -396,7 +409,7 @@ inline bool String::to<String>( String &val ) const
   return true;
 }
 
-//! Template partial-instantiation for conversion of strings (i.e. no conversion).
+//! \brief Template partial-instantiation for conversion of strings (i.e. no conversion).
 //! \note always returns \c true.
 template <>
 inline bool String::to<std::string>( std::string &val ) const
@@ -406,7 +419,7 @@ inline bool String::to<std::string>( std::string &val ) const
 }
 
 
-//! Template partial-instantiation for conversion of strings (i.e. no conversion).
+//! \brief Template partial-instantiation for conversion of strings (i.e. no conversion).
 //! \note always returns \c true.
 template <>
 inline bool String::to<char *>( char *&val ) const

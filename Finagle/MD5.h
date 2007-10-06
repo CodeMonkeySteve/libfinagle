@@ -60,14 +60,14 @@ public:
 
 public:
   MD5( void );
-  MD5( Digest const &MD );
-  MD5( void const *Bytes, unsigned NumBytes );
+  MD5( Digest const &digest );
+  MD5( void const *bytes, unsigned numBytes );
   MD5( FilePath const &File );
 
-  void fromMem( void const *Bytes, unsigned NumBytes );
-  bool fromFile( FilePath const &File );
+  void fromMem( void const *bytes, unsigned numBytes );
+  bool fromFile( FilePath const &file );
   bool fromStream( std::istream &in );
-  bool fromStream( std::istream &in, unsigned NumBytes );
+  bool fromStream( std::istream &in, unsigned numBytes );
 
   bool isValid( void ) const;
 
@@ -80,52 +80,58 @@ protected:
   void finish( void );
 
 protected:
-  bool HaveMD;
-  Digest MD;
+  bool _valid;
+  Digest _digest;
 
-  Word Count[2];  // Message length in bits, LSW first
-  Word Buff[4];   // Digest buffer
-  Byte Accum[64]; // Accumulate block
+  Word _count[2];   // message length in bits, LSW first
+  Word _buff[4];    // digest buffer
+  Byte _accum[64];  // accumulator block
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
+//! Constructs an empty message digest.
 inline MD5::MD5( void )
 {
   reset();
 }
 
-inline MD5::MD5( Digest const &MD )
-: MD( MD )
+inline MD5::MD5( Digest const &digest )
+: _digest( _digest )
 {
   reset();
-  HaveMD = true;
+  _valid = true;
 }
 
-inline MD5::MD5( void const *Bytes, unsigned NumBytes )
+//! Generates a digest from \a numBytes data bytes read from \a bytes.
+inline MD5::MD5( void const *bytes, unsigned numBytes )
 {
   reset();
-  fromMem( Bytes, NumBytes );
+  fromMem( bytes, numBytes );
   finish();
 }
 
-inline MD5::MD5( FilePath const &File )
+//! Generates a digest from the contents of \a file.
+inline MD5::MD5( FilePath const &file )
 {
   reset();
-  if ( fromFile( File ) )
+  if ( fromFile( file ) )
     finish();
 }
 
+//! Returns \c true if the digest is valid.
 inline bool MD5::isValid( void ) const
 {
-  return HaveMD;
+  return _valid;
 }
 
+//! Returns the message digest.
 inline MD5::Digest const &MD5::operator()( void )
 {
   finish();
-  return MD;
+  return _digest;
 }
+
 
 }
 

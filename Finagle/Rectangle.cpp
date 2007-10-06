@@ -25,8 +25,10 @@ using namespace Finagle;
 
 Range<double> const Rectangle::Arg( 0.0, 1.0 );
 
-/*! \class Rectangle
-** \brief A normalized rectangle
+/*! \class Finagle::Rectangle
+** \brief Represents a normalized rectangle (with double precision)
+**
+** This rectangle class has maximum dimensions of 1.0x1.0, i.e. a unit-square.
 */
 
 Rectangle &Rectangle::operator *=( Rectangle const &that )
@@ -35,55 +37,55 @@ Rectangle &Rectangle::operator *=( Rectangle const &that )
     return *this;
 
   if ( that.empty() ) {
-    Left = Top = Right = Bottom = 0.0;
+    _left = _top = _right = _bottom = 0.0;
     return *this;
   }
 
   double w = width(), h = height();
-  Left += that.Left * w;
-  Top += that.Top * h;
-  Right = Left + (w * that.width());
-  Bottom = Top + (h * that.height());
+  _left += that._left * w;
+  _top += that._top * h;
+  _right = _left + (w * that.width());
+  _bottom = _top + (h * that.height());
 
   return *this;
 }
 
 
-void Rectangle::width( double Width )
+void Rectangle::width( double w )
 {
-  Arg.clamp( Width );
-  if ( width() == Width )
+  Arg.clamp( w );
+  if ( width() == w )
     return;
 
-  if ( width() < Width ) {
+  if ( width() < w ) {
     // Expand
-    Left -= Width / 2.0;
-    Arg.clamp( Left );
+    _left -= w / 2.0;
+    Arg.clamp( _left );
   } else {
     // Shrink
-    Left += Width / 2.0;
+    _left += w / 2.0;
   }
 
-  Right = Left + Width;
+  _right = _left + w;
   Changed();
 }
 
 
-void Rectangle::height( double Height )
+void Rectangle::height( double h )
 {
-  Arg.clamp( Height );
-  if ( height() == Height )
+  Arg.clamp( h );
+  if ( height() == h )
     return;
 
-  if ( height() < Height ) {
+  if ( height() < h ) {
     // Expand
-    Top -= Height / 2.0;
-    Arg.clamp( Top );
+    _top -= h / 2.0;
+    Arg.clamp( _top );
   } else {
     // Shrink
-    Top += Height / 2.0;
+    _top += h / 2.0;
   }
 
-  Bottom = Top + Height;
+  _bottom = _top + h;
   Changed();
 }

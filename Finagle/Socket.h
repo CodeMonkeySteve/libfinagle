@@ -91,6 +91,7 @@ protected:
   int _error;
 };
 
+//! Writes the Socket::Addr-derived class to \a out as a string (e.g. hostname/port).
 std::ostream &operator <<( std::ostream &out, Socket::Addr const &addr );
 
 // INLINE IMPLEMENTATION ******************************************************

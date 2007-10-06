@@ -16,6 +16,7 @@
 
 namespace Finagle {
 
+//! Exception thrown on \c pthread errors
 class PThreadEx : public SystemEx {
 public:
   PThreadEx( String const &str, int errCode );

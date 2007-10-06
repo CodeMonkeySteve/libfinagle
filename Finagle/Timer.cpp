@@ -26,9 +26,15 @@ using namespace Finagle;
 using namespace AppLoop;
 
 /*! \class Finagle::Timer
-** Provides a time-triggered event.
+** \brief Provides a high-resolution timer.
 **
+** Example: \code
+** Timer::Ref timer = Timer::Recurring( 1.0 );
+** timer->connect( handlerInstance, &HandlerClass::eventHandler );
+** timer->start();
+** \endcode
 **
+** \sa AppLoop.
 */
 
 void Timer::start( void )

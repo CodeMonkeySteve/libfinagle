@@ -68,7 +68,7 @@ Element &Element::element( String const &tag )
 }
 
 
-void Element::openTag( ostream &out ) const
+void Element::openTag( std::ostream &out ) const
 {
   out << "<" << tag();
 
@@ -81,13 +81,13 @@ void Element::openTag( ostream &out ) const
 }
 
 
-void Element::closeTag( ostream &out ) const
+void Element::closeTag( std::ostream &out ) const
 {
   out << "</" << tag() << ">";
 }
 
 
-void Element::render( ostream &out ) const
+void Element::render( std::ostream &out ) const
 {
   if ( tag().empty() ) {
     // Text-only element
@@ -171,7 +171,7 @@ Element &Element::append( Element::Ref el )
 }
 
 
-void XML::Element::prettyRender( ostream &out, unsigned indent ) const
+void XML::Element::prettyRender( std::ostream &out, unsigned indent ) const
 {
   if ( _tag.empty() && _text.empty() && _elements.empty() )
     return;

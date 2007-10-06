@@ -25,31 +25,30 @@
 
 using namespace Finagle;
 
-PriorityMutex::PriorityMutex( void )
-{
-}
-
+/*! \class Finagle::PriorityMutex
+** \brief Provides a mutually-exclusive synchronization object with prioritized locking.
+*/
 
 bool PriorityMutex::lock( PriorityLock &Lock )
 {
-  PriorityLock *OldOwner = owner();
+  PriorityLock *oldOwner = owner();
 
-  if ( find( Locks.begin(), Locks.end(), &Lock ) == Locks.end() ) {
+  if ( find( _locks.begin(), _locks.end(), &Lock ) == _locks.end() ) {
     // Insertion sort
     List<PriorityLock *>::Iterator i;
-    for ( i = Locks.begin(); i != Locks.end(); ++i ) {
+    for ( i = _locks.begin(); i != _locks.end(); ++i ) {
       if ( **i < Lock ) {
-        Locks.insert( i, &Lock );
+        _locks.insert( i, &Lock );
         break;
       }
     }
-    if ( i == Locks.end() )
-      Locks.push_back( &Lock );
+    if ( i == _locks.end() )
+      _locks.push_back( &Lock );
   }
 
   PriorityLock *Owner = owner();
-  if ( OldOwner && (Owner != OldOwner) )
-    OldOwner->LoseLock();
+  if ( oldOwner && (Owner != oldOwner) )
+    oldOwner->LoseLock();
 
   return Lock.locked();
 }
@@ -57,50 +56,36 @@ bool PriorityMutex::lock( PriorityLock &Lock )
 
 void PriorityMutex::unlock( PriorityLock &Lock )
 {
-  PriorityLock *OldOwner = owner();
-  if ( OldOwner == &Lock )
-    OldOwner->LoseLock();
+  PriorityLock *oldOwner = owner();
+  if ( oldOwner == &Lock )
+    oldOwner->LoseLock();
 
-  Locks.remove( &Lock );
+  _locks.remove( &Lock );
 
   PriorityLock *Owner = owner();
-  if ( Owner && (Owner != OldOwner) )
+  if ( Owner && (Owner != oldOwner) )
     Owner->GainLock();
 }
 
-
-PriorityLock::PriorityLock( PriorityMutex *LockMutex, unsigned Priority )
-: LockMutex( LockMutex ), Priority( Priority )
-{
-}
-
-
-PriorityLock::PriorityLock( PriorityLock &that )
-: LockMutex( that.LockMutex ), Priority( that.Priority )
-{
-}
+/*! \class Finagle::PriorityLock
+** \brief Provides a lock on a PriorityMutex.
+*/
 
 
 PriorityLock::~PriorityLock( void )
 {
-  if ( LockMutex )
-    LockMutex->unlock( *this );
+  if ( _mutex )
+    _mutex->unlock( *this );
 }
 
-
-void PriorityLock::mutex( PriorityMutex *LockMutex )
+void PriorityLock::mutex( PriorityMutex *mutex )
 {
-  if ( LockMutex )
-    LockMutex->unlock( *this );
-
-  PriorityLock::LockMutex = LockMutex;
+  if ( _mutex )  _mutex->unlock( *this );
+  _mutex = mutex;
 }
 
-
-void PriorityLock::priority( unsigned Priority )
+void PriorityLock::priority( unsigned priority )
 {
-  if ( LockMutex )
-    LockMutex->unlock( *this );
-
-  PriorityLock::Priority = Priority;
+  if ( _mutex )  _mutex->unlock( *this );
+  _priority = priority;
 }

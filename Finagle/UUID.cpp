@@ -24,8 +24,31 @@
 using namespace Finagle;
 
 /*!
-** \class UUID
-**
+** \class Finagle::UUID
+** \brief Universallyl Unique IDentifier (via \c OSSP \c uuid)
+*/
+
+/*!
+** \class Finagle::UUID::Exception
+** \brief Exception thrown on error from \c uuid_ function.
 */
 
 const UUID UUID::nil;
+
+/*! \brief Returns a string representation of the id
+**
+** Will be of the form: \code XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX \endcode
+** unless the id is \c nil (i.e. #isNil), in which case an empty string is returned.
+*/
+UUID::operator String( void ) const
+{
+  if ( isNil() )
+    return String();
+
+  char tmp[UUID_LEN_STR + 1];
+  char *tmpp = tmp;
+  size_t tmpl = sizeof(tmp);
+  UUID_ASSERT( uuid_export( _uuid, UUID_FMT_STR, (void **) &tmpp, &tmpl ) );
+  return String( tmp, UUID_LEN_STR );
+}
+

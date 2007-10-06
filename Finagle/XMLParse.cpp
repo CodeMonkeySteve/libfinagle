@@ -28,6 +28,14 @@ using namespace std;
 using namespace Finagle;
 using namespace XML;
 
+static Array<Element::Ref> elements;
+static void elStart( void *, const char *tag, const char **attrs );
+static void elEnd( void *, const char *tag );
+static void elData( void *, const XML_Char *text, int len );
+
+/*! \brief Parses an XML document from a file
+** \return the document root element
+*/
 Element::Ref XML::parse( FilePath const &file )
 {
   ifstream in;
@@ -39,83 +47,78 @@ Element::Ref XML::parse( FilePath const &file )
   return parse( in, file.path() );
 }
 
-
-static Array<Element::Ref> Elements;
-static void XMLCALL elStart( void *, const char *Tag, const char **Attrs );
-static void XMLCALL   elEnd( void *, const char *Tag );
-static void XMLCALL  elData( void *, const XML_Char *Text, int Len );
-
-Element::Ref XML::parse( istream &Stream, String SourceName )
-{
-  if ( !Stream )
-    return( 0 );
-
-  XML_Parser Parser = XML_ParserCreate( 0 );
-  XML_SetElementHandler( Parser, elStart, elEnd );
-  XML_SetCharacterDataHandler( Parser, elData );
-
-  int Done = 0;
-  while ( !Done ) {
-    char Buff[512];
-    Stream.read( Buff, sizeof( Buff ) );
-    size_t BytesRead = Stream.gcount();
-
-    Done = BytesRead < sizeof( Buff );
-    if ( XML_Parse( Parser, Buff, BytesRead, Done ) == XML_STATUS_ERROR )
-      throw ParseEx( SourceName, XML_GetCurrentLineNumber( Parser ), XML_ErrorString( XML_GetErrorCode( Parser ) ) );
-  }
-
-  XML_ParserFree( Parser );
-  Element::Ref Root = Elements.front();
-  Elements.clear();
-
-  return Root;
-}
-
-
-static void XMLCALL elStart( void *, const char *Tag, const char **Attrs )
-{
-  Element::Ref El = new Element( Tag );
-
-  if ( !Elements.empty() )
-    *(Elements.back()) += El;
-
-  Elements.push_back( El );
-
-  Element::AttribMap &Attribs = El->attribs();
-  for ( const char **Attr = Attrs; *Attr; Attr += 2 )
-    // Ignore case on attribute names
-    Attribs.insert( String::toLower( Attr[0] ), Attr[1] );
-}
-
-
-static void XMLCALL elData( void *, const XML_Char *Text, int Len )
-{
-  Element::Ref El;
-  String Str( Text, Len );
-
-  // Ignore whitespace
-  if ( Str.trim().empty() )
-    return;
-
-  El = Elements.empty() ? Element::Ref(new Element) : Elements.back();
-  El->append( Str );
-}
-
-
-static void XMLCALL elEnd( void *, const char *Tag )
-{
-  FINAGLE_ASSERT( !Elements.empty() );
-  FINAGLE_ASSERT( Elements.back()->tag() == Tag );
-
-  if ( Elements.size() > 1 )
-    Elements.pop_back();
-}
-
-
 ParseEx::ParseEx( String const &src, unsigned lineNum, String const &err )
 : Exception( "XML (" + src + ": " + String( lineNum ) + "): " + err )
 {
   attribs()["src"] = src;
   attribs()["line"] = String( lineNum );
+}
+
+/*! \brief Parses an XML document from an input stream
+** \a srcName is used only for error messages, and is optional.
+** \return the document root element
+*/
+Element::Ref XML::parse( std::istream &in, String srcName )
+{
+  if ( !in )
+    return( 0 );
+
+  XML_Parser parser = XML_ParserCreate( 0 );
+  XML_SetElementHandler( parser, elStart, elEnd );
+  XML_SetCharacterDataHandler( parser, elData );
+
+  int done = 0;
+  while ( !done ) {
+    char buff[512];
+    in.read( buff, sizeof( buff ) );
+    size_t bytesRead = in.gcount();
+
+    done = bytesRead < sizeof( buff );
+    if ( XML_Parse( parser, buff, bytesRead, done ) == XML_STATUS_ERROR )
+      throw ParseEx( srcName, XML_GetCurrentLineNumber( parser ), XML_ErrorString( XML_GetErrorCode( parser ) ) );
+  }
+
+  XML_ParserFree( parser );
+  Element::Ref root( elements.front() );
+  elements.clear();
+
+  return root;
+}
+
+
+static void elStart( void *, const char *tag, const char **attrs )
+{
+  Element::Ref xml = new Element(tag);
+
+  if ( !elements.empty() )
+    *(elements.back()) += xml;
+
+  elements.push_back( xml );
+
+  Element::AttribMap &attribs = xml->attribs();
+  for ( const char **attr = attrs; *attr; attr += 2 )
+    // Ignore case on attribute names
+    attribs.insert( String::toLower( attr[0] ), attr[1] );
+}
+
+static void elData( void *, XML_Char const *text, int len )
+{
+  Element::Ref xml;
+  String t( text, len );
+
+  // Ignore whitespace
+  if ( t.trim().empty() )
+    return;
+
+  xml = elements.empty() ? Element::Ref(new Element) : elements.back();
+  xml->append( t );
+}
+
+static void elEnd( void *, const char *tag )
+{
+  FINAGLE_ASSERT( !elements.empty() );
+  FINAGLE_ASSERT( elements.back()->tag() == tag );
+
+  if ( elements.size() > 1 )
+    elements.pop_back();
 }

@@ -1,5 +1,5 @@
 /*!
-** \file Parser.h
+** \file OptionParser.h
 ** \author Steve Sloan <steve@finagle.org>
 ** \date Thu Dec 28 2006
 ** Copyright (C) 2006 by Steve Sloan
@@ -27,17 +27,27 @@
 #include <Finagle/TextString.h>
 
 namespace Finagle {
+
+//! Command-line parsing classes
 namespace Option {
 
 #include <getopt.h>
 
+//! Private base class for command-line arguments
 class OptionBase {
 public:
   virtual ~OptionBase( void ) {}
 
+  //! Returns the long name (e.g. "option" -> "--option")
   String const &name( void ) const {  return _name;  }
+
+  //! Returns the single-character short name (e.g. 'x' -> "-x") or \c 0 (no short name).
   char ch( void ) const            {  return _ch;  }
+
+  //! Does the option require an argument?
   bool valRequired( void ) const   {  return _required;  }
+
+  //! Has the option been set?
   bool isSet( void ) const         {  return _set;  }
 
 protected:
@@ -96,6 +106,7 @@ protected:
 
 }
 
+//! All command-line options.
 static Singleton<Option::Parser> cmdLine;
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************
@@ -114,6 +125,13 @@ inline bool OptionBase::set( const char * )
 }
 
 
+/*!
+** Create a new command-line option, where:
+** \arg \c name         Option long name (see #name).
+** \arg \c ch           Option short name, or \c 0 (see #ch).
+** \arg \c defaultVal   Default value (see #isSet).
+** \arg \c valRequired  Is an argument required?  (see #Finagle::Option::Flag)
+*/
 template <typename ArgType>
 inline Argument<ArgType>::Argument( const char *name, char ch, ArgType const &defaultVal, bool valRequired )
 : OptionBase( name, ch, valRequired ),

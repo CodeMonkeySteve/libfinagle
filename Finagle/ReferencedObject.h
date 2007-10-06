@@ -79,7 +79,7 @@ protected:
 };
 
 
-/*! \brief Simple reference-counting implementation
+/*! \brief Simple reference-counting implementation (suitable for ObjectRef)
 **
 ** This class implements a reference count, suitable for inheriting into
 ** classes which are referenced with ObjectRef.  A referenced object need not
@@ -196,6 +196,7 @@ ObjectRef<Type, RType, PType>::~ObjectRef( void )
   }
 }
 
+//! Returns \c true if the reference is not \c 0.
 template <typename Type, typename RType, typename PType>
 inline bool ObjectRef<Type, RType, PType>::isValid( void ) const
 {
@@ -232,6 +233,7 @@ ObjectRef<Type, RType, PType> &ObjectRef<Type, RType, PType>::operator =( Object
   return *this;
 }
 
+//! Returns \c true if this reference and \a ptr have the same address.
 template <typename Type, typename RType, typename PType>
 inline bool ObjectRef<Type, RType, PType>::operator ==( PtrType ptr ) const
 {
@@ -296,44 +298,58 @@ inline ObjectRef<Type, RType, PType>::operator PType( void )
 
 // PASS-THROUGH OPERATORS ---------------------------------------------------------------------------------------------------------
 
+//! Pass-through operator
 template <typename Type>
 inline bool operator <( ObjectRef<Type> const &a, ObjectRef<Type> const &b )
 {
   return *a < *b;
 }
 
+//! Pass-through operator
 template <typename Type>
 inline std::ostream &operator <<( std::ostream &out, ObjectRef<Type> const &obj )
 {
   return out << *obj;
 }
 
+//! Pass-through operator
 template <typename Type>
 inline std::istream &operator >>( std::ostream &in, ObjectRef<Type> &obj )
 {
-  return operator >>( in, *obj );
+  return in >> *obj;
 }
 
 // REFERENCE COUNT ----------------------------------------------------------------------------------------------------------------
 
+//! Initializes the reference count to \c 0.
 inline ReferenceCount::ReferenceCount( void )
 : _refs(0)
 {}
 
+//! Initializes the reference count to \c 0.
 inline ReferenceCount::ReferenceCount( ReferenceCount const & )
 : _refs(0)
 {}
 
+/*! \brief Incremements the reference count.
+**
+** \warning this function \e may not be thread-safe
+*/
 inline void ReferenceCount::ref( void ) const
 {
   _refs++;
 }
 
+/*! \brief Decremements the reference count and returns \c true if it's \c 0.
+**
+** \warning this function is \e not thread-safe
+*/
 inline bool ReferenceCount::deref( void ) const
 {
   return --_refs == 0;
 }
 
+//! Returns the reference count.
 inline unsigned ReferenceCount::refs( void ) const
 {
   return _refs;

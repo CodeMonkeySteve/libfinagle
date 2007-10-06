@@ -28,6 +28,7 @@
 
 namespace Finagle {
 
+//! Generic thread-safe prioritized queue
 template <typename Type, typename PriType = double>
 class PriorityQueue : protected MultiMap<PriType, Type, std::greater<PriType> > {
 public:
@@ -91,7 +92,6 @@ inline unsigned PriorityQueue<Type, PriType>::size( void ) const
   Lock _( _guard );
   return Map::size();
 }
-
 
 //! Adds an item to the queue
 template <typename Type, typename PriType>

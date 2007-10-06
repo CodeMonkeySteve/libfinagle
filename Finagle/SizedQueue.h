@@ -26,6 +26,7 @@
 
 namespace Finagle {
 
+//! Generic thread-safe queue with a maximum size
 template <typename Type>
 class SizedQueue : public Queue<Type> {
 public:

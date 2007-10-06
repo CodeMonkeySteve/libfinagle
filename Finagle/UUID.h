@@ -68,12 +68,14 @@ std::ostream &operator <<( std::ostream &out, UUID const &ID );
   }                                          \
 }
 
+//! Creates a \c nil id.
 inline UUID::UUID( void )
 : _uuid(0)
 {
   UUID_ASSERT( uuid_create( &_uuid ) );
 }
 
+//! Creates an id by parsing string \a str.
 inline UUID::UUID( String const &str )
 : _uuid(0)
 {
@@ -82,6 +84,7 @@ inline UUID::UUID( String const &str )
 }
 
 inline UUID::UUID( UUID const &id )
+: _uuid(0)
 {
   UUID_ASSERT( uuid_clone( id._uuid, &_uuid ) );
 }
@@ -118,7 +121,7 @@ inline bool UUID::operator <( UUID const &id )
   return res < 0;
 }
 
-
+//! Returns \c true if the id is invalid.
 inline bool UUID::isNil( void ) const
 {
   int res = 0;
@@ -126,25 +129,19 @@ inline bool UUID::isNil( void ) const
   return res;
 }
 
-inline UUID::operator String( void ) const
-{
-  if ( isNil() )
-    return String();
-
-  char tmp[UUID_LEN_STR + 1];
-  char *tmpp = tmp;
-  size_t tmpl = sizeof(tmp);
-  UUID_ASSERT( uuid_export( _uuid, UUID_FMT_STR, (void **) &tmpp, &tmpl ) );
-  return String( tmp, UUID_LEN_STR );
-}
-
-
+/*! \brief Generates a new universally unique identifier.
+**
+** The id generated is of the "classical" type, that is, computed using the ethernet MAC address and clock
+** time of the running system.  It is globally-unique, but may leak some information about the system used to
+** generate it.
+*/
 inline UUID &UUID::generate( void )
 {
   UUID_ASSERT( uuid_make( _uuid, UUID_MAKE_V1 ) );
   return *this;
 }
 
+//! Writes a string representation of the \a id to stream \a out.
 inline std::ostream &operator <<( std::ostream &out, UUID const &id )
 {
   return out << (String) id;

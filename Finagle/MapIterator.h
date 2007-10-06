@@ -24,6 +24,7 @@
 
 namespace Finagle {
 
+//! Convenience wrapper for map const iterators (e.g. \c std::map)
 template <typename Base>
 class MapConstIterator : public Base {
 public:
@@ -54,6 +55,7 @@ public:
 };
 
 
+//! Convenience wrapper for map iterators (e.g. \c std::map)
 template <typename Base>
 class MapIterator : public MapConstIterator<Base> {
 public:

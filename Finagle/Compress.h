@@ -28,7 +28,6 @@
 
 namespace Finagle {
 
-// Compress (gzipped) file stream
 class CompressBuff : public std::streambuf {
 public:
   typedef std::streambuf::traits_type traits;
@@ -39,7 +38,7 @@ public:
   CompressBuff( void );
  ~CompressBuff( void );
 
-  CompressBuff *open( FilePath const &Path, std::ios::openmode Mode );
+  CompressBuff *open( FilePath const &gzFile, std::ios::openmode mode );
   CompressBuff *close( void );
 
   bool is_open( void ) const;
@@ -49,71 +48,72 @@ public:
   int_type underflow( void );
 
 protected:
-  gzFile File;
-  std::ios::openmode Mode;
+  gzFile _gzFile;
+  std::ios::openmode _mode;
 };
 
-
+//! Convenience template for accessing a compressed iostream
 template <class Base, std::ios_base::openmode DefMode>
 class CompressTempl : public Base {
 public:
   CompressTempl( void );
-  CompressTempl( FilePath File, std::ios_base::openmode Mode = DefMode );
+  CompressTempl( FilePath gzFile, std::ios_base::openmode mode = DefMode )
+    : Base( &_buff ) {  open( gzFile, mode );  }
 
-  void open( FilePath File, std::ios_base::openmode Mode = DefMode );
+  void open( FilePath gzFile, std::ios_base::openmode mode = DefMode );
   bool is_open( void ) const;
   void close( void );
 
 protected:
-  CompressBuff Buff;
+  CompressBuff _buff;
 };
 
+//! Compressed input stream
 typedef CompressTempl<std::istream,  std::ios::in>  izfstream;
+
+//! Compressed output stream
 typedef CompressTempl<std::ostream,  std::ios::out> ozfstream;
-typedef CompressTempl<std::iostream,
-  std::ios::openmode( (int) std::ios::in | std::ios::out )> zfstream;
+
+//! Compressed input/output stream
+typedef CompressTempl<std::iostream, std::ios::openmode( (int) std::ios::in | std::ios::out )> zfstream;
 
 bool gzip( FilePath const &ArchFile, FilePath const &SrcFile );
 
 // INLINE IMPLEMENTATION ******************************************************
 
+CompressBuff::CompressBuff( void )
+: _gzFile(0)
+{}
+
 inline bool CompressBuff::is_open( void ) const
 {
-  return File != 0;
+  return _gzFile != 0;
 }
 
 // TEMPLATE IMPLEMENTATION ****************************************************
 
 template <class Base, std::ios_base::openmode DefMode>
 inline CompressTempl<Base, DefMode>::CompressTempl( void )
-: Base( &Buff )
-{
-}
+: Base( &_buff )
+{}
 
 template <class Base, std::ios_base::openmode DefMode>
-inline CompressTempl<Base, DefMode>::CompressTempl( FilePath File, std::ios::openmode Mode )
-: Base( &Buff )
+inline void CompressTempl<Base, DefMode>::open( FilePath gzFile, std::ios_base::openmode mode )
 {
-  open( File, Mode );
-}
-
-template <class Base, std::ios_base::openmode DefMode>
-inline void CompressTempl<Base, DefMode>::open( FilePath File, std::ios_base::openmode Mode )
-{
-  if ( !Buff.open( File, Mode ) )
+  if ( !_buff.open( gzFile, mode ) )
     Base::setstate( Base::rdstate() | std::ios_base::badbit );
 }
 
 template <class Base, std::ios_base::openmode DefMode>
 inline bool CompressTempl<Base, DefMode>::is_open( void ) const
 {
-  return Buff.is_open();
+  return _buff.is_open();
 }
 
 template <class Base, std::ios_base::openmode DefMode>
 inline void CompressTempl<Base, DefMode>::close( void )
 {
-  Buff.close();
+  _buff.close();
 }
 
 }

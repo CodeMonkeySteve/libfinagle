@@ -30,7 +30,7 @@ namespace Finagle {
 class DateTimeMask : public DateTime {
 public:
   struct BadDateEx : public Exception {
-    BadDateEx( String const &Str );
+    BadDateEx( String const &str );
   };
 
   static const char *MonthNames[];
@@ -38,62 +38,65 @@ public:
 
 public:
   DateTimeMask( void );
-  DateTimeMask( DateTime const &When );
-  DateTimeMask( String const &MaskStr );
+  DateTimeMask( DateTime const &time );
+  DateTimeMask( String const &maskStr );
 
-  void parse( String const &MaskStr );
+  void parse( String const &maskStr );
   bool empty( void ) const;
 
-  bool operator()( DateTime const &When ) const;
   operator Finagle::String( void ) const;
+  bool operator()( DateTime const &time ) const;
 
-  bool yearValid( void ) const    {  return Year != 0;  }
-  bool monthValid( void ) const   {  return Mon  != 0;  }
-  bool dayValid( void ) const     {  return Day  != 0;  }
-  bool weekDayValid( void ) const {  return WDay != 0;  }
-  bool hourValid( void ) const    {  return Hour != 0;  }
-  bool minuteValid( void ) const  {  return Min  != 0;  }
+  bool yearValid( void ) const    {  return _year  != 0;  }
+  bool monthValid( void ) const   {  return _month != 0;  }
+  bool dayValid( void ) const     {  return _day   != 0;  }
+  bool weekDayValid( void ) const {  return _wday  != 0;  }
+  bool hourValid( void ) const    {  return _hour  != 0;  }
+  bool minuteValid( void ) const  {  return _min   != 0;  }
 
-  unsigned year( void ) const    {  return Year + 2000;  }
-  unsigned month( void ) const   {  return Mon;          }
-  unsigned day( void ) const     {  return Day;          }
-  unsigned weekDay( void ) const {  return WDay - 1;     }
-  unsigned hour( void ) const    {  return Hour - 1;     }
-  unsigned minute( void ) const  {  return Min - 1;      }
+  unsigned year( void ) const    {  return _year + 2000;  }
+  unsigned month( void ) const   {  return _month;        }
+  unsigned day( void ) const     {  return _day;          }
+  unsigned weekDay( void ) const {  return _wday - 1;     }
+  unsigned hour( void ) const    {  return _hour - 1;     }
+  unsigned minute( void ) const  {  return _min - 1;      }
 
-  DateTime prev( DateTime When ) const;
-  DateTime next( DateTime When ) const;
+  DateTime prev( DateTime time ) const;
+  DateTime next( DateTime time ) const;
 
 protected:
-  unsigned char Year;
-  unsigned char Mon;
-  unsigned char Day;
-  unsigned char WDay;
-  unsigned char Hour;
-  unsigned char Min;
+  unsigned char _year;
+  unsigned char _month;
+  unsigned char _day;
+  unsigned char _wday;
+  unsigned char _hour;
+  unsigned char _min;
 };
 
-// INLINE IMPLEMENTATION ******************************************************
+// INLINE IMPLEMENTATION **********************************************************************************************************
 
-inline DateTimeMask::BadDateEx::BadDateEx( String const &Str )
-: Exception( "Bad date specification: " + Str )
+inline DateTimeMask::BadDateEx::BadDateEx( String const &str )
+: Exception( "Bad date specification: " + str )
 {}
 
 inline DateTimeMask::DateTimeMask( void )
-: Year( 0 ), Mon( 0 ), Day( 0 ), WDay( 0 ), Hour( 0 ), Min( 0 )
-{
-}
+: _year(0), _month(0), _day(0), _wday(0), _hour(0), _min(0)
+{}
 
-inline DateTimeMask::DateTimeMask( String const &MaskStr )
-: Year( 0 ), Mon( 0 ), Day( 0 ), WDay( 0 ), Hour( 0 ), Min( 0 )
+inline DateTimeMask::DateTimeMask( DateTime const &time )
+: _year( time.year() - 2000 ), _month( time.month() ), _day( time.day() ), _wday( 0 ), _hour( time.hour() + 1 ),
+  _min( time.minute() + 1 )
+{}
+
+inline DateTimeMask::DateTimeMask( String const &maskStr )
+: _year(0), _month(0), _day(0), _wday(0), _hour(0), _min(0)
 {
-  parse( MaskStr );
+  parse( maskStr );
 }
 
 inline bool DateTimeMask::empty( void ) const
 {
-  return( !yearValid() && !monthValid() && !dayValid() && !weekDayValid() &&
-          !hourValid() && !minuteValid() );
+  return !yearValid() && !monthValid() && !dayValid() && !weekDayValid() && !hourValid() && !minuteValid();
 }
 
 }

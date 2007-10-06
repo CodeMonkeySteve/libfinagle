@@ -31,23 +31,21 @@
 
 namespace Finagle {
 
-/*! \class Exception
+/*! \class Finagle::Exception
 ** \brief An extension of the standard exception class (\c std::exception).
 **
-** Adds a virtual function for providing the error string, as well as
-** caching for (static) error strings.
+** Adds a virtual function for providing the error string, as well as caching for (static) error strings.
 */
 class Exception : public std::exception, public LogEntry {
 public:
   Exception( void );
-  Exception( String const &Str );
-  Exception( XML::Element const &El );
+  Exception( String const &str );
  ~Exception( void ) throw() {}
 
   const char *what( void ) const throw();
 };
 
-/*! \class SystemEx
+/*! \class Finagle::SystemEx
 ** \brief An exception representing a standard system error.
 */
 class SystemEx : public Exception {
@@ -56,7 +54,7 @@ public:
   static String sysErrStr( int ErrNum = sysErrCode() );
 
 public:
-  SystemEx( String const &Str = String(), int ErrCode = sysErrCode() );
+  SystemEx( String const &str = String(), int ErrCode = sysErrCode() );
 };
 
 // INLINE IMPLEMENTATION ******************************************************
@@ -75,15 +73,6 @@ inline Exception::Exception( String const &str )
   attribs()["time"] = String( (unsigned) DateTime::now().calTime() );
   append( str );
 }
-
-//! Sets the error to element \a el.
-/*
-inline Exception::Exception( XML::Element const &el )
-: XML::Element( el )
-{
-  attribs()["time"] = String( (unsigned) DateTime::now().calTime() );
-}
-*/
 
 //! Returns the element text as a C-style string.
 inline const char *Exception::what( void ) const throw()

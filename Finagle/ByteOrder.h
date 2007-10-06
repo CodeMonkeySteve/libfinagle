@@ -38,7 +38,7 @@ namespace Finagle {
 #endif
 
 //! Provides architecture-dependant byte ordering at compile-time
-namespace ByteOrder {
+struct ByteOrder {
   typedef unsigned short      Word;
   typedef unsigned long      DWord;
   typedef unsigned long long QWord;

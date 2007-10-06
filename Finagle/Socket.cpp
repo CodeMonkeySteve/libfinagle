@@ -35,10 +35,17 @@ using namespace std;
 using namespace Finagle;
 
 /*! \class Finagle::Socket
-** Base class for network socket.
+** \brief Base class for a network socket
 */
 
-/*! Address constructor
+/*! \class Finagle::Socket::Addr
+** \brief Abstract address class
+**
+** \sa UnixSocket::Addr and INetSocket::Addr.
+*/
+
+
+/*! \brief Creates a socket from an existing file descriptor
 ** If \a sockDesc is non-0, binds to an existing socket.
 */
 Socket::Socket( int sockDesc, Socket const * )
@@ -51,7 +58,6 @@ Socket::Socket( int sockDesc, Socket const * )
   }
 }
 
-
 Socket::~Socket( void )
 {
   disconnect();
@@ -62,7 +68,10 @@ Socket::~Socket( void )
   setp( 0, 0 );
 }
 
-
+/*! \brief Creates a socket from an address specification
+** If \a spec names an existing file, a UnixSocket is created.  Otherwise, \a spec is assumed to be an Internet
+** Address (i.e. host:port), and an INetSocket is created.
+*/
 Socket::Ref Socket::fromSpec( String const &spec )
 {
   File sockAddr( spec );
@@ -72,7 +81,7 @@ Socket::Ref Socket::fromSpec( String const &spec )
   return new InetSocket( InetSocket::Addr( spec ) );
 }
 
-
+//! Returns the socket's file descriptor.
 int Socket::fd( void )
 {
   // if we haven't already, create the client socket here
@@ -89,9 +98,7 @@ int Socket::fd( void )
 }
 
 
-/*!
-** Attempts to connect to the remote host.
-**
+/*! \brief Attempts to connect to the remote host.
 ** Returns \c true if the connection was successful, \c false otherwise.
 */
 bool Socket::connect( void )
@@ -236,7 +243,6 @@ Socket::int_type Socket::sync( void )
   return 0;
 }
 
-
 Socket::int_type Socket::overflow( int_type Ch )
 {
   if ( !isConnected() )
@@ -256,7 +262,6 @@ Socket::int_type Socket::overflow( int_type Ch )
   pbump( 1 );
   return 0;
 }
-
 
 Socket::int_type Socket::underflow( void )
 {
@@ -288,7 +293,7 @@ Socket::int_type Socket::underflow( void )
 }
 
 
-Socket::IOEx::IOEx( ios::openmode mode )
+Socket::IOEx::IOEx( std::ios::openmode mode )
 {
   stringstream err;
 

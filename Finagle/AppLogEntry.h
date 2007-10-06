@@ -17,6 +17,11 @@
 
 namespace Finagle {
 
+/*! \brief Generic (XML) application log entry
+**
+** All log entries have an XML tag and level (e.g. "error", "warning", etc.)
+** \sa AppLog.
+*/
 class LogEntry : public XML::Element {
 public:
   LogEntry( String const &tag, String const &level = String() );
@@ -26,6 +31,7 @@ public:
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
+//! Creates a log entry with the given \a tag and \a level.
 inline LogEntry::LogEntry( String const &tag, String const &level )
 : XML::Element( tag )
 {
@@ -33,6 +39,8 @@ inline LogEntry::LogEntry( String const &tag, String const &level )
   attrib("time") = String( (unsigned) DateTime::now().calTime() );
 }
 
+//! Creates a log entry with the given \a tag and \a level, as well as the source \a file, \a line, and function (\a func)
+//! that created it.
 inline LogEntry::LogEntry( String const &tag, String const &level, const char *file, unsigned line, String const &func )
 : XML::Element( tag )
 {
@@ -43,6 +51,8 @@ inline LogEntry::LogEntry( String const &tag, String const &level, const char *f
   attrib("func") = func;
 }
 
+//! Creates a log entry with the given \a tag and \a level, as well as a unique identifier and the source \a file, \a line, and
+//! function (\a func) that created it.
 inline LogEntry::LogEntry( String const &tag, String const &level, String const &id, const char *file, unsigned line, String const &func )
 : XML::Element( tag )
 {

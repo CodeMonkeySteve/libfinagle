@@ -298,12 +298,14 @@ inline long DateTime::operator -( const DateTime &that ) const
   return (long) _time - (long) that._time;
 }
 
+//! Reads the date/time, as a \c time_t value, from the \a in stream.
 inline std::istream &operator >>( std::istream &in, DateTime &date )
 {
   date._haveLocal = false;
   return in >> date._time;
 }
 
+//! Writes the date/time, as a \c time_t value, to the \a out stream.
 inline std::ostream &operator <<( std::ostream &out, DateTime const &Date )
 {
   return out << Date._time;
@@ -321,11 +323,12 @@ inline Time::Time( unsigned hour, unsigned min, double sec )
 : _secs( (hour * 3600) + (min * 60) + sec )
 {}
 
-//! Initializes the time value with the time-of-day from \a Time.
+//! Initializes the time value with the time-of-day from \a time.
 inline Time::Time( DateTime const &time )
 : _secs( (time.hour() * 3600) + (time.minute() * 60) + time.second() )
 {}
 
+//! Initializes the time value with the timeval \a tv.
 inline Time::Time( timeval const &tv )
 : _secs( (double) tv.tv_sec + ((double) tv.tv_usec / 1000000.0) )
 {}

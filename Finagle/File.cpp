@@ -18,6 +18,7 @@
 ** License along with this library; if not, you may access it via the web
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
+#include <sstream>
 #include "File.h"
 #include "MD5.h"
 #include "MemTrace.h"
@@ -26,7 +27,7 @@ using namespace std;
 using namespace Finagle;
 
 /*! \class Finagle::File
-** \brief Provides access to filesystem information of a file.
+** \brief Provides access to the filesystem information for file.
 **
 ** This class inherits #FilePath to store the path, and adds functions for
 ** reading and modifying filesystem meta-data.
@@ -66,7 +67,7 @@ bool File::operator ==( File const &that ) const
 
 
 /*!
-** Erases the file, if it exists.
+** \brief Erases the file, if it exists.
 ** \param force If true, and if necessary, change the file permissions to make it deletable.
 ** \return \c true, if successful.
 */
@@ -86,18 +87,16 @@ bool File::erase( bool force )
 
 /*!
 ** \brief Copies the file to \a dest.
-**
-** If \a MD is non-\c NULL , calculates an MD5 digest on the file contents as
-** it copies.
+** If \a digest is non-\c NULL , calculates an MD5 digest on the file contents as it copies.
 **/
-bool File::copy( File &dest, MD5 *MD ) const
+bool File::copy( File &dest, MD5 *digest ) const
 {
   if ( !isRegularFile() )
     return false;
 
   if ( dest.isDir() ) {
     File f( dest, name() );
-    return copy( f, MD );
+    return copy( f, digest );
   }
 
   ifstream srcStream( path() );
@@ -115,8 +114,8 @@ bool File::copy( File &dest, MD5 *MD ) const
     srcStream.read( buff, sizeof(buff) );
     destStream.write( buff, srcStream.gcount() );
 
-    if ( MD )
-      MD->fromMem( buff, srcStream.gcount() );
+    if ( digest )
+      digest->fromMem( buff, srcStream.gcount() );
 
     if ( srcStream.bad() || destStream.bad() ) {
       destStream.close();
@@ -136,7 +135,7 @@ bool File::sync( File &dest ) const
   if ( !dest.exists() || (dest.size() != size()) || (dest.modifyTime() < modifyTime()) )
     return copy( dest );
 
-  // FIX ME: compare file contents
+// FIX ME: compare file contents
 
   return true;
 }
@@ -168,8 +167,6 @@ String Finagle::sizeStr( unsigned long long Bytes )
 }
 
 
-#include <sstream>
-
 File::Ex::Ex( FilePath const &path, std::ios::openmode mode )
 {
   String modeStr;
@@ -182,8 +179,7 @@ File::Ex::Ex( FilePath const &path, std::ios::openmode mode )
   attribs()["mode"] = modeStr;
 }
 
-
-File::OpenEx::OpenEx( FilePath const &path, ios::openmode mode )
+File::OpenEx::OpenEx( FilePath const &path, std::ios::openmode mode )
 : Ex( path, mode )
 {
   stringstream err;
@@ -202,8 +198,7 @@ File::OpenEx::OpenEx( FilePath const &path, ios::openmode mode )
   append( err.str() );
 }
 
-
-File::IOEx::IOEx( FilePath const &path, ios::openmode mode )
+File::IOEx::IOEx( FilePath const &path, std::ios::openmode mode )
 : Ex( path, mode )
 {
   stringstream err;

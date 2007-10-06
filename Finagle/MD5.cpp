@@ -1,6 +1,8 @@
 /*!
 ** \file MD5.cpp
 ** \date Tue Apr 20 2004
+*/
+/*
 ** Copyright (C) 1999, 2002 Aladdin Enterprises.  All rights reserved.
 **
 ** Permission is granted to anyone to use this software for any purpose,
@@ -31,6 +33,7 @@
 ** <ghost@aladdin.com>.  Other authors are noted in the change history
 ** that follows (in reverse chronological order):
 **
+**  2004-04-20 sts Imported into libFinagle and C++-ified
 **  2002-04-13 lpd Clarified derivation from RFC 1321; now handles byte order
 **                 either statically or dynamically; added missing
 **                 #include <string.h> in library.
@@ -53,7 +56,7 @@ using namespace std;
 using namespace Finagle;
 
 /*! \class Finagle::MD5
-** \brief Computes the MD5 message digest.
+** \brief Computes the %MD5 message digest.
 */
 
 /*
@@ -148,32 +151,6 @@ using namespace Finagle;
 ** \sa ByteArray.
 */
 
-/*! \fn MD5::MD5( void )
-** \brief Constructs an empty message digest.
-*/
-
-/*! \fn MD5::MD5( Digest const &MD )
-** \brief Copies the message digest.
-*/
-
-/*! \fn MD5::MD5( void const *Bytes, unsigned NumBytes )
-** \brief Generates a digest from \a NumBytes data bytes read from \a Bytes.
-*/
-
-/*! \fn MD5::MD5( FilePath const &File )
-** \brief Generates a digest from the contents of \a File.
-*/
-
-/*! \fn bool MD5::isValid( void ) const
-** \brief Returns \c true if a valid message digest exists.
-** \sa MD5::operator().
-*/
-
-/*! \fn MD5::Digest const &MD5::operator()( void )
-** \brief Returns the message digest.
-*/
-
-
 /*! \brief Resets the message digest.
 **
 ** This function must be called before the class can reused to compute another
@@ -181,46 +158,46 @@ using namespace Finagle;
 */
 void MD5::reset( void )
 {
-  Count[0] = Count[1] = 0;
-  Buff[0] = 0x67452301;
-  Buff[1] = T_MASK ^ 0x10325476;  // 0xefcdab89
-  Buff[2] = T_MASK ^ 0x67452301;  // 0x98badcfe
-  Buff[3] = 0x10325476;
-  HaveMD = false;
+  _count[0] = _count[1] = 0;
+  _buff[0] = 0x67452301;
+  _buff[1] = T_MASK ^ 0x10325476;  // 0xefcdab89
+  _buff[2] = T_MASK ^ 0x67452301;  // 0x98badcfe
+  _buff[3] = 0x10325476;
+  _valid = false;
 }
 
 
-//! Generates a digest from \a NumBytes data bytes read from \a Bytes.
-void MD5::fromMem( void const *Bytes, unsigned NumBytes )
+//! Generates a digest from \a numBytes data bytes read from \a bytes.
+void MD5::fromMem( void const *bytes, unsigned numBytes )
 {
-  if ( HaveMD )
+  if ( _valid )
     return;
 
-  Byte const *p = (Byte const *) Bytes;
-  unsigned Left = NumBytes;
-  int Offset = (Count[0] >> 3) & 63;
-  Word NumBits = (Word)(NumBytes << 3);
+  Byte const *p = (Byte const *) bytes;
+  unsigned Left = numBytes;
+  int Offset = (_count[0] >> 3) & 63;
+  Word NumBits = (Word)(numBytes << 3);
 
-  if ( NumBytes == 0 )
+  if ( numBytes == 0 )
     return;
 
   // Update the message length.
-  Count[1] += NumBytes >> 29;
-  Count[0] += NumBits;
-  if ( Count[0] < NumBits )
-    Count[1]++;
+  _count[1] += numBytes >> 29;
+  _count[0] += NumBits;
+  if ( _count[0] < NumBits )
+    _count[1]++;
 
   // Process an initial partial block.
   if ( Offset ) {
-    unsigned Copy = (Offset + NumBytes > 64) ? (64 - Offset) : NumBytes;
+    unsigned Copy = (Offset + numBytes > 64) ? (64 - Offset) : numBytes;
 
-    memcpy( Accum + Offset, p, Copy );
+    memcpy( _accum + Offset, p, Copy );
     if ( Offset + Copy < 64 )
       return;
 
     p += Copy;
     Left -= Copy;
-    processBlock( Accum );
+    processBlock( _accum );
   }
 
   // Process full blocks.
@@ -229,14 +206,14 @@ void MD5::fromMem( void const *Bytes, unsigned NumBytes )
 
   // Process a final partial block.
   if ( Left )
-    memcpy( Accum, p, Left );
+    memcpy( _accum, p, Left );
 }
 
 
 //! Generates a digest from the contents of \a File.
 bool MD5::fromFile( FilePath const &File )
 {
-  if ( HaveMD )
+  if ( _valid )
     return false;
 
   ifstream f( File );
@@ -250,32 +227,32 @@ bool MD5::fromFile( FilePath const &File )
 //! Generates a digest from the contents of \a stream.
 bool MD5::fromStream( std::istream &in )
 {
-  if ( HaveMD )
+  if ( _valid )
     return false;
 
-  Byte Buff[1024];
+  Byte _buff[1024];
 
   while ( in ) {
-    in.read( (char *) Buff, sizeof( Buff ) );
-    fromMem( Buff, in.gcount() );
+    in.read( (char *) _buff, sizeof( _buff ) );
+    fromMem( _buff, in.gcount() );
   }
 
   return in.good();
 }
 
 
-//! Generates a digest from the next \a NumBytes read from \a stream.
-bool MD5::fromStream( std::istream &in, unsigned NumBytes )
+//! Generates a digest from the next \a numBytes read from \a stream.
+bool MD5::fromStream( std::istream &in, unsigned numBytes )
 {
-  if ( HaveMD )
+  if ( _valid )
     return false;
 
-  Byte Buff[1024];
+  Byte _buff[1024];
 
-  while ( in && NumBytes ) {
-    in.read( (char *) Buff, min<unsigned>( sizeof( Buff ), NumBytes ) );
-    fromMem( Buff, in.gcount() );
-    NumBytes -= in.gcount();
+  while ( in && numBytes ) {
+    in.read( (char *) _buff, min<unsigned>( sizeof( _buff ), numBytes ) );
+    fromMem( _buff, in.gcount() );
+    numBytes -= in.gcount();
   }
 
   return !in.bad();
@@ -284,7 +261,7 @@ bool MD5::fromStream( std::istream &in, unsigned NumBytes )
 
 void MD5::processBlock( Byte const *Data )
 {
-  Word a = Buff[0], b = Buff[1], c = Buff[2], d = Buff[3];
+  Word a = _buff[0], b = _buff[1], c = _buff[2], d = _buff[3];
   Word t;
 
 #if BYTE_ORDER > 0
@@ -342,7 +319,7 @@ void MD5::processBlock( Byte const *Data )
   #define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32 - (n))))
 
   // Round 1.
-  // Let [Buff k s i] denote the operation:
+  // Let [_buff k s i] denote the operation:
   //   a = b + ((a + F(b,c,d) + X[k] + T[i]) <<< s).
 
   #define F(x, y, z) (((x) & (y)) | (~(x) & (z)))
@@ -370,7 +347,7 @@ void MD5::processBlock( Byte const *Data )
   #undef SET
 
   // Round 2.
-  // Let [Buff k s i] denote the operation:
+  // Let [_buff k s i] denote the operation:
   //   a = b + ((a + G(b,c,d) + X[k] + T[i]) <<< s).
   #define G(x, y, z) (((x) & (z)) | ((y) & ~(z)))
   #define SET(a, b, c, d, k, s, Ti)\
@@ -397,7 +374,7 @@ void MD5::processBlock( Byte const *Data )
   #undef SET
 
   // Round 3.
-  // Let [Buff k s t] denote the operation:
+  // Let [_buff k s t] denote the operation:
   //    a = b + ((a + H(b,c,d) + X[k] + T[i]) <<< s).
   #define H(x, y, z) ((x) ^ (y) ^ (z))
   #define SET(a, b, c, d, k, s, Ti)\
@@ -424,7 +401,7 @@ void MD5::processBlock( Byte const *Data )
   #undef SET
 
   // Round 4.
-  // Let [Buff k s t] denote the operation
+  // Let [_buff k s t] denote the operation
   //   a = b + ((a + I(b,c,d) + X[k] + T[i]) <<< s).
   #define I(x, y, z) ((y) ^ ((x) | ~(z)))
   #define SET(a, b, c, d, k, s, Ti)\
@@ -452,16 +429,16 @@ void MD5::processBlock( Byte const *Data )
 
   // Then perform the following additions. (that is increment each of the four
   // registers by the value it had before this block was started.)
-  Buff[0] += a;
-  Buff[1] += b;
-  Buff[2] += c;
-  Buff[3] += d;
+  _buff[0] += a;
+  _buff[1] += b;
+  _buff[2] += c;
+  _buff[3] += d;
 }
 
 
 void MD5::finish( void )
 {
-  if ( HaveMD )
+  if ( _valid )
     return;
 
   static const Byte Pad[64] = {
@@ -474,17 +451,17 @@ void MD5::finish( void )
 
   // Save the length before padding.
   for ( unsigned i = 0; i < 8; ++i )
-    Data[i] = (Byte)(Count[i >> 2] >> ((i & 3) << 3));
+    Data[i] = (Byte)(_count[i >> 2] >> ((i & 3) << 3));
 
   // Pad to 56 bytes mod 64.
-  fromMem( Pad, ((55 - (Count[0] >> 3)) & 63) + 1 );
+  fromMem( Pad, ((55 - (_count[0] >> 3)) & 63) + 1 );
 
   // Append the length.
   fromMem( Data, 8 );
 
-  Digest::Byte *b = MD;
+  Digest::Byte *b = _digest;
   for ( unsigned i = 0; i < 16; ++i, ++b )
-    *b = (Byte) (Buff[i >> 2] >> ((i & 3) << 3));
+    *b = (Byte) (_buff[i >> 2] >> ((i & 3) << 3));
 
-  HaveMD = true;
+  _valid = true;
 }

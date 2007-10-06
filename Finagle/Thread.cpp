@@ -32,7 +32,7 @@ public:
     PTHREAD_ASSERT( pthread_key_create( &threadClass, 0 ) );
   }
 
- ~ThreadData( void ) {
+  ~ThreadData( void ) {
     PTHREAD_ASSERT( pthread_key_delete( threadClass ) );
   }
 
@@ -51,8 +51,8 @@ public:
 pthread_key_t ThreadData::threadClass;
 
 
-/*! \class Thread
-**
+/*! \class Finagle::Thread
+** \brief Multi-thread object (via \c pthreads)
 */
 
 void *Thread::run( void *This )
@@ -78,7 +78,10 @@ void *Thread::run( void *This )
   return (void *) t->_exitVal;
 }
 
-
+/*! \brief Begins thread execution
+**
+** Does nothing if the thread is already running.
+*/
 void Thread::start( void )
 {
   if ( running() )  return;
@@ -91,7 +94,7 @@ void Thread::start( void )
   PTHREAD_ASSERT( pthread_attr_destroy( &attr ) );
 }
 
-
+//! waits for the thread to complete, and returns Thread::exitVal.
 int Thread::join( void )
 {
   if ( !_id )
@@ -110,7 +113,10 @@ int Thread::join( void )
   return (int) res;
 }
 
-
+/*! \brief Stops the thread
+**
+** Sets #running to \c false and waits for the thread to exit.
+*/
 void Thread::stop( void )
 {
   if ( !running() )
@@ -123,7 +129,7 @@ void Thread::stop( void )
 }
 
 
-//! Returns the Thread class for the currently-running thread.
+//! Returns a pointer to the currently running Thread class.
 Thread *Thread::self( void )
 {
   return __threadData.getSelf();

@@ -31,9 +31,13 @@ static struct SSLInit {
   }
 } _SSLInit;
 
+/*! \namespace Finagle::SSL
+** \brief Provides Secure %Socket Layer functionality, via \c openssl.
+** \note Currently incomplete!
+*/
+
 /*!
-** \class Context
-** SSL context
+** \class Finagle::SSL::Context
 */
 
 Context::Context( FilePath const &keyFile )

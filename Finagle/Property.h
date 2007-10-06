@@ -34,7 +34,7 @@ public:
   virtual ~Attribute( void ) {}
 
   virtual Type const &operator()( void ) const = 0;
-  virtual void operator()( Type const &Val ) = 0;
+  virtual void operator()( Type const &val ) = 0;
 
 public:
   operator Type const &( void ) const;
@@ -42,14 +42,14 @@ public:
 
   Type *operator ->( void ) {  return &(*this)();  }
 
-  Attribute<Type> &operator  =( Type const &Val );
-  Attribute<Type> &operator +=( Type const &Val );
-  Attribute<Type> &operator -=( Type const &Val );
-  Attribute<Type> &operator *=( Type const &Val );
-  Attribute<Type> &operator /=( Type const &Val );
+  Attribute<Type> &operator  =( Type const &val );
+  Attribute<Type> &operator +=( Type const &val );
+  Attribute<Type> &operator -=( Type const &val );
+  Attribute<Type> &operator *=( Type const &val );
+  Attribute<Type> &operator /=( Type const &val );
 
   template <typename Type>
-  friend std::ostream &operator <<( std::ostream &out, Attribute<Type> &Val );
+  friend std::ostream &operator <<( std::ostream &out, Attribute<Type> &val );
 };
 
 
@@ -59,20 +59,20 @@ public:
   typedef ValType Type;
 
   Property( void ) {}
-  Property( Type const &Val ) : Val( Val ) {}
+  Property( Type const &val ) : val( val ) {}
 
   Type const &operator()( void ) const;
   Type &operator()( void );
-  void operator()( Type const &Val );
+  void operator()( Type const &val );
 
-  Property<Type> &operator  =( Type const &Val );
-  Property<Type> &operator +=( Type const &Val );
-  Property<Type> &operator -=( Type const &Val );
-  Property<Type> &operator *=( Type const &Val );
-  Property<Type> &operator /=( Type const &Val );
+  Property<Type> &operator  =( Type const &val );
+  Property<Type> &operator +=( Type const &val );
+  Property<Type> &operator -=( Type const &val );
+  Property<Type> &operator *=( Type const &val );
+  Property<Type> &operator /=( Type const &val );
 
 protected:
-  Type Val;
+  Type _val;
 };
 
 /*
@@ -82,16 +82,16 @@ public:
   typedef ValType Type;
 
   ClassProperty( Class *Parent ) : Parent( *Parent ) {}
-  ClassProperty( Class *Parent, Type const &Val ) : Property<Type>( Val ), Parent( *Parent ) {}
+  ClassProperty( Class *Parent, Type const &val ) : Property<Type>( val ), Parent( *Parent ) {}
 
   Type const &operator()( void ) const;
-  void operator()( Type const &Val );
+  void operator()( Type const &val );
 
-  ClassProperty<ValType,Class,SetFunc> &operator  =( Type const &Val );
-  ClassProperty<ValType,Class,SetFunc> &operator +=( Type const &Val );
-  ClassProperty<ValType,Class,SetFunc> &operator -=( Type const &Val );
-  ClassProperty<ValType,Class,SetFunc> &operator *=( Type const &Val );
-  ClassProperty<ValType,Class,SetFunc> &operator /=( Type const &Val );
+  ClassProperty<ValType,Class,SetFunc> &operator  =( Type const &val );
+  ClassProperty<ValType,Class,SetFunc> &operator +=( Type const &val );
+  ClassProperty<ValType,Class,SetFunc> &operator -=( Type const &val );
+  ClassProperty<ValType,Class,SetFunc> &operator *=( Type const &val );
+  ClassProperty<ValType,Class,SetFunc> &operator /=( Type const &val );
 
 protected:
   Class &Parent;
@@ -103,16 +103,16 @@ public:
   typedef ValType Type;
 
   StoredProperty( Class *Parent ) : Parent( *Parent ) {}
-  StoredProperty( Class *Parent, Type const &Val ) : Property<Type>( Val ), Parent( *Parent ) {}
+  StoredProperty( Class *Parent, Type const &val ) : Property<Type>( val ), Parent( *Parent ) {}
 
   Type const &operator()( void ) const;
-  void operator()( Type const &Val );
+  void operator()( Type const &val );
 
-  StoredProperty<ValType,Class,StoreFunc> &operator  =( Type const &Val );
-  StoredProperty<ValType,Class,StoreFunc> &operator +=( Type const &Val );
-  StoredProperty<ValType,Class,StoreFunc> &operator -=( Type const &Val );
-  StoredProperty<ValType,Class,StoreFunc> &operator *=( Type const &Val );
-  StoredProperty<ValType,Class,StoreFunc> &operator /=( Type const &Val );
+  StoredProperty<ValType,Class,StoreFunc> &operator  =( Type const &val );
+  StoredProperty<ValType,Class,StoreFunc> &operator +=( Type const &val );
+  StoredProperty<ValType,Class,StoreFunc> &operator -=( Type const &val );
+  StoredProperty<ValType,Class,StoreFunc> &operator *=( Type const &val );
+  StoredProperty<ValType,Class,StoreFunc> &operator /=( Type const &val );
 
 protected:
   Class &Parent;
@@ -135,40 +135,40 @@ inline ValType const *Attribute<ValType>::operator ->( void ) const
 
 
 template <typename ValType>
-inline Attribute<ValType> &Attribute<ValType>::operator =( ValType const &Val )
+inline Attribute<ValType> &Attribute<ValType>::operator =( ValType const &val )
 {
-  (*this)( Val );
+  (*this)( val );
   return *this;
 }
 
 template <typename ValType>
-inline Attribute<ValType> &Attribute<ValType>::operator +=( ValType const &Val )
+inline Attribute<ValType> &Attribute<ValType>::operator +=( ValType const &val )
 {
-  return *this = *this + Val;
+  return *this = *this + val;
 }
 
 template <typename ValType>
-inline Attribute<ValType> &Attribute<ValType>::operator -=( ValType const &Val )
+inline Attribute<ValType> &Attribute<ValType>::operator -=( ValType const &val )
 {
-  return *this = *this - Val;
+  return *this = *this - val;
 }
 
 template <typename ValType>
-inline Attribute<ValType> &Attribute<ValType>::operator *=( ValType const &Val )
+inline Attribute<ValType> &Attribute<ValType>::operator *=( ValType const &val )
 {
-  return *this = *this * Val;
+  return *this = *this * val;
 }
 
 template <typename ValType>
-inline Attribute<ValType> &Attribute<ValType>::operator /=( ValType const &Val )
+inline Attribute<ValType> &Attribute<ValType>::operator /=( ValType const &val )
 {
-  return *this = *this / Val;
+  return *this = *this / val;
 }
 
 template <typename Type>
-inline std::ostream &operator <<( std::ostream &out, Attribute<Type> &Val )
+inline std::ostream &operator <<( std::ostream &out, Attribute<Type> &val )
 {
-  Stream << (const Type &) Val;
+  Stream << (const Type &) val;
   return Stream;
 }
 
@@ -176,53 +176,53 @@ inline std::ostream &operator <<( std::ostream &out, Attribute<Type> &Val )
 template <typename ValType>
 inline ValType const &Property<ValType>::operator()( void ) const
 {
-  return Val;
+  return val;
 }
 
 template <typename ValType>
 inline ValType &Property<ValType>::operator()( void )
 {
-  return Val;
+  return val;
 }
 
 template <typename ValType>
-inline void Property<ValType>::operator()( ValType const &Val )
+inline void Property<ValType>::operator()( ValType const &val )
 {
-  Property::Val = Val;
+  _val = val;
 }
 
 template <typename ValType>
-inline Property<ValType> &Property<ValType>::operator =( ValType const &Val )
+inline Property<ValType> &Property<ValType>::operator =( ValType const &val )
 {
-  Property::Val = Val;
+  _val = val;
   return *this;
 }
 
 template <typename ValType>
-inline Property<ValType> &Property<ValType>::operator +=( ValType const &Val )
+inline Property<ValType> &Property<ValType>::operator +=( ValType const &val )
 {
-  Property::Val += Val;
+  _val += val;
   return *this;
 }
 
 template <typename ValType>
-inline Property<ValType> &Property<ValType>::operator -=( ValType const &Val )
+inline Property<ValType> &Property<ValType>::operator -=( ValType const &val )
 {
-  Property::Val -= Val;
+  _val -= val;
   return *this;
 }
 
 template <typename ValType>
-inline Property<ValType> &Property<ValType>::operator *=( ValType const &Val )
+inline Property<ValType> &Property<ValType>::operator *=( ValType const &val )
 {
-  Property::Val *= Val;
+  _val *= val;
   return *this;
 }
 
 template <typename ValType>
-inline Property<ValType> &Property<ValType>::operator /=( ValType const &Val )
+inline Property<ValType> &Property<ValType>::operator /=( ValType const &val )
 {
-  Property::Val /= Val;
+  _val /= val;
   return *this;
 }
 
@@ -230,41 +230,41 @@ inline Property<ValType> &Property<ValType>::operator /=( ValType const &Val )
 template <typename ValType, class Class, void (Class::*SetFunc)( ValType & )>
 inline ValType const &ClassProperty<ValType,Class,SetFunc>::operator()( void ) const
 {
-  return Val;
+  return val;
 }
 
 template <class ValType, class Class, void (Class::*SetFunc)( ValType & )>
-inline void ClassProperty<ValType,Class,SetFunc>::operator()( ValType const &Val )
+inline void ClassProperty<ValType,Class,SetFunc>::operator()( ValType const &val )
 {
-  (Parent.*SetFunc)( ClassProperty::Val = Val );
+  (Parent.*SetFunc)( ClassProperty::val = val );
 }
 
 
 template <class ValType, class Class, void (Class::*SetFunc)( ValType & )>
-inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator =( Type const &Val )
+inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator =( Type const &val )
 {
-  (Parent.*SetFunc)( ClassProperty::Val = Val );
+  (Parent.*SetFunc)( ClassProperty::val = val );
   return *this;
 }
 
 template <class ValType, class Class, void (Class::*SetFunc)( ValType & )>
-inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator +=( Type const &Val )
+inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator +=( Type const &val )
 {
-  (Parent.*SetFunc)( ClassProperty::Val += Val );
+  (Parent.*SetFunc)( ClassProperty::val += val );
   return *this;
 }
 
 template <class ValType, class Class, void (Class::*SetFunc)( ValType & )>
-inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator -=( Type const &Val )
+inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator -=( Type const &val )
 {
-  (Parent.*SetFunc)( ClassProperty::Val -= Val );
+  (Parent.*SetFunc)( ClassProperty::val -= val );
   return *this;
 }
 
 template <class ValType, class Class, void (Class::*SetFunc)( ValType & )>
-inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator /=( Type const &Val )
+inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc>::operator /=( Type const &val )
 {
-  (Parent.*SetFunc)( ClassProperty::Val /= Val );
+  (Parent.*SetFunc)( ClassProperty::val /= val );
   return *this;
 }
 */
@@ -272,45 +272,45 @@ inline ClassProperty<ValType,Class,SetFunc> &ClassProperty<ValType,Class,SetFunc
 template <class ValType, class Class, void (Class::*StoreFunc)( void )>
 inline ValType const &StoredProperty<ValType,Class,StoreFunc>::operator()( void ) const
 {
-  return Val;
+  return val;
 }
 
 template <class ValType, class Class, void (Class::*StoreFunc)( void )>
-inline void StoredProperty<ValType,Class,StoreFunc>::operator()( ValType const &Val )
+inline void StoredProperty<ValType,Class,StoreFunc>::operator()( ValType const &val )
 {
-  StoredProperty::Val = Val;
+  StoredProperty::val = val;
   (Parent.*StoreFunc)();
 }
 
 
 template <class ValType, class Class, void (Class::*StoreFunc)( void )>
-inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator =( Type const &Val )
+inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator =( Type const &val )
 {
-  StoredProperty::Val = Val;
-  (Parent.*StoreFunc)();
-  return *this;
-}
-
-template <class ValType, class Class, void (Class::*StoreFunc)( void )>
-inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator +=( Type const &Val )
-{
-  StoredProperty::Val += Val;
+  StoredProperty::val = val;
   (Parent.*StoreFunc)();
   return *this;
 }
 
 template <class ValType, class Class, void (Class::*StoreFunc)( void )>
-inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator -=( Type const &Val )
+inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator +=( Type const &val )
 {
-  StoredProperty::Val -= Val;
+  StoredProperty::val += val;
   (Parent.*StoreFunc)();
   return *this;
 }
 
 template <class ValType, class Class, void (Class::*StoreFunc)( void )>
-inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator /=( Type const &Val )
+inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator -=( Type const &val )
 {
-  StoredProperty::Val /= Val;
+  StoredProperty::val -= val;
+  (Parent.*StoreFunc)();
+  return *this;
+}
+
+template <class ValType, class Class, void (Class::*StoreFunc)( void )>
+inline StoredProperty<ValType,Class,StoreFunc> &StoredProperty<ValType,Class,StoreFunc>::operator /=( Type const &val )
+{
+  StoredProperty::val /= val;
   (Parent.*StoreFunc)();
   return *this;
 }

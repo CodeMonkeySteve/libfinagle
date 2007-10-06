@@ -25,12 +25,12 @@ using namespace Finagle;
 
 /*! \class Finagle::WaitCondition
 ** \brief Provides a semaphore-style mutex.
-** This object can be used to have threads wait for an event (signalled from
-** another thread).
+**
+** This object can be used to have threads wait for an event (signalled from another thread).
 */
 
-//! Waits for another thread to #signal this WaitCondition, and returns \c true.  If the thread has not been signaled after
-//! \a timeout seconds, returns \c false.
+//! \brief Waits for another thread to signal this WaitCondition.
+//! If the thread has not been signaled after \a timeout seconds, returns \c false.
 bool WaitCondition::wait( Time timeout )
 {
   Time t( Time::now() + timeout );

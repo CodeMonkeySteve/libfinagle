@@ -51,8 +51,7 @@ protected:
 
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
 
-
-/*! \class Range
+/*! \class Finagle::Range
 ** \brief Represents a range of values.
 */
 

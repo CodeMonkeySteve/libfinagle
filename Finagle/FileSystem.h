@@ -27,13 +27,14 @@
 
 namespace Finagle {
 
+//! Provides information about a filesystem (via \c statvfs)
 class FileSystem  {
 public:
-  FileSystem( const char *path );
+  FileSystem( Dir const &dir );
 
   bool refresh( bool force = false ) const;
 
-  Finagle::FilePath const &mountPoint( void ) const;
+  Dir const &mountPoint( void ) const;
 
   unsigned long long bytesTotal( void ) const;
   unsigned long long bytesAvail( void ) const;
@@ -44,20 +45,20 @@ public:
   unsigned long inodesUsed( void ) const;
 
 protected:
-  Finagle::FilePath path;
-  mutable struct statvfs info;
+  Dir _dir;
+  mutable struct statvfs _info;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
-//! Initializes the class to point at the filesystem on which \a path resides.
-inline FileSystem::FileSystem( const char *path )
-: path( path )
+//! Initializes the class to point at the filesystem on which \a dir resides.
+inline FileSystem::FileSystem( Dir const &dir )
+: _dir( dir )
 {
   info.f_bsize = 0;
 }
 
-/*! Updates the filesystem information.
+/*! \brief Updates the filesystem information.
 **
 ** Normally, the filesystem info is only updated when it's used.  If \a Force is \c true, will refresh even if cached values exist.
 */
@@ -67,42 +68,47 @@ inline bool FileSystem::refresh( bool force ) const
 }
 
 
+//! Returns the filesystem directory
 inline Finagle::FilePath const &FileSystem::mountPoint( void ) const
 {
-  return path;
+  return _dir;
 }
 
-
+//! Returns the filesystem's total size, in bytes.
 inline unsigned long long FileSystem::bytesTotal( void ) const
 {
   refresh();
   return (unsigned long long) info.f_blocks * (unsigned long long) info.f_frsize;
 }
 
+//! Returns the filesystem's free size, in bytes.
 inline unsigned long long FileSystem::bytesAvail( void ) const
 {
   refresh();
   return (unsigned long long) info.f_bavail * (unsigned long long) info.f_frsize;
 }
 
+//! Returns the filesystem's used size, in bytes.
 inline unsigned long long FileSystem::bytesUsed( void ) const
 {
   return bytesTotal() - ((unsigned long long) info.f_bfree * (unsigned long long) info.f_frsize);
 }
 
-
+//! Returns the total number of inodes on the filesystem.
 inline unsigned long FileSystem::inodesTotal( void ) const
 {
   refresh();
   return info.f_files;
 }
 
+//! Returns the number of free inodes on the filesystem.
 inline unsigned long FileSystem::inodesAvail( void ) const
 {
   refresh();
   return info.f_favail;
 }
 
+//! Returns the number of used inodes on the filesystem.
 inline unsigned long FileSystem::inodesUsed( void ) const
 {
   return inodesTotal() - info.f_ffree;

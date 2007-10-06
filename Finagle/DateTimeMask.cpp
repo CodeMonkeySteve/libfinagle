@@ -26,19 +26,16 @@
 using namespace std;
 using namespace Finagle;
 
+/*! \class Finagle::DateTimeMask
+** \brief Specifies a set of dates/times by masking datetime fields
+*/
+
 const char *DateTimeMask::MonthNames[] = {
   "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec",
 };
 const char *DateTimeMask::DayNames[] = {
   "sun", "mon", "tue", "wed", "thu", "fri", "sat",
 };
-
-
-DateTimeMask::DateTimeMask( DateTime const &When )
-: Year( When.year() - 2000 ), Mon( When.month() ), Day( When.day() ), WDay( 0 ),
-  Hour( When.hour() + 1 ), Min( When.minute() + 1 )
-{
-}
 
 
 void DateTimeMask::parse( Finagle::String const &MaskStr )
@@ -54,26 +51,26 @@ void DateTimeMask::parse( Finagle::String const &MaskStr )
     const char **MonthEnd = &MonthNames[sizeof( MonthNames ) / sizeof( MonthNames[0] )];
     const char **m = find( MonthNames, MonthEnd, *t );
     if ( m != MonthEnd ) {
-      Mon = (m - MonthNames) + 1;
+      _month = (m - MonthNames) + 1;
       continue;
     }
 
     const char **DayEnd = &DayNames[sizeof( DayNames ) / sizeof( DayNames[0] )];
     const char **d = find( DayNames, DayEnd, *t );
     if ( d != DayEnd ) {
-      WDay = (d - DayNames) + 1;
+      _wday = (d - DayNames) + 1;
       continue;
     }
 
     if ( YearMatch( *t ) ) {
-      if ( !YearMatch[1].to( Year ) )
+      if ( !YearMatch[1].to( _year ) )
         throw BadDateEx( YearMatch[1] + " is not a valid year" );
-      Year -= 2000;
+      _year -= 2000;
       continue;
     }
 
     if ( DayMatch( *t ) ) {
-      if ( !DayMatch[1].to( Day ) || (Day > 31) )
+      if ( !DayMatch[1].to( _day ) || (_day > 31) )
         throw BadDateEx( DayMatch[1] + " is not a valid day" );
       continue;
     }
@@ -81,15 +78,15 @@ void DateTimeMask::parse( Finagle::String const &MaskStr )
     bool HaveHour = HourMatch( *t ), HaveMin = MinMatch( *t );
     if ( HaveHour || HaveMin ) {
       if ( HaveHour ) {
-        if ( !HourMatch[1].to( Hour ) || (Hour > 23) )
+        if ( !HourMatch[1].to( _hour ) || (_hour > 23) )
           throw BadDateEx( HourMatch[1] + " is not a valid hour" );
-        Hour++;
+        _hour++;
       }
 
       if ( HaveMin ) {
-        if ( !MinMatch[1].to( Min ) || (Min > 59) )
+        if ( !MinMatch[1].to( _min ) || (_min > 59) )
           throw BadDateEx( MinMatch[1] + " is not a valid minute" );
-        Min++;
+        _min++;
       }
 
       continue;
@@ -100,7 +97,7 @@ void DateTimeMask::parse( Finagle::String const &MaskStr )
 }
 
 
-DateTimeMask::operator String( void ) const
+DateTimeMask::operator Finagle::String( void ) const
 {
   String::Array s;
 
@@ -122,114 +119,114 @@ DateTimeMask::operator String( void ) const
 }
 
 
-bool DateTimeMask::operator()( DateTime const &When ) const
+bool DateTimeMask::operator()( DateTime const &time ) const
 {
-  return( (   !yearValid() || (When.year()    == year())) &&
-          (  !monthValid() || (When.month()   == month())) &&
-          (!weekDayValid() || (When.weekDay() == weekDay())) &&
-          (    !dayValid() || (When.day()     == day())) &&
-          (   !hourValid() || (When.hour()    == hour())) &&
-          ( !minuteValid() || (When.minute()  == minute())) );
+  return( (   !yearValid() || (time.year()    == year())) &&
+          (  !monthValid() || (time.month()   == month())) &&
+          (!weekDayValid() || (time.weekDay() == weekDay())) &&
+          (    !dayValid() || (time.day()     == day())) &&
+          (   !hourValid() || (time.hour()    == hour())) &&
+          ( !minuteValid() || (time.minute()  == minute())) );
 }
 
 
-//! \brief Returns the most recent date/time before \a When that matches this mask.
-DateTime DateTimeMask::prev( DateTime When ) const
+//! \brief Returns the most recent date/time before \a time that matches this mask.
+DateTime DateTimeMask::prev( DateTime time ) const
 {
-  if ( yearValid() && (year() != When.year()) )
-    return (When.year() > year()) ? prev( DateTime( year(), 12, 31, 23, 59 ) ) : DateTime();
+  if ( yearValid() && (year() != time.year()) )
+    return (time.year() > year()) ? prev( DateTime( year(), 12, 31, 23, 59 ) ) : DateTime();
 
-  if ( monthValid() && (month() != When.month())) {
-    if ( When.month() > month() )
-      return prev( DateTime( When.year(), month(), 31, 23, 59 ) );
+  if ( monthValid() && (month() != time.month())) {
+    if ( time.month() > month() )
+      return prev( DateTime( time.year(), month(), 31, 23, 59 ) );
 
-    return prev( DateTime(  When.year() - 1, 12, 31, 23, 59 ) );
+    return prev( DateTime(  time.year() - 1, 12, 31, 23, 59 ) );
   }
 
-  if ( dayValid() && (day() != When.day() ) ) {
-    if ( When.day() > day() )
-      return prev( DateTime( When.year(), When.month(), day(), 23, 59 ) );
+  if ( dayValid() && (day() != time.day() ) ) {
+    if ( time.day() > day() )
+      return prev( DateTime( time.year(), time.month(), day(), 23, 59 ) );
 
-    if ( When.month() == 1 )
-      return prev( DateTime( When.year() - 1, 12, day(), 23, 59 ) );
+    if ( time.month() == 1 )
+      return prev( DateTime( time.year() - 1, 12, day(), 23, 59 ) );
 
-    return prev( DateTime( When.year(), When.month() - 1, day(), 23, 59 ) );
+    return prev( DateTime( time.year(), time.month() - 1, day(), 23, 59 ) );
   }
 
-  if ( weekDayValid() && (weekDay() != When.weekDay() ) ) {
-    if ( When.weekDay() > weekDay() )
-      When -= (When.weekDay() - weekDay()) * (24 * 60 * 60);
+  if ( weekDayValid() && (weekDay() != time.weekDay() ) ) {
+    if ( time.weekDay() > weekDay() )
+      time -= (time.weekDay() - weekDay()) * (24 * 60 * 60);
     else
-      When -= (7 - (weekDay() - When.weekDay())) * (24 * 60 * 60);
+      time -= (7 - (weekDay() - time.weekDay())) * (24 * 60 * 60);
 
-    return prev( DateTime( When.year(), When.month(), When.day(), 23, 59 ) );
+    return prev( DateTime( time.year(), time.month(), time.day(), 23, 59 ) );
   }
 
-  if ( hourValid() && (hour() != When.hour()) ) {
-    if ( When.hour() < hour() )
-      When -= (24 * 60 * 60);
+  if ( hourValid() && (hour() != time.hour()) ) {
+    if ( time.hour() < hour() )
+      time -= (24 * 60 * 60);
 
-    return prev( DateTime( When.year(), When.month(), When.day(), hour(), 59 ) );
+    return prev( DateTime( time.year(), time.month(), time.day(), hour(), 59 ) );
   }
 
-  if ( minuteValid() && (minute() != When.minute())) {
-    if ( When.minute() > minute() )
-      return DateTime( When.year(), When.month(), When.day(), When.hour(), minute() );
+  if ( minuteValid() && (minute() != time.minute())) {
+    if ( time.minute() > minute() )
+      return DateTime( time.year(), time.month(), time.day(), time.hour(), minute() );
 
-    When -= (60 * 60);
-    return prev( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) );
+    time -= (60 * 60);
+    return prev( DateTime( time.year(), time.month(), time.day(), time.hour(), minute() ) );
   }
 
-  return When;
+  return time;
 }
 
 
-//! \brief Returns the next date/time on or after \a When that matches this mask.
-DateTime DateTimeMask::next( DateTime When ) const
+//! \brief Returns the next date/time on or after \a time that matches this mask.
+DateTime DateTimeMask::next( DateTime time ) const
 {
-  if ( yearValid() && (year() != When.year()) )
-    return (When.year() < year()) ? next( DateTime( year() ) ) : DateTime();
+  if ( yearValid() && (year() != time.year()) )
+    return (time.year() < year()) ? next( DateTime( year() ) ) : DateTime();
 
-  if ( monthValid() && (month() != When.month())) {
-    if ( When.month() < month() )
-      return next( DateTime( When.year(), month(), 1 ) );
+  if ( monthValid() && (month() != time.month())) {
+    if ( time.month() < month() )
+      return next( DateTime( time.year(), month(), 1 ) );
 
-    return next( DateTime( When.year() + 1, 1, 1 ) );
+    return next( DateTime( time.year() + 1, 1, 1 ) );
   }
 
-  if ( dayValid() && (day() != When.day() ) ) {
-    if ( When.day() < day() )
-      return next( DateTime( When.year(), When.month(), day() ) );
+  if ( dayValid() && (day() != time.day() ) ) {
+    if ( time.day() < day() )
+      return next( DateTime( time.year(), time.month(), day() ) );
 
-    if ( When.month() == 12 )
-      return next( DateTime( When.year() + 1, 1, day() ) );
+    if ( time.month() == 12 )
+      return next( DateTime( time.year() + 1, 1, day() ) );
 
-    return next( DateTime( When.year(), When.month() + 1, day() ) );
+    return next( DateTime( time.year(), time.month() + 1, day() ) );
   }
 
-  if ( weekDayValid() && (weekDay() != When.weekDay() ) ) {
-    if ( When.weekDay() < weekDay() )
-      When += (weekDay() - When.weekDay()) * (24 * 60 * 60);
+  if ( weekDayValid() && (weekDay() != time.weekDay() ) ) {
+    if ( time.weekDay() < weekDay() )
+      time += (weekDay() - time.weekDay()) * (24 * 60 * 60);
     else
-      When += (7 - (When.weekDay() - weekDay())) * (24 * 60 * 60);
+      time += (7 - (time.weekDay() - weekDay())) * (24 * 60 * 60);
 
-    return next( DateTime( When.year(), When.month(), When.day() ) );
+    return next( DateTime( time.year(), time.month(), time.day() ) );
   }
 
-  if ( hourValid() && (hour() != When.hour()) ) {
-    if ( When.hour() > hour() )
-      When += (24 * 60 * 60);
+  if ( hourValid() && (hour() != time.hour()) ) {
+    if ( time.hour() > hour() )
+      time += (24 * 60 * 60);
 
-    return next( DateTime( When.year(), When.month(), When.day(), hour() ) );
+    return next( DateTime( time.year(), time.month(), time.day(), hour() ) );
   }
 
-  if ( minuteValid() && (minute() != When.minute())) {
-    if ( When.minute() < minute() )
-      return DateTime( When.year(), When.month(), When.day(), When.hour(), minute() );
+  if ( minuteValid() && (minute() != time.minute())) {
+    if ( time.minute() < minute() )
+      return DateTime( time.year(), time.month(), time.day(), time.hour(), minute() );
 
-    When += (60 * 60);
-    return next( DateTime( When.year(), When.month(), When.day(), When.hour(), minute() ) );
+    time += (60 * 60);
+    return next( DateTime( time.year(), time.month(), time.day(), time.hour(), minute() ) );
   }
 
-  return When;
+  return time;
 }

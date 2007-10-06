@@ -54,7 +54,7 @@ inline WaitCondition::~WaitCondition( void )
   PTHREAD_ASSERT( pthread_cond_destroy( &_cond ) );
 }
 
-//! Waits for another thread to #signal this WaitCondition.
+//! Waits for another thread to signal this WaitCondition.
 inline void WaitCondition::wait( void )
 {
   Lock _( *this );

@@ -24,12 +24,9 @@
 
 #include <Finagle/Socket.h>
 
-/*! \class Finagle::ServerSocket
-** Template class to provide a server socket
-*/
-
 namespace Finagle {
 
+//! Template class to provide a server-side network socket
 template <typename SockType>
 class ServerSocket : public SockType, public has_slots<> {
 public:

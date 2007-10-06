@@ -25,7 +25,7 @@ using namespace Finagle;
 using namespace XML;
 
 /*!
-** \class Configurable
+** \class Finagle::Configurable
 **
 */
 

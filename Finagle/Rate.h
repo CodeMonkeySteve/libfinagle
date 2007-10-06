@@ -36,57 +36,57 @@ public:
 
   unsigned count( void ) const;
   double operator()( void ) const;
-  double throttleTime( double RateLimit ) const;
+  double throttleTime( double limit ) const;
 
   void reset( void );
 
-protected: public:
-  unsigned Count;
-  Time     Start;
+protected:
+  unsigned _count;
+  Time     _start;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
 inline Rate::Rate( void )
-: Count( 0 )
+: _count( 0 )
 {
 }
 
 //! Signal that an event has occured.
 inline Rate &Rate::operator ++( void )
 {
-  if ( !Count )  Start = Time::now();
-  Count++;
+  if ( !_count )  _start = Time::now();
+  _count++;
   return *this;
 }
 
 //! Signal that an event has occured.
 inline Rate &Rate::operator ++( int )
 {
-  if ( !Count )  Start = Time::now();
-  Count++;
+  if ( !_count )  _start = Time::now();
+  _count++;
   return *this;
 }
 
 //! Signal that \a Counts events have occured.
 inline Rate &Rate::operator +=( unsigned Counts )
 {
-  if ( !Count )  Start = Time::now();
-  Count += Counts;
+  if ( !_count )  _start = Time::now();
+  _count += Counts;
   return *this;
 }
 
 
 inline unsigned Rate::count( void ) const
 {
-  return Count;
+  return _count;
 }
 
 
 inline double Rate::operator()( void ) const
 {
-//  return Count ? ((double) Count / (double) (Time::now() - Start)) : 0.0;
-  return (double) Count / (double) (Time::now() - Start);
+//  return _count ? ((double) _count / (double) (Time::now() - _start)) : 0.0;
+  return (double) _count / (double) (Time::now() - _start);
 }
 
 

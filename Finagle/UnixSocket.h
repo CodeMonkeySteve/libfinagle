@@ -27,8 +27,10 @@
 
 namespace Finagle {
 
+//! Provides a Unix domain socket
 class UnixSocket : public Socket {
 public:
+  //! Unix domain address (socket path)
   class Addr : public Socket::Addr {
   public:
     Addr( void );
@@ -69,6 +71,8 @@ inline UnixSocket::Addr::Addr( void )
   _domainAddr.sun_family = domainFamily();
 }
 
+//! \fn UnixSocket::Addr::Addr(FilePath const &)
+//! Creates a socket using the socket file at \a path.
 inline UnixSocket::Addr::Addr( FilePath const &path )
 {
   memset( &_domainAddr, 0, sizeof(_domainAddr) );
@@ -76,6 +80,7 @@ inline UnixSocket::Addr::Addr( FilePath const &path )
   UnixSocket::Addr::path( path );
 }
 
+//! Creates a socket using the given socket address.
 inline UnixSocket::Addr::Addr( sockaddr const *addr, socklen_t len )
 {
   if ( len > sizeof(_domainAddr) )
@@ -88,17 +93,19 @@ inline UnixSocket::Addr::Addr( sockaddr const *addr, socklen_t len )
     _path = _domainAddr.sun_path;
 }
 
+//! Returns the socket path.
 inline FilePath const &UnixSocket::Addr::path( void ) const
 {
   return _path;
 }
 
-
+//! Returns the domain family (always \c AF_UNIX).
 inline unsigned UnixSocket::Addr::domainFamily( void ) const
 {
   return AF_UNIX;
 }
 
+//! Sets the socket path.
 inline void UnixSocket::Addr::path( FilePath const &path )
 {
   _path = path;
@@ -109,6 +116,7 @@ inline void UnixSocket::Addr::path( FilePath const &path )
   strcpy( _domainAddr.sun_path, path.path() );
 }
 
+//! Returns the socket address.
 inline sockaddr const &UnixSocket::Addr::domainAddr( void ) const
 {
   return (sockaddr &) _domainAddr;

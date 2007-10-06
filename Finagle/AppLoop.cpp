@@ -34,6 +34,10 @@ using namespace Finagle;
 
 /*! \namespace Finagle::AppLoop
 ** \brief Provides the main application loop.
+**
+** The application loop provides support for asynchronous file access (via FileDescWatcher and \c select(2)) as well
+** as high-precision (i.e. video) timing via Timer.
+** \sa FileDescWatcher, Timer
 */
 
 namespace Finagle {

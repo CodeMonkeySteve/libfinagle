@@ -27,7 +27,7 @@
 
 namespace Finagle {
 
-/*! \brief Provides an ordered map
+/*! \brief Provides an ordered \c map
 **
 ** This class behaves similarly to the Map class, except the elements are stored
 ** in order of insertion.  Normal maps hash the elements, and the order is lost.

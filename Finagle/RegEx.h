@@ -1,7 +1,7 @@
 /*!
 ** \file RegEx.h
-** \author Steve Sloan <steve@finagle.org>
 ** \date Wed Dec 15 2004
+** \author Steve Sloan <steve@finagle.org>
 ** Copyright (C) 2004 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
@@ -34,90 +34,55 @@ class RegEx {
 public:
   class Exception : public Finagle::Exception {
   public:
-    Exception( const char *Exp, const char *ErrStr )
-      : Finagle::Exception( String( "Regular expression \"" ) + Exp + "\" " + ErrStr ) {}
+    Exception( const char *regExp, const char *errStr )
+      : Finagle::Exception( String( "Regular expression \"" ) + regExp + "\" " + errStr ) {}
   };
 
 public:
-  RegEx( const char *RegExp, bool IgnoreCase = false, unsigned Opts = 0 );
+  RegEx( const char *regExp, bool ignoreCase = false, unsigned optFlags = 0 );
  ~RegEx( void );
 
-  bool operator()( const char *Text = 0 );
-  String operator[]( unsigned SubMatch );
+  bool operator()( const char *text = 0 );
+  String operator[]( unsigned subMatch ) const;
 
-  bool search( const char *Text = 0, unsigned Opts = 0 );
+  String const &text( void ) const;
+  Array<int> const &offsets( void ) const;
+
+  bool search( const char *text = 0, unsigned optFlags = 0 );
 
 protected:
   void clearMatchList( void );
 
 protected:
-  pcre *RExp;
-  pcre_extra *RExtra;
+  pcre *_exp;
+  pcre_extra *_extra;
 
-public:
-  String Text;
-  Array<int> Offsets;
+  // match data
+  String _text;
+  Array<int> _offsets;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
-inline RegEx::RegEx( const char *Exp, bool IgnoreCase, unsigned Opts )
-{
-  const char *ErrStr;
-  int         ErrOff;
-
-  if ( IgnoreCase )
-    Opts |= PCRE_CASELESS;
-
-  RExp = pcre_compile( Exp, Opts | PCRE_UNGREEDY, &ErrStr, &ErrOff, 0 );
-  if ( !RExp )
-    throw Exception( Exp, ErrStr );
-
-  RExtra = pcre_study( RExp, 0, &ErrStr );
-  int c;
-  pcre_fullinfo( RExp, RExtra, PCRE_INFO_CAPTURECOUNT, &c );
-  Offsets.resize( (c + 1) * 3 );
-}
-
 inline RegEx::~RegEx( void )
 {
-  if ( RExtra )
-    pcre_free( RExtra );
-
-  pcre_free( RExp );
+  if ( _extra )  pcre_free( _extra );
+  if ( _exp )  pcre_free( _exp );
 }
 
-inline bool RegEx::operator()( const char *Text )
+inline bool RegEx::operator()( const char *text )
 {
-  return search( Text );
+  return search( text );
 }
 
-inline bool RegEx::search( const char *Text, unsigned Opts )
+inline String const &RegEx::text( void ) const
 {
-  if ( Text )
-    RegEx::Text = Text;
-
-  int Res = pcre_exec( RExp, RExtra, RegEx::Text, RegEx::Text.size(), 0, Opts | PCRE_NOTEMPTY, &Offsets.front(), Offsets.size() );
-  if ( Res > 0 )
-    return true;
-  else
-  if ( Res < -1 )
-    throw Exception( "", "" );
-
-  return false;
+  return _text;
 }
 
-inline String RegEx::operator[]( unsigned SubMatch )
+inline Array<int> const &RegEx::offsets( void ) const
 {
-  if ( SubMatch >= (Offsets.size() / 3) )
-    return String();
-
-  unsigned Offset = SubMatch * 2;
-  int Start = Offsets[Offset], End = Offsets[Offset + 1];
-  if ( (Start < 0) || (End <= Start) )
-    return String();
-
-  return Text.substr( Start, End - Start );
+  return _offsets;
 }
 
 }

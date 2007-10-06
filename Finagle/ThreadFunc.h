@@ -26,6 +26,7 @@
 
 namespace Finagle {
 
+//! Convenience object for running a class method as a separate thread
 template <typename ClassType, typename FuncType = void (ClassType::*)(void)>
 class ClassFuncThread : public Thread {
 public:

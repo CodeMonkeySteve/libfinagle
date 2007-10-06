@@ -28,7 +28,7 @@
 namespace Finagle {
 
 /*!
-** Application-wide singleton object.
+** \brief Template for create-on-first-use singletons
 **
 ** Creates an instance of the object on first use (except when the copy constructor is used).  Destroy when last the last code unit
 ** (i.e. source file that includes the executable) has been unloaded.

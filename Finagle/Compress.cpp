@@ -27,16 +27,13 @@ using namespace Finagle;
 
 static const unsigned BuffSize = 4096;
 
-CompressBuff::CompressBuff( void )
-: File( 0 )
-{
-}
-
+/*! \class Finagle::CompressBuff
+** \brief Compressed (gzipped) file stream buffer
+*/
 
 CompressBuff::~CompressBuff( void )
 {
   close();
-
   delete [] eback();
   delete [] pbase();
   setg( 0, 0, 0 );
@@ -48,39 +45,38 @@ CompressBuff::~CompressBuff( void )
 ** \note ios::app and ios::in|ios::out not yet supported
 ** \note ios::binary  is implied
 */
-CompressBuff *CompressBuff::open( FilePath const &Path, std::ios::openmode Mode )
+CompressBuff *CompressBuff::open( FilePath const &Path, std::ios::openmode mode )
 {
   if ( is_open() )
     close();
 
-  if ( (Mode & ios::in) && (Mode & ios::out) )
-    return( 0 );
+  if ( (mode & ios::in) && (mode & ios::out) )
+    return 0;
 
-  if ( Mode & ios::in )
-    File = gzopen( Path, "rb" );
+  if ( mode & ios::in )
+    _gzFile = gzopen( Path, "rb" );
   else
-  if ( Mode & ios::out )
-    File = gzopen( Path, "wb" );
+  if ( mode & ios::out )
+    _gzFile = gzopen( Path, "wb" );
   else
-    return( 0 );
+    return 0;
 
-  if ( !File )
-    return( 0 );
+  if ( !_gzFile )
+    return 0;
 
   // Allocate read buffer
-  if ( Mode & ios::in ) {
+  if ( mode & ios::in ) {
     char_type *Buff = new char_type[BuffSize];
     setg( Buff, Buff + BuffSize, Buff + BuffSize );
   }
 
   // Allocate write buffer
-  if ( Mode & ios::out ) {
+  if ( mode & ios::out ) {
     char_type *Buff = new char_type[BuffSize];
     setp( Buff, Buff + BuffSize );
   }
 
-  CompressBuff::Mode = Mode;
-
+  _mode = mode;
   return this;
 }
 
@@ -91,7 +87,7 @@ CompressBuff *CompressBuff::close( void )
     return this;
 
   sync();
-  gzclose( File );
+  gzclose( _gzFile );
 
   return this;
 }
@@ -99,33 +95,33 @@ CompressBuff *CompressBuff::close( void )
 
 CompressBuff::int_type CompressBuff::sync( void )
 {
-  streamsize BytesOut = pptr() - pbase();
-  if ( !BytesOut )
+  streamsize bytesOut = pptr() - pbase();
+  if ( !bytesOut )
     return( 0 );
 
-  if ( !is_open() || !(Mode & ios::out) )
+  if ( !is_open() || !(_mode & ios::out) )
     return traits::eof();
 
-  while ( BytesOut ) {
-    const streamsize BytesWritten = gzwrite( File, pbase(), BytesOut );
-    if ( !BytesWritten || (BytesWritten == -1) )
+  while ( bytesOut ) {
+    const streamsize bytesWritten = gzwrite( _gzFile, pbase(), bytesOut );
+    if ( !bytesWritten || (bytesWritten == -1) )
       return -1;
 
-    if ( BytesWritten < BytesOut )
-      memmove( pbase(), pbase() + BytesWritten, BytesOut - BytesWritten );
+    if ( bytesWritten < bytesOut )
+      memmove( pbase(), pbase() + bytesWritten, bytesOut - bytesWritten );
 
-    pbump( -BytesWritten );
+    pbump( -bytesWritten );
 
-    BytesOut -= BytesWritten;
+    bytesOut -= bytesWritten;
   }
 
-  return( 0 );
+  return 0;
 }
 
 
 CompressBuff::int_type CompressBuff::overflow( int_type Ch )
 {
-  if ( !is_open() || !(Mode & ios::out) )
+  if ( !is_open() || !(_mode & ios::out) )
     return traits::eof();
 
   streamsize n = pptr() - pbase();
@@ -135,18 +131,18 @@ CompressBuff::int_type CompressBuff::overflow( int_type Ch )
 
   if ( (epptr() - pptr()) == 0 ) {
     char_type c = traits::to_char_type( Ch );
-    return (gzwrite( File, &c, sizeof( c ) ) == sizeof( c )) ? 0 : -1;
+    return (gzwrite( _gzFile, &c, sizeof( c ) ) == sizeof( c )) ? 0 : -1;
   }
 
   *pptr() = traits::to_char_type( Ch );
   pbump( 1 );
-  return( 0 );
+  return 0;
 }
 
 
 CompressBuff::int_type CompressBuff::underflow( void )
 {
-  if ( !is_open() || !(Mode & ios::in) )
+  if ( !is_open() || !(_mode & ios::in) )
     return traits::eof();
 
   if ( gptr() < egptr() )
@@ -156,13 +152,13 @@ CompressBuff::int_type CompressBuff::underflow( void )
 
   if ( !n ) {
     char_type c;
-    if ( gzread( File, &c, sizeof( c ) ) != sizeof( c ) )
+    if ( gzread( _gzFile, &c, sizeof( c ) ) != sizeof( c ) )
       return traits::eof();
 
     return traits::to_int_type( c );
   }
 
-  streamsize BytesIn = gzread( File, eback(), n );
+  streamsize BytesIn = gzread( _gzFile, eback(), n );
   if ( BytesIn < 1 )
     return traits::eof();
 
@@ -174,18 +170,19 @@ CompressBuff::int_type CompressBuff::underflow( void )
 }
 
 
-bool Finagle::gzip( FilePath const &ArchFile, FilePath const &SrcFile )
+//! Compresses \a srcFile into \a gzFile.
+bool Finagle::gzip( FilePath const &gzFile, FilePath const &srcFile )
 {
-  ifstream InFile( SrcFile );
-  ozfstream OutFile( ArchFile );
+  ifstream in( srcFile );
+  ozfstream out( gzFile );
 
-  if ( !InFile.is_open() || !OutFile.is_open() )
+  if ( !in.is_open() || !out.is_open() )
     return false;
 
-  OutFile << InFile.rdbuf() << flush;
-  if ( !OutFile.good() || InFile.bad() ) {
-    OutFile.close();
-    File( ArchFile ).erase();
+  out << in.rdbuf() << flush;
+  if ( !out.good() || in.bad() ) {
+    out.close();
+    File(gzFile).erase();
     return false;
   }
 

@@ -18,6 +18,7 @@ namespace Finagle {
 
 using std::deque;
 
+//! Generic thread-safe queue
 template <typename Type>
 class Queue : protected deque<Type> {
 public:

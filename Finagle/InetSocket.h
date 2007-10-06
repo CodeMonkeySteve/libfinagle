@@ -27,8 +27,10 @@
 
 namespace Finagle {
 
+//! Provides an Internet domain socket
 class InetSocket : public Socket {
 public:
+  //! Internet domain address (host and port)
   class Addr : public Socket::Addr {
   public:
     Addr( void );

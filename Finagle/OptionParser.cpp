@@ -1,5 +1,5 @@
 /*!
-** \file Parser.cpp
+** \file OptionParser.cpp
 ** \author Steve Sloan <steve@finagle.org>
 ** \date Thu Dec 28 2006
 ** Copyright (C) 2006 by Steve Sloan
@@ -28,10 +28,40 @@ using namespace Finagle;
 using namespace Option;
 
 /*!
-** \class Parser
+** \class Finagle::Option::Parser
+** \brief Provides command-line argument parsing, using \c getopt_long(3).
 **
+** Arguments are specified using the Argument and Flag class, and loaded with the parse() function.  Options may then
+** be read from the cmdLine singleton.
+**
+** Example: \code
+** Option::Argument<unsigned short> Port( "port", 'p', 4242 );  // i.e. "--port=X" or "-p X"
+** Option::Flag Verbose( "verbose", 'v' );                      // i.e. "--verbose" or "--no-verbose"
+**
+** if ( !cmdLine().parse( argc, argv ) ) {
+**   // print usage
+**   exit(0);
+** }
+** unsigned short port = Port();
+** bool verbose = Verbose();
+** ...
+** \endcode
 */
 
+/*! \class Finagle::Option::Argument
+** \brief Represents a named, typed command-line option.
+*/
+
+/*! \class Finagle::Option::Flag
+** \brief Represents a named Boolean flag command-line option.
+**
+** For example, "--name" = \c true and "--no-name" = \c false.
+*/
+
+/*!
+** Parses command line options (where \a numArgs is \c argc and \a args is \c argv).
+** Returns \c true if all arguments were parsed and recognized, or \c false otherwise.
+*/
 bool Parser::parse( unsigned numArgs, char * const args[] )
 {
   if ( _parsed )
@@ -74,5 +104,3 @@ bool Parser::parse( unsigned numArgs, char * const args[] )
   _parsed = true;
   return true;
 }
-
-

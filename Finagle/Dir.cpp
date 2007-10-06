@@ -42,7 +42,7 @@ using namespace std;
 using namespace Finagle;
 
 /*! \class Finagle::Dir
-** Abstracts the filesystem location of a directory.
+** \brief Provides access to the filesystem information for a directory.
 */
 
 //! A platform-specific directory representing the top of the filesystem, e.g. "root" or "C:".
@@ -62,8 +62,7 @@ bool Dir::current( Dir const &dir )
   return chdir( dir.absolute().path() ) == 0;
 }
 
-
-//! Returns the current user's home directory ($HOME, /home/$USER, or /)
+//! Returns the current user's home directory (\c $HOME, \c /home/$USER, or \c /)
 Dir Dir::home( void )
 {
   const char *h = 0;
@@ -77,9 +76,7 @@ Dir Dir::home( void )
   return Dir::root;
 }
 
-
-//! Returns the number of bytes available on the filesystem that contains
-//! the directory.  Returns \c -1 on error.
+//! Returns the number of bytes available on the directory's filesystem.  Returns \c -1 on error.
 long long Dir::spaceFree( void ) const
 {
   struct statfs stats;
@@ -89,10 +86,10 @@ long long Dir::spaceFree( void ) const
   return (long long) stats.f_bsize * stats.f_bavail;
 }
 
-
-//! Returns the sum of the sizes, in bytes, of the files contained in this
-// directory (and all of its subdirectories).  Note that this doesn't take
-//! into account per-file and per-directory overhead.
+/*!
+** Returns the total size, in bytes, of all the files contained in the directory (and all of its subdirectories).
+** \note: this only counts the file contents, not filesystem overhead.
+*/
 long long Dir::spaceUsed( void ) const
 {
   unsigned long long totSize = 0;
@@ -103,19 +100,18 @@ long long Dir::spaceUsed( void ) const
   return totSize;
 }
 
-
-unsigned Dir::count( const char *Ext ) const
+//! Returns the number of files in the directory that have extension \a ext.
+unsigned Dir::count( const char *ext ) const
 {
   unsigned count = 0;
-  for ( Iterator f = begin( Ext ); f != end() ; ++f )
+  for ( Iterator f = begin( ext ); f != end() ; ++f )
     count++;
 
   return count;
 }
 
-
-//! Removes the directory.  If \a recursive is \c true, will first remove all
-//! files and subdirectories.  Returns \c true if successful.
+//! \brief Removes the directory.
+//! If \a recursive is \c true, will first remove all files and subdirectories.  Returns \c true if successful.
 bool Dir::erase( bool recursive ) const
 {
   if ( recursive ) {
@@ -164,7 +160,7 @@ bool Dir::sync( Dir &dest ) const
 
 
 /*! \class Finagle::Dir::Iterator
-** Iterates through all of the entries of a given subdirectory.
+** \brief Iterates through all of the entries of a given subdirectory.
 ** \note Constructed via call to Dir#begin or Dir#end.
 */
 
@@ -178,7 +174,6 @@ Dir::Iterator::Iterator( Iterator const &that )
   findNextFile();
 }
 
-
 Dir::Iterator::Iterator( Finagle::Dir const &dir, const char *ext )
 : _dir(dir), _ext(ext), _search(0)
 {
@@ -189,13 +184,11 @@ Dir::Iterator::Iterator( Finagle::Dir const &dir, const char *ext )
   findNextFile();
 }
 
-
 Dir::Iterator::~Iterator( void )
 {
   if ( _search )
     closedir( (DIR *) _search );
 }
-
 
 void Dir::Iterator::findNextFile( void )
 {
@@ -217,10 +210,8 @@ void Dir::Iterator::findNextFile( void )
 }
 
 /*! \class Finagle::TempDir
-** Represents a dynamically created temporary directory
+** \brief Represents a dynamically-created temporary directory
 */
-
-#include "AppLog.h"
 
 TempDir::TempDir( unsigned mode )
 {

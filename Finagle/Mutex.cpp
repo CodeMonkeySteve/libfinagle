@@ -39,7 +39,7 @@ void Mutex::init( void )
 
 
 /*! \class Finagle::Lock
-** \brief Provides a mutex lock object.
+** \brief Provides a lock on a Mutex.
 **
 ** When the Lock is instantiated, it locks the referenced mutex.  When the
 ** lock object falls out of scope, it unlocks the mutex.

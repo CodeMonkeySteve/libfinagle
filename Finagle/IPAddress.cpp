@@ -37,8 +37,7 @@ using namespace Finagle;
 const IPAddress IPAddress::nil;
 const IPAddress IPAddress::local( 127, 0, 0, 1 );
 
-/*!
-** Returns the IP address.
+/*! \brief Returns the IP address.
 **
 ** If a host name was specified, this will attempt a reverse-DNS lookup of the
 ** IP.  Returns \c 0 if the host name doesn't resolve.
@@ -79,8 +78,7 @@ String IPAddress::ipStr( void ) const
 }
 
 
-/*!
-** Returns the host name of this address.
+/*! \brief Returns the host name that corresponds to this address.
 **
 ** If an IP address was specified, this will attempt a DNS lookup of the
 ** hostname.  If the host name doesn't resolve, returns the IP address in

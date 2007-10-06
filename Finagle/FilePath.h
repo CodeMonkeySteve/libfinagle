@@ -50,10 +50,16 @@ public:
   static const char DirDelim, ExtDelim;
 };
 
+//! Array of FilePaths
 typedef Array<FilePath> FileArray;
+
+//! List of FilePaths
 typedef List<FilePath>  FileList;
 
+//! Appends \a str to \a path, with a directory separator.
 FilePath operator +( FilePath const &path, String const &str );
+
+//! Appends \a str to \a path, with a directory separator.
 FilePath operator +( FilePath const &path, const char *str );
 
 // INLINE IMPLEMENTATION ******************************************************
@@ -63,12 +69,10 @@ inline FilePath::FilePath( const char *Path )
 : String( Path )
 {}
 
-
 //! Initializes the class to point at the file \a Path.
 inline FilePath::FilePath( String const &Path )
 : String( Path )
 {}
-
 
 //! Returns the full path of the file.  Same as \c (String).
 inline String FilePath::path( void ) const

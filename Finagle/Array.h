@@ -28,7 +28,6 @@
 namespace Finagle {
 
 //! Wrapper for the (misnamed, IMNSHO) STL \c vector class.
-
 template <typename Type, typename AllocType = std::allocator<Type> >
 class Array : public std::vector<Type, AllocType> {
 public:

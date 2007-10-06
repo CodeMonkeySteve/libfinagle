@@ -35,7 +35,7 @@ public:
   virtual ~Thread( void );
 
   bool running( void ) const;
-  pthread_t const &id( void ) const;
+  Thread::ID const &id( void ) const;
   int  exitVal( void ) const;
 
   void start( void );
@@ -62,25 +62,30 @@ private:
 
 // INLINE IMPLEMENTATION ******************************************************
 
+//! Creates a new (stopped) thread
 inline Thread::Thread( void )
 : _id(0), _running(false), _exitVal(0)
 {}
 
+//! Stops the thread, if running
 inline Thread::~Thread( void )
 {
   stop();
 }
 
-inline pthread_t const &Thread::id( void ) const
+//! Returns this thread's \c pthreads id
+inline Thread::ID const &Thread::id( void ) const
 {
   return _id;
 }
 
+//! Returns \c true if the thread is running (or should be running)
 inline bool Thread::running( void ) const
 {
   return _running;
 }
 
+//! Returns the final exit value (or \c 0 if the thread is still running)
 inline int Thread::exitVal( void ) const
 {
   return running() ? 0 : _exitVal;
@@ -92,7 +97,7 @@ inline void Thread::exit( int res )
   pthread_exit( (void *) res );
 }
 
-//! Returns the Thread id for the currently-running thread.
+//! Returns the \c pthreads id for the currently-running thread.
 inline Thread::ID Thread::self_id( void )
 {
   return pthread_self();

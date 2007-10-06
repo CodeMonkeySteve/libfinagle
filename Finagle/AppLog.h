@@ -65,9 +65,10 @@ protected:
   List<Logger::Ref> _loggers;
 };
 
+//! The application log singleton
 static Singleton<AppLog> Log;
 
-
+//! A log message
 class LogMsg : public LogEntry {
 public:
   LogMsg( String const &level )
@@ -80,6 +81,7 @@ public:
   : LogEntry( "Msg", level, id, file, line, func ) {}
 };
 
+//! A Debug log message
 class LogDebug : public LogMsg {
 public:
   LogDebug( const char *file, unsigned line, String const &func, String const &module = String() )
@@ -90,24 +92,28 @@ public:
   }
 };
 
+//! An Info log message
 class LogInfo : public LogMsg {
 public:
   LogInfo( void )
   : LogMsg( "info" ) {}
 };
 
+//! A Warning log message
 class LogWarn : public LogMsg {
 public:
   LogWarn( const char *file, unsigned line, String const &func )
   : LogMsg( "warn", file, line, func ) {}
 };
 
+//! An Error log message
 class LogErr : public LogMsg {
 public:
   LogErr( const char *file, unsigned line, String const &func )
   : LogMsg( "error", file, line, func ) {}
 };
 
+//! A (failed) Assertion log message
 class LogAssert : public LogErr {
 public:
   LogAssert( String const &expr, const char *file, unsigned line, String const &func )
@@ -149,22 +155,28 @@ inline AppLog::Logger::Logger( void )
   Log()._loggers.push_back( this );
 }
 
+/*! Creates a Logger to send log entries to the given output stream buffer (\a buf).
+**
+** If \a asXML is \c false, XML entries will be converted to a plain text form.  If \a debug is \c false, entries with a level
+** of \c debug will be silently dropped.
+*/
 inline LogToStream::LogToStream( std::streambuf *buf, bool asXML, bool debug )
 : _stream(buf), _asXML(asXML), _debug(debug)
 {}
 
+/*! Creates a Logger to send log entries to an output file.
+**
+** If \a asXML is \c false, XML entries will be converted to a plain text form.  If \a debug is \c false, entries with a level
+** of \c debug will be silently dropped.
+*/
 inline LogToFile::LogToFile( FilePath const &base, bool asXML, bool debug )
 : LogToStream( &_buf, asXML, debug ), _base(base)
 {}
 
+//! Returns the output file base name.
 inline FilePath const &LogToFile::base( void ) const
 {
   return _base;
-}
-
-inline FilePath const &LogToFile::base( FilePath const &base )
-{
-  return _base = base;
 }
 
 #define LOG_DEBUG        Finagle::Log() += Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__ )

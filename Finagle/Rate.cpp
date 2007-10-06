@@ -25,7 +25,7 @@ using namespace Finagle;
 
 /*!
 ** \class Finagle::Rate
-** \brief This class computes the average rate of occurance for some periodic event.
+** \brief Computes the average rate of some periodic event.
 **
 ** This class is intended for measuring (and/or limiting), e.g. data
 ** transmission (sending a byte), rendering (drawing a frame), or anything
@@ -39,30 +39,27 @@ using namespace Finagle;
 */
 
 
-/*!
-** Resets the rate counter.  Until an event next occurs #average() will return
-** 0.0 .
-*/
+//! Resets the rate counter.  Until an event next occurs the average will be 0.0.
 void Rate::reset( void )
 {
-  Count = 0;
+  _count = 0;
 }
 
 
 /*!
-** If a rate limit of \a RateLimit is to be imposed, this returns the minimum
+** If a rate limit of \a limit is to be imposed, this returns the minimum
 ** time until the next event can occur.  Apps that are trying to throttle, e.g.
 ** upstream bandwidth, should delay (perhaps #sleep()) for the duration of the
 ** return value, before sending another byte.  Will return 0.0 if the current
 ** average rate is within the limit.
 **
 */
-double Rate::throttleTime( double RateLimit ) const
+double Rate::throttleTime( double limit ) const
 {
-  if ( (*this)() <= RateLimit )
+  if ( (*this)() <= limit )
     return 0.0;
 
-  return ((Count + 1) / RateLimit) + Start - (const double &) Time::now();
+  return ((_count + 1) / limit) + _start - (const double &) Time::now();
 }
 
 

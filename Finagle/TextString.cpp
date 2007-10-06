@@ -31,6 +31,7 @@ using namespace Finagle;
 
 const String String::nil;
 
+//! String conversion exception
 class String::ConversionEx : public Exception {
 public:
   ConversionEx( String const &src, std::type_info const &dest )

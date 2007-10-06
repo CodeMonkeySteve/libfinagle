@@ -37,26 +37,26 @@ public:
 
   PriorityLock *owner( void ) const;
 
-  bool lock( PriorityLock &Lock );
-  void unlock( PriorityLock &Lock );
+  bool lock( PriorityLock &lock );
+  void unlock( PriorityLock &lock );
 
 protected:
-  List<PriorityLock *> Locks;
+  List<PriorityLock *> _locks;
 
   friend class PriorityLock;
 };
 
 class PriorityLock {
 public:
-  PriorityLock( PriorityMutex *LockMutex = 0, unsigned Priority = 0 );
+  PriorityLock( PriorityMutex *mutex = 0, unsigned priority = 0 );
   PriorityLock( PriorityLock &that );
  ~PriorityLock( void );
 
   PriorityMutex *mutex( void ) const;
-  void mutex( PriorityMutex *LockMutex );
+  void mutex( PriorityMutex *mutex );
 
   unsigned priority( void ) const;
-  void priority( unsigned Priority );
+  void priority( unsigned priority );
 
   bool locked( void ) const;
   bool lock( void );
@@ -65,51 +65,65 @@ public:
   bool operator <( PriorityLock const &that );
 
 public:
+  //! emitted when this lock has (re-)acquired the mutex
   signal0<> GainLock;
+
+  //! emitted when this lock has lost the mutex to a higher-priority lock
   signal0<> LoseLock;
 
 protected:
-  PriorityMutex *LockMutex;
-  unsigned Priority;
+  PriorityMutex *_mutex;
+  unsigned _priority;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
+inline PriorityMutex::PriorityMutex( void )
+{}
+
 inline PriorityLock *PriorityMutex::owner( void ) const
 {
-  return Locks.empty() ? 0 : Locks.front();
+  return _locks.empty() ? 0 : _locks.front();
 }
 
 
+inline PriorityLock::PriorityLock( PriorityMutex *mutex, unsigned priority )
+: _mutex( mutex ), _priority( priority )
+{}
+
+
+inline PriorityLock::PriorityLock( PriorityLock &that )
+: _mutex( that._mutex ), _priority( that._priority )
+{}
+
 inline bool PriorityLock::operator <( PriorityLock const &that )
 {
-  return Priority < that.Priority;
+  return _priority < that._priority;
 }
 
 inline bool PriorityLock::locked( void ) const
 {
-  return LockMutex && (LockMutex->owner() == this);
+  return _mutex && (_mutex->owner() == this);
 }
 
 inline bool PriorityLock::lock( void )
 {
-  return LockMutex && LockMutex->lock( *this );
+  return _mutex && _mutex->lock( *this );
 }
 
 inline void PriorityLock::unlock( void )
 {
-  if ( LockMutex )
-    LockMutex->unlock( *this );
+  if ( _mutex )  _mutex->unlock( *this );
 }
 
 inline PriorityMutex *PriorityLock::mutex( void ) const
 {
-  return LockMutex;
+  return _mutex;
 }
 
 inline unsigned PriorityLock::priority( void ) const
 {
-  return Priority;
+  return _priority;
 }
 
 };

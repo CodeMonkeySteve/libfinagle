@@ -57,7 +57,7 @@ public:
 
 // INLINE IMPLEMENTATION ******************************************************
 
-//! Initializes with an invalide address (i.e. \c 0).
+//! Initializes with an invalid address (i.e. \c 0).
 inline IPAddress::IPAddress( void )
 : _ip(0)
 {}
@@ -77,18 +77,19 @@ inline IPAddress::IPAddress( unsigned ip )
 : _ip(ip)
 {}
 
-//! Returns \c true if the address is the same as \a that
+//! Returns \c true if the address is the same as \a that.
 inline bool IPAddress::operator ==( const IPAddress &that ) const
 {
   return ip() == that.ip();
 }
 
-//! Returns \c true if the address is different from \a that
+//! Returns \c true if the address is different from \a that.
 inline bool IPAddress::operator !=( const IPAddress &that ) const
 {
   return !(operator ==( that ));
 }
 
+//! Writes the \a host name to the \a out stream.
 inline std::ostream &operator <<( std::ostream &out, IPAddress const &host )
 {
   return out << host.name();

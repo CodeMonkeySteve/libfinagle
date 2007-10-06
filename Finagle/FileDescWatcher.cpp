@@ -24,13 +24,14 @@
 using namespace Finagle;
 
 /*! \class Finagle::FileDescWatcher
-** Watches a file descriptor for a change in status.
+** \brief Watches a file descriptor for a change in status (via \c select(2)).
 **
 ** This class watches (using \c select(2)) a particular file descriptor for
 ** changes in status, i.e. readable, writable, or an exception occured.  It
 ** is intended to be used for sockets, but could be used for any operating
 ** system object which provides a file descriptor.
-** \sa Socket and ServerSocket.
+**
+** \sa AppLoop, Socket and ServerSocket.
 */
 
 void FileDescWatcher::fd( int fileDesc )

@@ -41,8 +41,8 @@ class MD5;
 
 class File : public FilePath {
 public:
-  struct CompareSize {        bool operator()( File const &A, File const &B ) {  return A.size() < B.size();              }  };
-  struct CompareAccessTime {  bool operator()( File const &A, File const &B ) {  return A.accessTime() < B.accessTime();  }  };
+  struct CompareSize {        bool operator()( File const &a, File const &b ) {  return a.size() < b.size();              }  };
+  struct CompareAccessTime {  bool operator()( File const &a, File const &b ) {  return a.accessTime() < b.accessTime();  }  };
 
   //! The size of a file, in bytes.
   typedef unsigned long long Size;
@@ -57,7 +57,7 @@ public:
     Ex( FilePath const &path, std::ios::openmode mode = std::ios::in );
   };
 
-  class OpenEx : public Ex {
+  class OpenEx : public File::Ex {
   public:
     OpenEx( FilePath const &path, std::ios::openmode mode = std::ios::in );
    ~OpenEx( void ) throw() {}
@@ -70,14 +70,14 @@ public:
   };
 
 public:
-  File( const char *Path = "" );
-  File( String const &Path );
-  File( FilePath const &Path );
-  File( const char *DirName, const char *FileName, const char *FileExt = 0 );
+  File( const char *path = "" );
+  File( String const &path );
+  File( FilePath const &path );
+  File( const char *dir, const char *file, const char *ext = 0 );
 
-  File &operator =( FilePath const &NewPath );
+  File &operator =( FilePath const &path );
 
-  bool refresh( bool Force = false ) const;
+  bool refresh( bool force = false ) const;
   bool exists( void ) const;
   bool isRegularFile( void ) const;
   bool isDir( void ) const;
@@ -95,8 +95,8 @@ public:
   bool readable( void ) const;
   bool writeable( void ) const;
 
-  bool readable( bool State );
-  bool writeable( bool State );
+  bool readable( bool state );
+  bool writeable( bool state );
 
   bool operator ==( File const &that ) const;
   bool operator !=( File const &that ) const;
@@ -105,72 +105,64 @@ public:
   bool touch( void );
   bool erase( bool force = true );
   bool rename( File dest, bool force = true );
-  bool copy( File &dest, Finagle::MD5 *MD = 0 ) const;
+  bool copy( File &dest, Finagle::MD5 *digest = 0 ) const;
   bool sync( File &dest ) const;
 
 protected:
-  mutable struct stat FileInfo;
+  mutable struct stat _info;
 
 protected:
   static const int AccessReadBit, AccessWriteBit, ChmodReadBit, ChmodWriteBit;
 };
 
-String sizeStr( unsigned long long Bytes );
+String sizeStr( unsigned long long bytes );
 
 // INLINE IMPLEMENTATION ******************************************************
 
-//! Initializes the class to point at the file \a Path.
-inline File::File( const char *Path )
-: FilePath( Path ), FileInfo()
+//! Initializes the class to point at the file \a path.
+inline File::File( const char *path )
+: FilePath( path ), _info()
 {
-  FileInfo.st_size = -1;
+  _info.st_size = -1;
 }
 
-//! Initializes the class to point at the file \a Path.
-inline File::File( String const &Path )
-: FilePath( Path ), FileInfo()
+//! Initializes the class to point at the file \a path.
+inline File::File( String const &path )
+: FilePath( path ), _info()
 {
-  FileInfo.st_size = -1;
+  _info.st_size = -1;
 }
 
-//! Initializes the class to point at the file \a Path.
-inline File::File( const FilePath &Path )
-: FilePath( Path ), FileInfo()
+//! Initializes the class to point at the file \a path.
+inline File::File( const FilePath &path )
+: FilePath( path ), _info()
 {
-  FileInfo.st_size = -1;
+  _info.st_size = -1;
 }
 
-/*!
-** Initializes the class to point at the file \a FileName, with resides in the
-** \a DirName directory, and has extension \a FileExt.  Any of the arguments
-** may be \c 0.
-*/
-inline File::File( const char *DirName, const char *FileName, const char *FileExt )
-: FilePath( DirName, FileName, FileExt ), FileInfo()
+//! Initializes the object to the file composed of \a dir, \a file, and \a ext (any of the arguments may be \c 0).
+inline File::File( const char *dir, const char *file, const char *ext )
+: FilePath( dir, file, ext ), _info()
 {
-  FileInfo.st_size = -1;
+  _info.st_size = -1;
 }
 
-//! Changes the class to reference file \a NewPath.
-inline File &File::operator =( FilePath const &NewPath )
+//! Changes the class to reference file \a path.
+inline File &File::operator =( FilePath const &path )
 {
-  FilePath::operator =( NewPath );
-  FileInfo.st_size = -1;  // Force refresh later
+  FilePath::operator =( path );
+  _info.st_size = -1;  // force refresh later
   return *this;
 }
 
 
 /*! \brief Updates the file information.
-**
-** Normally, the file info is only updated when it's used.  If \a Force is
-** \c true, will refresh even if cached values exist.
+** Normally, the file info is only updated when it's used.  If \a force is \c true, will refresh even if cached values exist.
 */
-inline bool File::refresh( bool Force ) const
+inline bool File::refresh( bool force ) const
 {
-  return( ((FileInfo.st_size != -1) && !Force) ||
-          (stat( path(), &FileInfo ) == 0) );
+  return ((_info.st_size != -1) && !force) || (stat( path(), &_info ) == 0);
 }
-
 
 /*! \brief Check if the file exists.
 ** \return \c true, if the file exists.
@@ -180,17 +172,14 @@ inline bool File::exists( void ) const
   return refresh( true );
 }
 
-
-/*!
-** Check if the path is a regular file.
+/*! \brief Check if the path is a regular file.
 ** \return \c true, if the path points to a regular file.
 */
 inline bool File::isRegularFile( void ) const
 {
   refresh();
-  return (FileInfo.st_mode & S_IFREG) != 0;
+  return (_info.st_mode & S_IFREG) != 0;
 }
-
 
 /*!
 ** Check if the path is a directory.
@@ -199,14 +188,11 @@ inline bool File::isRegularFile( void ) const
 inline bool File::isDir( void ) const
 {
   refresh();
-  return (FileInfo.st_mode & S_IFDIR) != 0;
+  return (_info.st_mode & S_IFDIR) != 0;
 }
 
-/*!
-** Returns the contents of the symlink (via readlink(2)).
-** \note if the file is inaccesable (or not a symlink), the path returned will
-**       be an empty string.
-** \todo Test me
+/*! \brief Returns the contents of the symlink (via readlink(2)).
+** If the file is inaccesable (or not a symlink), the path returned will be an empty string.
 */
 inline FilePath File::followSymLink( void ) const
 {
@@ -215,6 +201,9 @@ inline FilePath File::followSymLink( void ) const
   return res < 0 ? FilePath() : FilePath( String( toFile, res ) );
 }
 
+/*! \brief Creates a symlink to this file, with the name of \a toFile.
+** If \a force is true, the symlink, if it already exists, will be overwritten.
+*/
 inline bool File::createSymLink( FilePath const &toFile, bool force )
 {
   if ( force && exists() )
@@ -227,35 +216,35 @@ inline bool File::createSymLink( FilePath const &toFile, bool force )
 inline DateTime File::createTime( void ) const
 {
   refresh();
-  return FileInfo.st_ctime;
+  return _info.st_ctime;
 }
 
 //! Returns the file's last access time.
 inline DateTime File::accessTime( void ) const
 {
   refresh();
-  return FileInfo.st_atime;
+  return _info.st_atime;
 }
 
 //! Returns the file's last modification time.
 inline DateTime File::modifyTime( void ) const
 {
   refresh();
-  return FileInfo.st_mtime;
+  return _info.st_mtime;
 }
 
 //! Returns the file's size (in bytes).
 inline File::Size File::size( void ) const
 {
   refresh();
-  return FileInfo.st_size;
+  return _info.st_size;
 }
 
 //! Returns the file's permission mode.
 inline File::Mode File::mode( void ) const
 {
   refresh();
-  return FileInfo.st_mode;
+  return _info.st_mode;
 }
 
 //! Returns \c true if the file has read permission.
@@ -270,22 +259,20 @@ inline bool File::writeable( void ) const
   return access( path(), AccessWriteBit ) == 0;
 }
 
-/*! \brief Sets the read permission on the file to \a State
+/*! \brief Sets the read permission on the file to \a state
 ** \return \c true , if the permission was set.
 */
-inline bool File::readable( bool State )
+inline bool File::readable( bool state )
 {
-  return( chmod( path(), (writeable() ? ChmodWriteBit : 0) |
-                         (State       ? ChmodReadBit  : 0) ) == 0 );
+  return chmod( path(), (writeable() ? ChmodWriteBit : 0) | (state ? ChmodReadBit  : 0) ) == 0;
 }
 
-/*! \brief Sets the write permission on the file to \a State
+/*! \brief Sets the write permission on the file to \a state
 ** \return \c true , if the permission was set.
 */
-inline bool File::writeable( bool State )
+inline bool File::writeable( bool state )
 {
-  return( chmod( path(), (readable() ? ChmodReadBit  : 0) |
-                         (State      ? ChmodWriteBit : 0) ) == 0 );
+  return chmod( path(), (readable() ? ChmodReadBit  : 0) | (state ? ChmodWriteBit : 0) ) == 0;
 }
 
 /*! \brief Compares the contents of the file with another file (\a that).
@@ -297,9 +284,7 @@ inline bool File::operator !=( File const &that ) const
 }
 
 /*! \brief Updates the access and modification times to the current time.
-**
-** If the file doesn't exist, it will be created.
-** \return \c true, if successful.
+** If the file doesn't exist, it will be created. \return \c true, if successful.
 */
 inline bool File::touch( void )
 {
@@ -307,7 +292,7 @@ inline bool File::touch( void )
   return Stream.is_open();
 }
 
-/*! Renames the file to \a dest.
+/*! \brief Renames the file to \a dest.
 ** If \a force is \c true, it will overwrite any existing file.
 */
 inline bool File::rename( File dest, bool force )

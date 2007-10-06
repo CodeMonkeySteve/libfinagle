@@ -43,7 +43,7 @@ template <typename CType>
 typename CType::value_type pop_back( CType &container );
 
 template <typename Type>
-Type absVal( Type const &Val );
+Type absVal( Type const &val );
 
 // TEMPLATE IMPLEMENTATION ****************************************************
 
@@ -55,6 +55,7 @@ inline double drand( void )
 
 
 /*! \brief Pops the front-most item from \a Container and returns it.
+**
 ** Uses \c front() and \c erase(). If the container is empty, returns an empty value.
 */
 template <typename CType>
@@ -71,6 +72,7 @@ typename CType::value_type pop_front( CType &container )
 }
 
 /*! \brief Pops the back-most item from \a container and returns it.
+**
 ** Uses \c back() and \c erase(). If the container is empty, returns an empty value.
 */
 template <typename CType>
@@ -86,14 +88,14 @@ typename CType::value_type pop_back( CType &container )
   return item;
 }
 
-//! Returns the absolute value of \a Val.
+//! Returns the absolute value of \a val.
 template <typename Type>
-Type absVal( Type const &Val )
+Type absVal( Type const &val )
 {
   if ( !std::numeric_limits<Type>::is_signed )
-    return Val;
+    return val;
 
-  return (Val < 0) ? -Val : Val;
+  return (val < 0) ? -val : val;
 }
 
 #ifdef min
@@ -118,10 +120,10 @@ inline Type const &max( Type const &a, Type const &b )
   return (a >= b) ? a : b;
 }
 
-/*! \brief Clamps \a Val to within \a Min and \a Max.
+/*! \brief Clamps \a val to within \a min and \a max.
 **
-** If \a Val is within the range [\a Min .. \a Max], returns \a Val.
-** Otherwise, returns the number within the range nearest to \a Val.
+** If \a val is within the range [\a min .. \a max], returns \a val.
+** Otherwise, returns the number within the range nearest to \a val.
 */
 template <typename Type>
 inline Type clamp( Type val, Type const &min, Type const &max )

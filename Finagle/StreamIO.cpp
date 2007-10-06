@@ -81,20 +81,20 @@ istream &Finagle::StreamIO::operator >>( istream &in, StreamIO::find const &str 
   string::const_iterator i = str.begin();
 
   // find beginning of search string
-  streambuf::int_type Ch;
+  streambuf::int_type ch;
   do {
-    Ch = in.rdbuf()->sgetc();
-    if ( Ch == traits::eof() ) {
+    ch = in.rdbuf()->sgetc();
+    if ( ch == traits::eof() ) {
       in.setstate( in.rdstate() | ios_base::failbit | ios_base::eofbit );
       return in;
     }
     in.rdbuf()->sbumpc();
-  } while ( Ch != traits::to_int_type( *i ) );
+  } while ( ch != traits::to_int_type( *i ) );
 
   unsigned CharsRead = 0;
   for ( ++i; i != str.end(); ++i ) {
-    streambuf::int_type Ch = in.rdbuf()->sgetc();
-    if ( Ch == traits::eof() ) {
+    streambuf::int_type ch = in.rdbuf()->sgetc();
+    if ( ch == traits::eof() ) {
       while ( CharsRead-- )
         in.rdbuf()->sungetc();
 
@@ -103,7 +103,7 @@ istream &Finagle::StreamIO::operator >>( istream &in, StreamIO::find const &str 
     }
     CharsRead++;
 
-    if ( Ch != traits::to_int_type( *i ) ) {
+    if ( ch != traits::to_int_type( *i ) ) {
       in.setstate( in.rdstate() | ios_base::failbit );
       break;
     }
@@ -116,43 +116,51 @@ istream &Finagle::StreamIO::operator >>( istream &in, StreamIO::find const &str 
 
 
 /*! \class Finagle::QuotedString
-** Function object to insert/extract quoted strings to/from streams.
+** \brief Function object to insert/extract quoted strings to/from streams.
+**
+** A quoted string:
+** * Begins and ends with double-quote marks
+** * Has internal double-quotes escaped with a single backslash
+** * Has internal backslashes escaped with a backslash
+**
+** Example: \code
+** "This is a \"Hello World\" kind of a example"
+** \endcode
 */
 
-std::istream &Finagle::operator >>( std::istream &in, QuotedString &QStr )
+std::istream &Finagle::operator >>( std::istream &in, QuotedString &qStr )
 {
-  char Ch;
-  in.get( Ch );
-  if ( Ch != '"' ) {
+  char ch;
+  in.get( ch );
+  if ( ch != '"' ) {
     in.setstate( in.rdstate() | ios::failbit );
     return in;
   }
 
-  QStr.str.clear();
+  qStr.str.clear();
 
   while ( in.good() ) {
-    in.get( Ch );
-    if ( Ch == '"' )
+    in.get( ch );
+    if ( ch == '"' )
       break;
 
-    if ( Ch != '\\' ) {
-      QStr.str.push_back( Ch );
+    if ( ch != '\\' ) {
+      qStr.str.push_back( ch );
       continue;
     }
 
-    in.get( Ch );
+    in.get( ch );
 
-    if ( (Ch != '\\') && (Ch != '"') )
-      QStr.str.push_back( '\\' );
+    if ( (ch != '\\') && (ch != '"') )
+      qStr.str.push_back( '\\' );
 
-    QStr.str.push_back( Ch );
+    qStr.str.push_back( ch );
   }
 
-  QStr.str.reserve( QStr.str.size() );
+  qStr.str.reserve( qStr.str.size() );
 
   return in;
 }
-
 
 std::ostream &Finagle::operator <<( std::ostream &out, QuotedString const &qStr )
 {
