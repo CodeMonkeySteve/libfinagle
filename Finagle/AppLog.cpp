@@ -149,7 +149,6 @@ void LogToStream::onMsg( XML::Element const &msg )
 **
 ** The filename is determined by taking the #base name and appending ".log" or ".xlog", depending on the value of \a asXML passed
 ** to the constructor.
-
 */
 
 /*! Sets the output file base name, reopenning the file if necessary.
