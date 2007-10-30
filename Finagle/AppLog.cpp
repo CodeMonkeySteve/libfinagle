@@ -153,7 +153,7 @@ void LogToStream::onMsg( XML::Element const &msg )
 
 /*! Sets the output file base name, reopenning the file if necessary.
 */
-FilePath const &LogToFile::base( FilePath const &base )
+String const &LogToFile::base( String const &base )
 {
   if ( base == _base )
     return _base;
@@ -174,8 +174,8 @@ void LogToFile::onMsg( XML::Element const &msg )
     if ( !_base )
       return;
 
-    Dir(_base.dir()).create();
     FilePath path( _base + (_asXML ? ".xlog" : ".log") );
+    Dir( path.dir() ).create();
 
     if ( !_buf.open( path, ios::out | ios::app | ios::binary ) ) {
       File::OpenEx ex( path, ios::out );

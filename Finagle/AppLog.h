@@ -137,14 +137,14 @@ protected:
 
 class LogToFile : public LogToStream {
 public:
-  LogToFile( FilePath const &base, bool asXML = false, bool debug = false );
+  LogToFile( String const &base, bool asXML = false, bool debug = false );
   void onMsg( XML::Element const &msg );
 
-  FilePath const &base( void ) const;
-  FilePath const &base( FilePath const &base );
+  String const &base( void ) const;
+  String const &base( String const &base );
 
 protected:
-  FilePath _base;
+  String _base;
   std::filebuf _buf;
 };
 
@@ -169,12 +169,12 @@ inline LogToStream::LogToStream( std::streambuf *buf, bool asXML, bool debug )
 ** If \a asXML is \c false, XML entries will be converted to a plain text form.  If \a debug is \c false, entries with a level
 ** of \c debug will be silently dropped.
 */
-inline LogToFile::LogToFile( FilePath const &base, bool asXML, bool debug )
+inline LogToFile::LogToFile( String const &base, bool asXML, bool debug )
 : LogToStream( &_buf, asXML, debug ), _base(base)
 {}
 
 //! Returns the output file base name.
-inline FilePath const &LogToFile::base( void ) const
+inline String const &LogToFile::base( void ) const
 {
   return _base;
 }
