@@ -4,6 +4,7 @@ SUBDIRS = Finagle test
 
 EXTRA_DIST = Doxyfile Doxyfile.in doc/html $(srcdir)/doc/*
 doc/html: Doxyfile $(DIST_SOURCES)
+	@rm -rf doc/html
 	@doxygen Doxyfile >/dev/null
 
 # Add pkg-config file
