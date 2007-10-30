@@ -177,8 +177,8 @@ void LogToFile::onMsg( XML::Element const &msg )
     Dir(_base.dir()).create();
     FilePath path( _base + (_asXML ? ".xlog" : ".log") );
 
-    if ( !_buf.open( _base, ios::out | ios::app | ios::binary ) ) {
-      File::OpenEx ex( _base, ios::out );
+    if ( !_buf.open( path, ios::out | ios::app | ios::binary ) ) {
+      File::OpenEx ex( path, ios::out );
       _base.clear(); // Make sure we don't try to reopen to log the exception
       throw ex;
     }
