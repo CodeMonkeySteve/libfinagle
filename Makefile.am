@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = foreign 1.4
 
 SUBDIRS = Finagle test
 
-EXTRA_DIST = Doxyfile Doxyfile.in doc/html
+EXTRA_DIST = Doxyfile Doxyfile.in doc/html $(srcdir)/doc/*
 doc/html: Doxyfile $(DIST_SOURCES)
 	@doxygen Doxyfile >/dev/null
 
