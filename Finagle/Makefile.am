@@ -39,6 +39,7 @@ doc: Doxyfile $(DIST_SOURCES)
 	@rm -rf doc
 	@doxygen Doxyfile >/dev/null
 
+docdir ?= $(datadir)/doc/$(PACKAGE)
 htmldir = $(docdir)/Finagle
 html_DATA = $(wildcard doc/*)
 EXTRA_DIST = doc
