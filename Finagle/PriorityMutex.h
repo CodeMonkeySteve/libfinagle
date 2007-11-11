@@ -23,7 +23,7 @@
 #define FINAGLE_PRIORITYLOCK_H
 
 #include <Finagle/List.h>
-#include <Finagle/sigslot.h>
+#include <sigslot/sigslot.h>
 
 namespace Finagle {
 

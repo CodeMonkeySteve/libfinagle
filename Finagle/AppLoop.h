@@ -23,7 +23,7 @@
 #define FINAGLE_APPLOOP_H
 
 #include <Finagle/DateTime.h>
-#include <Finagle/sigslot.h>
+#include <sigslot/sigslot.h>
 
 namespace Finagle {
 

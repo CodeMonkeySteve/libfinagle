@@ -28,8 +28,8 @@
 #include <Finagle/FilePath.h>
 #include <Finagle/Map.h>
 #include <Finagle/Mutex.h>
-#include <Finagle/sigslot.h>
 #include <Finagle/Singleton.h>
+#include <sigslot/sigslot.h>
 
 namespace Finagle {
 

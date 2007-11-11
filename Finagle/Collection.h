@@ -24,7 +24,7 @@
 
 #include <Finagle/Configure.h>
 #include <Finagle/Constructable.h>
-#include <Finagle/sigslot.h>
+#include <sigslot/sigslot.h>
 
 namespace Finagle {
 

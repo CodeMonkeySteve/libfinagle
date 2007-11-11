@@ -24,7 +24,7 @@
 
 #include <Finagle/AppLoop.h>
 #include <Finagle/ReferencedObject.h>
-#include <Finagle/sigslot.h>
+#include <sigslot/sigslot.h>
 #include <Finagle/Array.h>
 
 namespace Finagle {

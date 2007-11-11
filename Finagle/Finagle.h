@@ -24,7 +24,7 @@
 
 #include <iomanip>
 
-#include <Finagle/sigslot.h>
+#include <sigslot/sigslot.h>
 
 // Basic types, included for convenience
 #include <Finagle/Timer.h>

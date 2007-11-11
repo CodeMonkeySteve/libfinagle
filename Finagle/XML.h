@@ -28,7 +28,11 @@
 #include <Finagle/Map.h>
 #include <Finagle/ReferencedObject.h>
 
+#include <iostream>
+
 namespace Finagle {  namespace XML {
+
+//#include <tinyxml/tinyxml.h>
 
 class Element : public ReferenceCount {
 public:

@@ -93,10 +93,10 @@ void UUIDTest::testExport( void )
 {
   String s( UUID().generate() );
   CPPUNIT_ASSERT_EQUAL( 36, (int) s.length() );
-  CPPUNIT_ASSERT_EQUAL( '-', s(8) );
-  CPPUNIT_ASSERT_EQUAL( '-', s(13) );
-  CPPUNIT_ASSERT_EQUAL( '-', s(18) );
-  CPPUNIT_ASSERT_EQUAL( '-', s(23) );
+  CPPUNIT_ASSERT_EQUAL( '-', s[8] );
+  CPPUNIT_ASSERT_EQUAL( '-', s[13] );
+  CPPUNIT_ASSERT_EQUAL( '-', s[18] );
+  CPPUNIT_ASSERT_EQUAL( '-', s[23] );
 
   CPPUNIT_ASSERT_EQUAL( String(), String(UUID()) );
 }

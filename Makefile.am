@@ -1,16 +1,11 @@
 AUTOMAKE_OPTIONS = foreign 1.4
 
-SUBDIRS = Finagle test
-
-EXTRA_DIST = Doxyfile Doxyfile.in doc/html $(srcdir)/doc/*
-doc/html: Doxyfile $(DIST_SOURCES)
-	@rm -rf doc/html
-	@doxygen Doxyfile >/dev/null
+SUBDIRS = sigslot tinyxml Finagle
 
 # Add pkg-config file
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = @PACKAGE@.pc 
-EXTRA_DIST += @PACKAGE@.pc.in
+pkgconfig_DATA = @PACKAGE@.pc
+EXTRA_DIST = @PACKAGE@.pc.in
 
 # Build RPMS
 EXTRA_DIST += @PACKAGE@.spec @PACKAGE@.spec.in
@@ -24,5 +19,4 @@ pkgs-install: pkgs
 
 $(RPM_PATHS): @PACKAGE@.spec.in $(DIST_SOURCES)
 	$(MAKE) dist-bzip2
-	rpmbuild -tb $(distdir).tar.bz2	
-
+	rpmbuild -tb $(distdir).tar.bz2

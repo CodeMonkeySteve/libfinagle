@@ -72,4 +72,4 @@ programs that use libFinagle.
 %{_libdir}/%{name}*.a
 %{_libdir}/pkgconfig/%{name}.pc
 %{_includedir}/%{name}-%{version}-%{release}
-%doc doc/*
+%doc %{_docdir}/libFinagle/*

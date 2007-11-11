@@ -86,8 +86,12 @@ public: // Conversions
 
 public: // Return-type wrappers
   String substr( size_type Pos = 0, size_type Len = npos ) const;
-  reference operator()( size_type n );
-  const_reference operator()( size_type n ) const;
+
+  template <typename Type>
+  reference operator[]( Type n ) {  return std::string::operator[]( size_type(n) );  }
+
+  template <typename Type>
+  const_reference operator[]( Type n ) const {  return std::string::operator[]( size_type(n) );  }
 
 public: // Class methods
   static String format( const char *form, ... );
@@ -238,17 +242,17 @@ inline String String::substr( size_type pos, size_type len ) const
   return std::string::substr( pos, len );
 }
 
-//! Alternate index operator
-inline String::reference String::operator()( size_type n )
+/*
+inline String::reference String::operator[]( size_type n )
 {
   return std::string::operator[]( n );
 }
 
-//! Alternate index operator
-inline String::const_reference String::operator()( size_type n ) const
+inline String::const_reference String::operator[]( size_type n ) const
 {
   return std::string::operator[]( n );
 }
+*/
 
 //! Joins two strings
 inline String operator +( String const &left, String const &right )

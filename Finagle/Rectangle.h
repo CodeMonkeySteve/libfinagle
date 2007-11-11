@@ -22,7 +22,7 @@
 #ifndef FINAGLE_RECTANGLE_H
 #define FINAGLE_RECTANGLE_H
 
-#include <Finagle/sigslot.h>
+#include <sigslot/sigslot.h>
 #include <Util.h>
 
 namespace Finagle {
