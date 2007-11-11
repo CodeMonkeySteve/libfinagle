@@ -1,6 +1,9 @@
-SUBDIRS = test
-
 METASOURCES = AUTO
+SUBDIRS = test
+INCLUDES = -I$(top_srcdir) $(PTHREAD_CFLAGS) $(expat_CFLAGS) \
+	$(libpcre_CFLAGS) $(openssl_CFLAGS) $(uuid_CFLAGS) $(z_CFLAGS)
+AM_CXXFLAGS = -Wall
+
 lib_LTLIBRARIES = libFinagle.la
 
 libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp \
@@ -20,8 +23,6 @@ libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp \
 libFinagle_la_LDFLAGS = -no-undefined -version-info @LIB_CURRENT@:@LIB_REVISION@:@LIB_AGE@ -release @FINAGLE_VERSION@
 libFinagle_la_LIBADD = $(top_builddir)/tinyxml/libTinyXML.a $(PTHREAD_LIBS) \
 	$(expat_LIBS) $(libpcre_LIBS) $(openssl_LIBS) $(uuid_LIBS) $(z_LIBS)
-INCLUDES = -I$(top_srcdir)/. $(PTHREAD_CFLAGS) $(expat_CFLAGS) \
-	$(libpcre_CFLAGS) $(openssl_CFLAGS) $(uuid_CFLAGS) $(z_CFLAGS)
 
 library_includedir=$(includedir)/$(PACKAGE)-$(VERSION)/Finagle
 library_include_HEADERS = AppLog.h AppLogEntry.h AppLoop.h Array.h ByteArray.h \
@@ -34,7 +35,6 @@ library_include_HEADERS = AppLog.h AppLogEntry.h AppLoop.h Array.h ByteArray.h \
 	Set.h Singleton.h SizedQueue.h Socket.h StreamIO.h TextString.h Thread.h \
 	ThreadFunc.h Timer.h UUID.h UnixSocket.h Util.h WaitCondition.h XML.h
 
-
 doc: Doxyfile $(DIST_SOURCES)
 	@rm -rf doc
 	@doxygen Doxyfile >/dev/null
@@ -43,4 +43,4 @@ docdir ?= $(datadir)/doc/$(PACKAGE)
 htmldir = $(docdir)/Finagle
 html_DATA = $(wildcard doc/*)
 EXTRA_DIST = doc
-dist-hook: doc
+

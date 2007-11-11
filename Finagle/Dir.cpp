@@ -52,8 +52,7 @@ const Dir Dir::root( FilePath::DirDelim );
 Dir Dir::current( void )
 {
   char dir[PATH_MAX + 1] = "";
-  getcwd( dir, sizeof( dir ) );
-  return Dir(dir);
+  return Dir( getcwd( dir, sizeof( dir ) ) );
 }
 
 //! Sets the current working directory

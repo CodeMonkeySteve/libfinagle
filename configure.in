@@ -9,7 +9,6 @@ AC_SUBST(FINAGLE_RELEASE)
 AC_CONFIG_SRCDIR(configure.in)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(libFinagle, $FINAGLE_VERSION-$FINAGLE_RELEASE)
-AC_CONFIG_SUBDIRS(tinyxpath)
 
 # Library versioning
 LIB_CURRENT=0
@@ -73,5 +72,6 @@ AC_CONFIG_FILES([Makefile
                  Finagle/Makefile Finagle/test/Makefile Finagle/Doxyfile
                  sigslot/Makefile 
                  tinyxml/Makefile tinyxml/test/Makefile
+                 tinyxpath/Makefile tinyxpath/test/Makefile
                  libFinagle.spec libFinagle.pc])
 AC_OUTPUT

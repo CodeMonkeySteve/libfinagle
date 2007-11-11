@@ -2,6 +2,7 @@
    Test program for TinyXML.
 */
 
+#include "tinyxml/tinyxml.h"
 
 #ifdef TIXML_USE_STL
 	#include <iostream>
@@ -16,8 +17,6 @@
 	_CrtMemState startMemState;
 	_CrtMemState endMemState;
 #endif
-
-#include "tinyxml/tinyxml.h"
 
 static int gPass = 0;
 static int gFail = 0;
@@ -74,6 +73,9 @@ bool XmlTest( const char* testString, int expected, int found, bool noEcho = fal
 
 int main()
 {
+  if ( chdir( TESTDIR ) != 0 )
+    return -1;
+
 	//
 	// We start with the 'demoStart' todo list. Process it. And
 	// should hopefully end up with the todo list as illustrated.

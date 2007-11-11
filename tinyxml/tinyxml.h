@@ -43,6 +43,7 @@ distribution.
 #define DEBUG
 #endif
 
+#define TIXML_USE_STL
 #include <Finagle/TextString.h>
 #include <iostream>
 #include <sstream>
