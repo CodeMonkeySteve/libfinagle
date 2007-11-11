@@ -34,10 +34,10 @@ library_include_HEADERS = AppLog.h AppLogEntry.h AppLoop.h Array.h ByteArray.h \
 	Set.h Singleton.h SizedQueue.h Socket.h StreamIO.h TextString.h Thread.h \
 	ThreadFunc.h Timer.h UUID.h UnixSocket.h Util.h WaitCondition.h XML.h
 
-htmldir = $(docdir)/Finagle
-html_DATA = doc/*
-EXTRA_DIST = $(html_DATA)
-
 doc: Doxyfile $(DIST_SOURCES)
 	@rm -rf doc
 	@doxygen Doxyfile >/dev/null
+
+EXTRA_DIST = doc
+htmldir = $(docdir)/Finagle
+html_DATA = $(wildcard doc/*)
