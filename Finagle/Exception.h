@@ -77,7 +77,7 @@ inline Exception::Exception( String const &str )
 //! Returns the element text as a C-style string.
 inline const char *Exception::what( void ) const throw()
 {
-  return _text;
+  return XML::Element::text();
 }
 
 

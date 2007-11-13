@@ -1,7 +1,7 @@
 /*!
-** \file XML.h
+** \file Parse.cpp
 ** \author Steve Sloan <steve@finagle.org>
-** \date Mon Nov 1 2004
+** \date Fri Dec 16 2004
 ** Copyright (C) 2004 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
@@ -19,15 +19,12 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_XML_H
-#define FINAGLE_XML_H
+#include "Finagle/AppLog.h"
+#include "Finagle/File.h"
+#include "Element.h"
+#include "expat.h"
 
-//#include <Finagle/Exception.h>
-#include <Finagle/XML/Element.h>
+using namespace std;
+using namespace Finagle;
+using namespace XML;
 
-namespace Finagle {  namespace XML {
-
-
-} }
-
-#endif

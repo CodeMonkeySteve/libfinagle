@@ -53,18 +53,18 @@ public:
   static Configurable::Ref deserialize( XML::Element const &el );
 
 protected:
-  String _tag;
+  String _name;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
 inline Configurable::Configurable( String const &tag )
-: _tag( tag )
+: _name( tag )
 {}
 
 inline String const &Configurable::tag( void ) const
 {
-  return _tag;
+  return _name;
 }
 
 inline Configurable::InvalidTagEx::InvalidTagEx( const char *tag, const char *wrongTag )

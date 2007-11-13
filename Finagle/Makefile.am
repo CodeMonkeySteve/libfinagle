@@ -1,27 +1,19 @@
 METASOURCES = AUTO
-SUBDIRS = test
+SUBDIRS = XML test
 INCLUDES = -I$(top_srcdir) $(PTHREAD_CFLAGS) $(expat_CFLAGS) \
 	$(libpcre_CFLAGS) $(openssl_CFLAGS) $(uuid_CFLAGS) $(z_CFLAGS)
 AM_CXXFLAGS = -Wall
 
 lib_LTLIBRARIES = libFinagle.la
 
-libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp \
-	Compress.cpp \
-	Configure.cpp DateTime.cpp \
-	DateTimeMask.cpp Dir.cpp File.cpp \
-	FileDescWatcher.cpp FilePath.cpp \
-	IPAddress.cpp MD5.cpp \
-	MemTrace.cpp Mutex.cpp OptionParser.cpp \
-	PriorityMutex.cpp \
-	Rate.cpp Rectangle.cpp \
-	RegEx.cpp SSL.cpp Schedule.cpp \
-	Socket.cpp StreamIO.cpp TextString.cpp \
-	Thread.cpp Timer.cpp UUID.cpp \
-	Util.cpp WaitCondition.cpp XML.cpp
+libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp Compress.cpp Configure.cpp \
+	DateTime.cpp DateTimeMask.cpp Dir.cpp File.cpp FileDescWatcher.cpp FilePath.cpp \
+	IPAddress.cpp MD5.cpp MemTrace.cpp Mutex.cpp OptionParser.cpp PriorityMutex.cpp \
+	Rate.cpp Rectangle.cpp RegEx.cpp SSL.cpp Socket.cpp StreamIO.cpp TextString.cpp \
+	Thread.cpp Timer.cpp UUID.cpp Util.cpp WaitCondition.cpp
 
 libFinagle_la_LDFLAGS = -no-undefined -version-info @LIB_CURRENT@:@LIB_REVISION@:@LIB_AGE@ -release @FINAGLE_VERSION@
-libFinagle_la_LIBADD = $(top_builddir)/tinyxml/libTinyXML.a $(PTHREAD_LIBS) \
+libFinagle_la_LIBADD = $(top_builddir)/Finagle/XML/libXML.a $(PTHREAD_LIBS) \
 	$(expat_LIBS) $(libpcre_LIBS) $(openssl_LIBS) $(uuid_LIBS) $(z_LIBS)
 
 library_includedir=$(includedir)/$(PACKAGE)-$(VERSION)/Finagle

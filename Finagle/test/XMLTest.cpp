@@ -1,8 +1,8 @@
 /*!
-** \file XML.h
+** \file XMLTest.cpp
+** \date Sat July 21 2007
 ** \author Steve Sloan <steve@finagle.org>
-** \date Mon Nov 1 2004
-** Copyright (C) 2004 by Steve Sloan
+** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU Lesser General Public License as published
@@ -19,15 +19,27 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_XML_H
-#define FINAGLE_XML_H
+#include <iostream>
+#include <cppunit/extensions/HelperMacros.h>
+#include <Finagle/XML.h>
 
-//#include <Finagle/Exception.h>
-#include <Finagle/XML/Element.h>
+using namespace std;
+using namespace Finagle;
 
-namespace Finagle {  namespace XML {
+class XMLTest : public CppUnit::TestFixture
+{
+  CPPUNIT_TEST_SUITE( XMLTest );
+  CPPUNIT_TEST( testParse );
+  CPPUNIT_TEST_SUITE_END();
+
+public:
+  void testParse( void );
+};
 
 
-} }
+CPPUNIT_TEST_SUITE_REGISTRATION( XMLTest );
 
-#endif
+void XMLTest::testParse( void )
+{
+}
+

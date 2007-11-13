@@ -66,22 +66,22 @@ bool Schedule::apply( DateTime const &When, Configurable::Ref Target ) const
 }
 
 
-void Schedule::configure( XML::Element const &El )
+void Schedule::configure( XML::Element const &el )
 {
-  Configurable::configure( El );
+  Configurable::configure( el );
 
-  if ( El.attribs().contains( "begin" ) )
-    Begin.parse( El.attrib("begin") );
+  if ( el.attribs().contains( "begin" ) )
+    Begin.parse( el.attrib("begin") );
 
-  if ( El.attribs().contains( "end" ) )
-    Begin.parse( El.attrib("end") );
+  if ( el.attribs().contains( "end" ) )
+    Begin.parse( el.attrib("end") );
 
-  for ( XML::Element::ConstIterator e = El.elements().begin(); e != El.elements().end(); ++e ) {
-    if ( e->tag() != Schedule::Tag ) {
+  for ( XML::Node::ConstIterator n( el.firstChild() ); n; ++n ) {
+    if ( n->name() != Schedule::Name ) {
       if ( !Config )
         Config = new XML::Element;
 
-      *Config += e;
+      *Config += n;
       continue;
     }
 
@@ -94,21 +94,21 @@ void Schedule::configure( XML::Element const &El )
 
 XML::Element::Ref Schedule::configuration( void ) const
 {
-  XML::Element::Ref El = Configurable::configuration();
+  XML::Element::Ref el = Configurable::configuration();
 
   if ( !Begin.empty() )
-    El->attrib("begin") = Begin;
+    el->attrib("begin") = Begin;
 
   if ( !End.empty() )
-    El->attrib("end") = End;
+    el->attrib("end") = End;
 
   if ( Config )
-    *El += Config;
+    *el += Config;
 
   for ( List<Schedule::Ref>::const_reverse_iterator s = SubSched.rbegin(); s != SubSched.rend(); ++s )
-    *El += (*s)->configuration();
+    *el += (*s)->configuration();
 
-  return El;
+  return el;
 }
 
 
@@ -126,11 +126,11 @@ Schedulable::~Schedulable( void )
 }
 
 
-void Schedulable::configure( XML::Element const &El )
+void Schedulable::configure( XML::Element const &el )
 {
-  Configurable::configure( El );
+  Configurable::configure( el );
 
-  for ( XML::Element::ConstIterator e = El.elements().begin(); e != El.elements().end(); ++e ) {
+  for ( XML::Element::ConstIterator e = el.elements().begin(); e != el.elements().end(); ++e ) {
     if ( e->tag() != Schedule::Tag )
       continue;
 
@@ -139,7 +139,7 @@ void Schedulable::configure( XML::Element const &El )
       continue;
 
     if ( s->Config )
-      s->Config->tag( El.tag() );
+      s->Config->tag( el.tag() );
 
     Master[Ref( this )].push_front( Schedule::ConstRef( s ) );
   }
@@ -148,17 +148,17 @@ void Schedulable::configure( XML::Element const &El )
 
 XML::Element::Ref Schedulable::configuration( void ) const
 {
-  XML::Element::Ref El = Configurable::configuration();
+  XML::Element::Ref el = Configurable::configuration();
 
   if ( !Master.contains( Ref( const_cast<Schedulable *>( this ) ) ) )
-    return El;
+    return el;
 
   List<Schedule::ConstRef> &Sched = Master[Ref( const_cast<Schedulable *>( this ) )];
   List<Schedule::ConstRef>::const_reverse_iterator End = Sched.rend();
   for ( List<Schedule::ConstRef>::const_reverse_iterator s = Sched.rbegin(); s != End; ++s )
-    *El += (*s)->configuration();
+    *el += (*s)->configuration();
 
-  return El;
+  return el;
 }
 
 

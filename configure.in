@@ -31,7 +31,7 @@ AC_SUBST(PTHREAD_LIBS)
 AC_SUBST(PTHREAD_CFLAGS)
 
 AC_CHECK_LIB( z,     deflateInit_,         , exit )
-#AC_CHECK_LIB( expat, XML_ExpatVersionInfo, , exit )
+AC_CHECK_LIB( expat, XML_ExpatVersionInfo, , exit )
 
 PKG_CHECK_MODULES( libpcre, [libpcre >= 6.6],    , exit )
 PKG_CHECK_MODULES( openssl, [openssl >= 0.9.7],  , exit )
@@ -70,8 +70,8 @@ AC_CHECK_FUNCS([getcwd gethostbyaddr gethostbyname gettimeofday inet_ntoa memmov
 
 AC_CONFIG_FILES([Makefile
                  Finagle/Makefile Finagle/test/Makefile Finagle/Doxyfile
+                 Finagle/XML/Makefile
                  sigslot/Makefile 
-                 tinyxml/Makefile tinyxml/test/Makefile
                  tinyxpath/Makefile tinyxpath/test/Makefile
                  libFinagle.spec libFinagle.pc])
 AC_OUTPUT

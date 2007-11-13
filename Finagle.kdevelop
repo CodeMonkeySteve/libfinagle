@@ -27,16 +27,19 @@
       <mainprogram/>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle/>
+        <testFinagle>MutexTest</testFinagle>
         <xmltest/>
+        <testxpath/>
       </runarguments>
       <debugarguments>
-        <testFinagle/>
+        <testFinagle>ExceptionTest</testFinagle>
         <xmltest/>
+        <testxpath/>
       </debugarguments>
       <cwd>
-        <testFinagle/>
+        <testFinagle>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./Finagle/test</testFinagle>
         <xmltest>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./tinyxml/test</xmltest>
+        <testxpath>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./tinyxpath/test</testxpath>
       </cwd>
       <programargs/>
       <globaldebugarguments/>

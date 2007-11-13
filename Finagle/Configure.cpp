@@ -31,22 +31,22 @@ using namespace XML;
 
 void Configurable::configure( XML::Element const &el )
 {
-  if ( !_tag.empty() && (_tag != el.tag()) )
-    throw InvalidTagEx( el.tag(), _tag );
+  if ( !_name.empty() && (_name != el.name()) )
+    throw InvalidTagEx( el.name(), _name );
 }
 
 
 XML::Element::Ref Configurable::configuration( void ) const
 {
-  return new XML::Element( _tag );
+  return new XML::Element( _name );
 }
 
 
 Configurable::Ref Configurable::deserialize( XML::Element const &el )
 {
-  if ( el.tag().empty() || !(Factories().contains( el.tag() )) )
+  if ( el.name().empty() || !(Factories().contains( el.name() )) )
     return 0;
 
-  Configurable::Ref obj = Factories()[el.tag()]->construct( el );
+  Configurable::Ref obj = Factories()[el.name()]->construct( el );
   return obj;
 }

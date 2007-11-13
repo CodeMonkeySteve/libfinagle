@@ -5,9 +5,10 @@ TESTS = $(check_PROGRAMS)
 
 check_PROGRAMS = testFinagle
 
-testFinagle_SOURCES = FactoryTest.cpp FilePathTest.cpp MutexTest.cpp \
-	ObjectRefTest.cpp PriorityQueueTest.cpp QueueTest.cpp SizedQueueTest.cpp StringTest.cpp \
-	TestFinagle.cpp ThreadTest.cpp UUIDTest.cpp UtilTest.cpp WaitConditionTest.cpp
+testFinagle_SOURCES = ExceptionTest.cpp FactoryTest.cpp FilePathTest.cpp \
+	MutexTest.cpp ObjectRefTest.cpp PriorityQueueTest.cpp QueueTest.cpp \
+	SizedQueueTest.cpp StringTest.cpp TestFinagle.cpp ThreadTest.cpp UUIDTest.cpp UtilTest.cpp \
+	WaitConditionTest.cpp XMLTest.cpp
 testFinagle_LDADD = $(top_builddir)/Finagle/libFinagle.la
 
 testFinagle_CXXFLAGS = $(PTHREAD_CFLAGS) $(z_CFLAGS) $(libpcre_CFLAGS) $(expat_CFLAGS) $(openssl_CFLAGS) $(CPPUNIT_CFLAGS) \

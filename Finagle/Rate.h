@@ -49,8 +49,7 @@ protected:
 
 inline Rate::Rate( void )
 : _count( 0 )
-{
-}
+{}
 
 //! Signal that an event has occured.
 inline Rate &Rate::operator ++( void )

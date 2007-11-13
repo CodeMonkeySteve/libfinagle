@@ -305,7 +305,7 @@ inline String String::trim( String const &str, const char *chars )
 //! Stream output operator
 inline std::ostream &operator <<( std::ostream &out, NoCase const &str )
 {
-  return out << str.c_str();
+  return out << str;
 }
 
 // TEMPLATE IMPLEMENTATION ********************************************************************************************************

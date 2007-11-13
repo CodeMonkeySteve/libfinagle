@@ -43,7 +43,7 @@ using namespace Finagle;
 //! Add an XML element (e.g. a \a msg) to the log.
 AppLog &AppLog::operator +=( XML::Element const &msg )
 {
-  if ( msg.text().empty() && msg.elements().empty() )
+  if ( msg.empty() )
     return *this;
 
   Lock X( _guard );
@@ -108,7 +108,7 @@ AppLog::Logger::Ref AppLog::Logger::fromSpec( String const &spec, bool debug )
 
 void LogToStream::onMsg( XML::Element const &msg )
 {
-  String const &level( msg.attrib("level") );
+  NoCase level( msg.attrib("level") );
 
   if ( !_debug && (level == "debug") )
     return;
@@ -126,21 +126,25 @@ void LogToStream::onMsg( XML::Element const &msg )
     _stream << string( 11, ' ' );
 */
 
-  if ( !msg.text().empty() ) {
+  XML::Text::ConstRef t( msg.lastChild() );
+  if ( t && !t->text().empty() ) {
     if ( level == "error" )
       _stream << "ERROR: ";
     else
     if ( level == "warn" )
       _stream << "WARNING: ";
     else
-    if ( msg.tag() == "exception" )
+    if ( msg.name() == NoCase("exception") )
       _stream << "EXCEPTION: ";
 
-    _stream << msg.text() << endl;
+    _stream << t->text() << endl;
   }
 
-  for ( XML::Element::List::ConstIterator m = msg.elements().begin(); m != msg.elements().end(); ++m )
-    onMsg( *m );
+  for ( XML::Element::ConstIterator n( &msg ); n; ++n ) {
+    XML::Element::ConstRef e( &*n );
+    if ( e )
+      onMsg( *e );
+  }
 }
 
 

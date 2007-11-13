@@ -1,5 +1,5 @@
 /*!
-** \file XML.h
+** \file XML.cpp
 ** \author Steve Sloan <steve@finagle.org>
 ** \date Mon Nov 1 2004
 ** Copyright (C) 2004 by Steve Sloan
@@ -19,15 +19,7 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_XML_H
-#define FINAGLE_XML_H
+// using namespace std;
+// using namespace Finagle;
+// using namespace XML;
 
-//#include <Finagle/Exception.h>
-#include <Finagle/XML/Element.h>
-
-namespace Finagle {  namespace XML {
-
-
-} }
-
-#endif

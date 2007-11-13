@@ -80,7 +80,7 @@ inline UUID::UUID( String const &str )
 : _uuid(0)
 {
   UUID_ASSERT( uuid_create( &_uuid ) );
-  UUID_ASSERT( uuid_import( _uuid, UUID_FMT_STR, str.c_str(), str.length() ) );
+  UUID_ASSERT( uuid_import( _uuid, UUID_FMT_STR, str, str.length() ) );
 }
 
 inline UUID::UUID( UUID const &id )

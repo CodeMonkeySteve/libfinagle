@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign 1.4
 
-SUBDIRS = sigslot tinyxml tinyxpath Finagle
+SUBDIRS = sigslot Finagle
 
 # Add pkg-config file
 pkgconfigdir = $(libdir)/pkgconfig
