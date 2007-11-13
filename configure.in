@@ -72,6 +72,5 @@ AC_CONFIG_FILES([Makefile
                  Finagle/Makefile Finagle/test/Makefile Finagle/Doxyfile
                  Finagle/XML/Makefile
                  sigslot/Makefile 
-                 tinyxpath/Makefile tinyxpath/test/Makefile
                  libFinagle.spec libFinagle.pc])
 AC_OUTPUT
