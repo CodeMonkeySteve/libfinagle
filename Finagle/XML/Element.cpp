@@ -25,6 +25,9 @@ using namespace std;
 using namespace Finagle;
 using namespace XML;
 
+const Element Element::nil( "" );
+
+
 Element::Element( String const &name, String const &text )
 : _name(name)
 {
@@ -32,53 +35,6 @@ Element::Element( String const &name, String const &text )
     insert( new Text(text) );
 }
 
-//! Returns the first child element with \a name.
-// Element &Element::element( String const &name )
-// {
-//   String const &(XML::Element::*f)(void) const = &XML::Element::name;
-//
-//   Iterator i = std::find_if( _elements.begin(), _elements.end(),
-//     compose1( bind2nd( std::equal_to<String>(), name ), mem_fun_ref(f) )
-//   );
-//
-//   if ( i != _elements.end() )
-//     return *i;
-//
-//   Element::Ref el = new Element( name );
-//   append( el );
-//   return el;
-// }
-
-// inline bool Element::List::contains( String const &name ) const
-// {
-//   String const &(XML::Element::*f)(void) const = &XML::Element::name;
-//   return
-//     std::find_if( List::begin(), List::end(),
-//       compose1( bind2nd( std::equal_to<String>(), name ), mem_fun_ref(f) )
-//     ) != List::end();
-// }
-
-//! Inserts \a child as the first child node.
-Node::Ref Element::firstChild( Node::Ref child )
-{
-  if ( !hasChildren() )
-    insert( child );
-  else
-    child->insertBefore( _firstChild );
-
-  return child;
-}
-
-//! Inserts \a child as the last child node.
-Node::Ref Element::lastChild( Node::Ref child )
-{
-  if ( !_lastChild )
-    insert( child );
-  else
-    child->insertBefore( _lastChild );
-
-  return child;
-}
 
 //! Removes all attributes and child nodes
 void Element::clear( void )
@@ -104,13 +60,13 @@ Element &Element::append( String const &str )
   return *this;
 }
 
-Element &Element::append( Element::Ref el )
+Element &Element::append( Node::Ref node )
 {
-  Text::Ref a( _lastChild ), b( el );
+  Text::Ref a( _lastChild ), b( node );
   if ( a && b )
     a->text() += b->text();
   else
-    lastChild( Node::Ref(el) );
+    lastChild( node );
 
   return *this;
 }
@@ -126,7 +82,7 @@ void Element::render( std::ostream &out ) const
   }
 
   if ( !_lastChild ) {
-    out << " />";
+    out << "/>";
     return;
   }
   out << ">";

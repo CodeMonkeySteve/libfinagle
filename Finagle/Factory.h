@@ -111,7 +111,7 @@ template <typename Name, typename Base>
 ObjectRef<Base> FactoryMap<Name, Base>::operator()( Name const &name )
 {
   typename Map<Name, Factory<Base> *>::Iterator it( _map.find( name ) );
-  return (it != _map.end()) ? (**it)() : 0;
+  return (it != _map.end()) ? (**it)() : ObjectRef<Base>(0);
 }
 
 }

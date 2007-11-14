@@ -59,8 +59,9 @@ public:
 
   ObjectRef &operator =( ObjectRef<Type,RType,PType> ref );
 
+  operator bool( void ) const;
+  bool operator ==( ObjectRef<Type,RType,PType> const &ref ) const;
   bool operator ==( PtrType ptr ) const;
-  bool isValid( void ) const;
 
   Type const &operator *( void ) const;
   Type const *operator ->( void ) const;
@@ -198,9 +199,24 @@ ObjectRef<Type, RType, PType>::~ObjectRef( void )
 
 //! Returns \c true if the reference is not \c 0.
 template <typename Type, typename RType, typename PType>
-inline bool ObjectRef<Type, RType, PType>::isValid( void ) const
+inline ObjectRef<Type, RType, PType>::operator bool( void ) const
 {
   return _ptr != 0;
+}
+
+
+//! Returns \c true if this reference and \a ref have the same address.
+template <typename Type, typename RType, typename PType>
+inline bool ObjectRef<Type, RType, PType>::operator ==( ObjectRef<Type,RType,PType> const &ref ) const
+{
+  return _ptr == ref._ptr;
+}
+
+//! Returns \c true if this reference and \a ptr have the same address.
+template <typename Type, typename RType, typename PType>
+inline bool ObjectRef<Type, RType, PType>::operator ==( PtrType ptr ) const
+{
+  return _ptr == ptr;
 }
 
 
@@ -233,13 +249,6 @@ ObjectRef<Type, RType, PType> &ObjectRef<Type, RType, PType>::operator =( Object
   return *this;
 }
 
-//! Returns \c true if this reference and \a ptr have the same address.
-template <typename Type, typename RType, typename PType>
-inline bool ObjectRef<Type, RType, PType>::operator ==( PtrType ptr ) const
-{
-  return _ptr == ptr;
-}
-
 template <typename Type, typename RType, typename PType>
 inline Type const &ObjectRef<Type, RType, PType>::operator *( void ) const
 {
@@ -264,7 +273,6 @@ inline ObjectRef<Type, RType, PType>::operator Type const &( void ) const
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::operator Type const *( void ) const
 {
-  CHECK_PTR();
   return _ptr;
 }
 

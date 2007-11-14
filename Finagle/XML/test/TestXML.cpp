@@ -1,6 +1,6 @@
 /*!
-** \file XMLTest.cpp
-** \date Sat July 21 2007
+** \file TestXML.cpp
+** \date Tue Nov 13 2007
 ** \author Steve Sloan <steve@finagle.org>
 ** Copyright (C) 2007 by Steve Sloan
 **
@@ -19,27 +19,29 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
-#include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/XML.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
 
 using namespace std;
-using namespace Finagle;
 
-class XMLTest : public CppUnit::TestFixture
+int main( int argc, char *argv[] )
 {
-  CPPUNIT_TEST_SUITE( XMLTest );
-  CPPUNIT_TEST( testParse );
-  CPPUNIT_TEST_SUITE_END();
+  CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
 
-public:
-  void testParse( void );
-};
+  if ( (argc > 2) || ((argc > 1) && (string(argv[1]) == "--help")) ) {
+    string app( argv[0] );
+    cout << "Usage: " << app.substr( app.find_last_of('/') + 1 ) << " [test_case]" << endl
+         << "Test cases:" << endl;
 
+    for ( int i = 0; i < suite->getChildTestCount(); ++i )
+      cout << "  " << suite->getChildTestAt(i)->getName() << endl;
 
-CPPUNIT_TEST_SUITE_REGISTRATION( XMLTest );
+    return 0;
+  }
 
-void XMLTest::testParse( void )
-{
+  CppUnit::TextTestRunner runner;
+  runner.addTest( suite );
+
+  return runner.run( (argc > 1) ? argv[1] : "" ) ? 0 : 1;
 }
-

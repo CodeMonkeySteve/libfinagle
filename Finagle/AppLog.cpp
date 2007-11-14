@@ -29,6 +29,7 @@
 
 using namespace std;
 using namespace Finagle;
+using namespace XML;
 
 /*! \class Finagle::AppLog
 ** \brief Application logging framework
@@ -41,7 +42,7 @@ using namespace Finagle;
 */
 
 //! Add an XML element (e.g. a \a msg) to the log.
-AppLog &AppLog::operator +=( XML::Element const &msg )
+AppLog &AppLog::operator +=( Element const &msg )
 {
   if ( msg.empty() )
     return *this;
@@ -106,7 +107,7 @@ AppLog::Logger::Ref AppLog::Logger::fromSpec( String const &spec, bool debug )
 ** \brief Sends log entries to a given \c std::ostream.
 */
 
-void LogToStream::onMsg( XML::Element const &msg )
+void LogToStream::onMsg( Element const &msg )
 {
   NoCase level( msg.attrib("level") );
 
@@ -126,7 +127,7 @@ void LogToStream::onMsg( XML::Element const &msg )
     _stream << string( 11, ' ' );
 */
 
-  XML::Text::ConstRef t( msg.lastChild() );
+  Text::ConstRef t( msg.lastChild() );
   if ( t && !t->text().empty() ) {
     if ( level == "error" )
       _stream << "ERROR: ";
@@ -140,11 +141,8 @@ void LogToStream::onMsg( XML::Element const &msg )
     _stream << t->text() << endl;
   }
 
-  for ( XML::Element::ConstIterator n( &msg ); n; ++n ) {
-    XML::Element::ConstRef e( &*n );
-    if ( e )
-      onMsg( *e );
-  }
+  for ( Element::ConstElementIterator el( msg.firstChild() ); el; ++el )
+    onMsg( *el );
 }
 
 
@@ -172,7 +170,7 @@ String const &LogToFile::base( String const &base )
 **
 ** This will open the file, if necessary.  It will also create leading components of the base path, as necessary.
 */
-void LogToFile::onMsg( XML::Element const &msg )
+void LogToFile::onMsg( Element const &msg )
 {
   if ( !_buf.is_open() ) {
     if ( !_base )
@@ -208,7 +206,7 @@ LogToSysLog::LogToSysLog( int facility, String const &ident )
 }
 
 
-void LogToSysLog::onMsg( XML::Element const &msg )
+void LogToSysLog::onMsg( Element const &msg )
 {
   syslog( priority(msg["level"]) , "%s", (const char *) msgToText(msg) );
 }

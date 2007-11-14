@@ -43,6 +43,14 @@ CPPUNIT_TEST_SUITE_REGISTRATION( ExceptionTest );
 
 void ExceptionTest::testCreateDestroy( void )
 {
+  CPPUNIT_ASSERT_NO_THROW( Exception() );
+
+XML::Element::Ref e( new XML::Element("foo") );
+cout << *e << endl;
+
+e->append( "splat" );
+cout << *e << endl;
+
   CPPUNIT_ASSERT_NO_THROW( Exception( "This is a test" ) );
 }
 

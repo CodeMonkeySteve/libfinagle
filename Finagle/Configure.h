@@ -22,7 +22,6 @@
 #ifndef FINAGLE_CONFIGURE_H
 #define FINAGLE_CONFIGURE_H
 
-#include <Finagle/XML.h>
 #include <Finagle/Exception.h>
 
 namespace Finagle {  namespace XML {

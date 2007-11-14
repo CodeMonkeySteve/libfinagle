@@ -25,7 +25,9 @@
 #include <ext/functional>   // for compose1()
 #include <Finagle/Map.h>
 #include <Finagle/TextString.h>
+#include <Finagle/XML/Node.h>
 #include <Finagle/XML/Text.h>
+#include <Finagle/XML/Iterator.h>
 
 namespace Finagle {  namespace XML {
 
@@ -34,8 +36,13 @@ public:
   typedef ObjectRef<Element> Ref;
   typedef ObjectRef<const Element> ConstRef;
   typedef Map<String, String> AttribMap;
-  typedef Iterator Iterator;
-  typedef Node::ConstIterator ConstIterator;
+
+  typedef XML::Iterator<Node>    Iterator;
+  typedef XML::Iterator<Element> ElementIterator;
+  typedef XML::ConstIterator<Node>    ConstIterator;
+  typedef XML::ConstIterator<Element> ConstElementIterator;
+
+  static const Element nil;
 
 public:
   explicit Element( String const &name, String const &text = String() );
@@ -48,30 +55,30 @@ public:
   bool hasChildren( void ) const;
   void render( std::ostream &out ) const;
 
+  Node::ConstRef firstChild( void ) const;
+  Node::ConstRef lastChild( void ) const;
+  Node::Ref firstChild( void );
+  Node::Ref lastChild( void );
+  Node *firstChild( Node *child );
+  Node *lastChild( Node *child );
+
   String const &name( void ) const;
   AttribMap const &attribs( void ) const;
   String const &attrib( String const &attrib ) const;
   String const &text( void ) const;
-  String const &operator[]( String const &attrib ) const;
-  ConstIterator operator()( String const &name ) const;
-  Node::ConstRef firstChild( void ) const;
-  Node::ConstRef lastChild( void ) const;
+  String  const &operator[]( const char *attrib ) const;
+  Element const &operator()( String const &name ) const;
 
   void name( String const &name );
   AttribMap &attribs( void );
   String &attrib( String const &attrib );
-  String &operator[]( String const &attrib );
-  Iterator operator()( String const &name );
-  Node::Ref firstChild( void );
-  Node::Ref lastChild( void );
+  String  &operator[]( const char *attrib );
 
-  Node::Ref firstChild( Node::Ref child );
-  Node::Ref lastChild( Node::Ref child );
   void clear( void );
 
   Element &append( String const &str );
-  Element &append( Element const &el );
-  Element &append( Element::Ref el );
+  Element &append( Node &node );
+  Element &append( Node::Ref node );
 
   template <typename T>  Element &operator <<( T t );
   template <typename T>  Element &operator <<( String const &str );
@@ -130,6 +137,54 @@ inline bool Element::hasChildren( void ) const
 }
 
 
+//! Returns the first child node (or \c 0, if this element has no children).
+inline Node::ConstRef Element::firstChild( void ) const
+{
+  return Node::ConstRef(_firstChild);
+}
+
+//! Returns the last child node (or \c 0, if this element has no children).
+inline Node::ConstRef Element::lastChild( void ) const
+{
+  return Node::ConstRef(_lastChild);
+}
+
+//! Returns the first child node (or \c 0, if this element has no children).
+inline Node::Ref Element::firstChild( void )
+{
+  return _firstChild;
+}
+
+//! Returns the last child node (or \c 0, if this element has no children).
+inline Node::Ref Element::lastChild( void )
+{
+  return _lastChild;
+}
+
+
+//! Inserts \a child as the first child node.
+inline Node *Element::firstChild( Node *child )
+{
+  if ( !hasChildren() )
+    insert( child );
+  else
+    child->insertBefore( _firstChild );
+
+  return child;
+}
+
+//! Inserts \a child as the last child node.
+inline Node *Element::lastChild( Node *child )
+{
+  if ( !_lastChild )
+    insert( child );
+  else
+    child->insertAfter( _lastChild );
+
+  return child;
+}
+
+
 inline String const &Element::name( void ) const
 {
   return _name;
@@ -152,28 +207,19 @@ inline String const &Element::text( void ) const
 }
 
 //! Attribute index
-inline String const &Element::operator[]( String const &attrib ) const
+inline String const &Element::operator[]( const char *attrib ) const
 {
   return Element::attrib(attrib);
 }
 
 //! Child element index
-inline Element::ConstIterator Element::operator()( String const &name ) const
+inline Element const &Element::operator()( String const &name ) const
 {
-// FIX ME
-return ConstIterator(*this);
-}
-
-//! Returns the first child node (or \c 0, if this element has no children).
-inline Node::ConstRef Element::firstChild( void ) const
-{
-  return Node::ConstRef(_firstChild);
-}
-
-//! Returns the last child node (or \c 0, if this element has no children).
-inline Node::ConstRef Element::lastChild( void ) const
-{
-  return Node::ConstRef(_lastChild);
+  for ( ConstElementIterator i( firstChild() ); i; ++i ) {
+    if ( i->name() == name )
+      return i;
+  }
+  return nil;
 }
 
 
@@ -193,28 +239,9 @@ inline String &Element::attrib( String const &attrib )
 }
 
 //! Attribute index
-inline String &Element::operator[]( String const &attrib )
+inline String &Element::operator[]( const char *attrib )
 {
   return Element::attrib(attrib);
-}
-
-//! Child element index
-inline Element::Iterator Element::operator()( String const &name )
-{
-// FIX ME
-return Iterator(*this);
-}
-
-//! Returns the first child node (or \c 0, if this element has no children).
-inline Node::Ref Element::firstChild( void )
-{
-  return _firstChild;
-}
-
-//! Returns the last child node (or \c 0, if this element has no children).
-inline Node::Ref Element::lastChild( void )
-{
-  return _lastChild;
 }
 
 
@@ -226,9 +253,9 @@ inline Element &Element::operator <<( T t )
   return append( s.str() );
 }
 
-inline Element &Element::append( Element const &el )
+inline Element &Element::append( Node &node )
 {
-  return append( Element::ConstRef(&el) );
+  return append( &node );
 }
 
 template <>

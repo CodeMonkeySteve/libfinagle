@@ -29,10 +29,9 @@ using namespace XML;
 void Node::insertBefore( Node::Ref sib )
 {
   _next = sib;
-  sib->_prev = this;
-
   _prev = sib->_prev;
   if ( _prev )  _prev->_next = this;
+  sib->_prev = this;
 
   _parent = sib->_parent;
   if ( _parent )  _parent->insert( this );
@@ -42,17 +41,16 @@ void Node::insertBefore( Node::Ref sib )
 void Node::insertAfter( Node::Ref sib )
 {
   _prev = sib;
-  sib->_next = this;
-
   _next = sib->_next;
   if ( _next )  _next->_prev = this;
+  sib->_next = this;
 
   _parent = sib->_parent;
   if ( _parent )  _parent->insert( this );
 }
 
 //! Removes this node from its parent.
-inline void Node::remove( void )
+void Node::remove( void )
 {
   if ( _prev )  _prev->_next = _next;
   if ( _next )  _next->_prev = _prev;
@@ -66,11 +64,7 @@ inline void Node::remove( void )
 ** \brief Renders this node (including all children) to the given output stream.
 */
 void Node::render( std::ostream &out ) const
-{
-  for ( ConstIterator n(*this); n; ++n ) {
-    n->render( out );
-  }
-}
+{}
 
 
 /*! \internal

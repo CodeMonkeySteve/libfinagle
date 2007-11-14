@@ -26,14 +26,14 @@
 
 namespace Finagle {  namespace XML {
 
-template <typename Type>
+template <typename Type = Node>
 class Iterator {
 public:
   typedef ObjectRef<Type> TypeRef;
 
 public:
   Iterator( void );
-  Iterator( TypeRef node );
+  Iterator( Node::Ref node );
 
   operator bool( void ) const;
   operator TypeRef( void );
@@ -46,8 +46,6 @@ public:
   Iterator<Type> &toParent( void );
   Iterator<Type> &toPrev( void );
   Iterator<Type> &toNext( void );
-  Iterator<Type> &toFirstChild( void );
-  Iterator<Type> &toLastChild( void );
 
   Iterator<Type> &operator --( void );
   Iterator<Type>  operator --( int );
@@ -55,7 +53,17 @@ public:
   Iterator<Type>  operator ++( int );
 
 protected:
-  TypeRef _node;
+  Node::Ref _node;
+};
+
+template <typename Type = Node>
+class ConstIterator : public Iterator<Type const> {
+public:
+  ConstIterator( void ) {}
+  ConstIterator( Node::Ref node )
+  : Iterator<Type const>( node ) {}
+  ConstIterator( Node::ConstRef node )
+  : Iterator<Type const>( const_cast<Node *>((Node const *) node) ) {}
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
@@ -65,9 +73,14 @@ inline Iterator<Type>::Iterator( void )
 {}
 
 template <typename Type>
-inline Iterator<Type>::Iterator( TypeRef node )
+inline Iterator<Type>::Iterator( Node::Ref node )
 : _node(node)
-{}
+{
+  while ( _node ) {
+    if ( TypeRef(_node) )  break;
+    node = node->next();
+  }
+}
 
 template <typename Type>
 inline Iterator<Type>::operator bool( void ) const
@@ -76,7 +89,7 @@ inline Iterator<Type>::operator bool( void ) const
 }
 
 template <typename Type>
-inline Iterator<Type>::operator ObjectRef<Type>( void )
+inline Iterator<Type>::operator TypeRef( void )
 {
   return _node;
 }
@@ -84,60 +97,58 @@ inline Iterator<Type>::operator ObjectRef<Type>( void )
 template <typename Type>
 inline Type &Iterator<Type>::operator *( void )
 {
-  return _node;
+  return TypeRef(_node);
 }
 
 template <typename Type>
 inline Type *Iterator<Type>::operator ->( void )
 {
-  return _node;
+  return TypeRef(_node);
 }
 
 template <typename Type>
 inline Iterator<Type>::operator Type &( void )
 {
-  return _node;
+  return TypeRef(_node);
 }
 
 template <typename Type>
 inline Iterator<Type>::operator Type *( void )
 {
-  return _node;
+  return TypeRef(_node);
 }
 
 
 template <typename Type>
 inline Iterator<Type> &Iterator<Type>::toParent( void )
 {
-  if ( _node )  _node = _node->parent();
+  while ( _node ) {
+    _node = _node->parent();
+    if ( _node && TypeRef(_node) )
+      break;
+  }
   return *this;
 }
 
 template <typename Type>
 inline Iterator<Type> &Iterator<Type>::toPrev( void )
 {
-  if ( _node )  _node = _node->prev();
+  while ( _node ) {
+    _node = _node->prev();
+    if ( _node && TypeRef(_node) )
+      break;
+  }
   return *this;
 }
 
 template <typename Type>
 inline Iterator<Type> &Iterator<Type>::toNext( void )
 {
-  if ( _node )  _node = _node->next();
-  return *this;
-}
-
-template <typename Type>
-inline Iterator<Type> &Iterator<Type>::toFirstChild( void )
-{
-  if ( _node )  _node = _node->firstChild();
-  return *this;
-}
-
-template <typename Type>
-inline Iterator<Type> &Iterator<Type>::toLastChild( void )
-{
-  if ( _node )  _node = _node->lastChild();
+  while ( _node ) {
+    _node = _node->next();
+    if ( _node && TypeRef(_node) )
+      break;
+  }
   return *this;
 }
 

@@ -28,7 +28,7 @@
 
 namespace Finagle {  namespace XML {
 
-class Document : public Element {
+class Document {
 public:
   typedef ObjectRef<Document> Ref;
   typedef ObjectRef<const Document> ConstRef;
@@ -36,17 +36,22 @@ public:
 public:
   Document( void );
   Document( FilePath const &src );
+  explicit Document( String const &xml );
 
   FilePath const &src( void ) const;
+
+  Node::ConstRef root( void ) const;
+  Node::Ref root( void );
 
   void load( void );
   void save( void ) const;
 
-  void parse( String const &in, String const &srcName );
-  void parse( std::istream &in, String const &srcName );
+  void parse( String const &in, String const &srcName = String() );
+  void parse( std::istream &in, String const &srcName = String() );
 
 protected:
   FilePath _src;
+  Node::Ref _root;
 };
 
 struct ParseEx : public Exception {
@@ -67,31 +72,55 @@ inline Document::Document( FilePath const &src )
   load();
 }
 
+inline Document::Document( String const &xml )
+{
+  parse( xml );
+}
+
 //! Returns the document's source file path.
 inline FilePath const &Document::src( void ) const
 {
   return _src;
 }
 
-//! \brief Parses the XML document from an input stream
-std::istream &operator >>( std::istream &in, Document &doc )
+inline Node::ConstRef Document::root( void ) const
 {
-  doc.parse( in, FilePath() );
+  return Node::ConstRef(_root);
+}
+
+inline Node::Ref Document::root( void )
+{
+  return _root;
+}
+
+
+//! \brief Parses the XML document from a string.
+inline void Document::parse( String const &in, String const &srcName )
+{
+  std::istringstream strm( in );
+  parse( strm, srcName );
+}
+
+
+//! \brief Parses the XML document from an input stream
+inline std::istream &operator >>( std::istream &in, Document &doc )
+{
+  doc.parse( in );
   return in;
 }
 
 //! \brief Writes the XML document to an output stream
-std::ostream &operator <<( std::ostream &out, Document const &doc )
+inline std::ostream &operator <<( std::ostream &out, Document const &doc )
 {
-  doc.render( out );
+  doc.root()->render( out );
   return out;
 }
 
 inline ParseEx::ParseEx( String const &src, unsigned lineNum, String const &err )
 : Exception( "XML (" + src + ": " + String( lineNum ) + "): " + err )
 {
-//  attribs()["src"] = src;
-//  attribs()["line"] = String( lineNum );
+  attrib("src") = src;
+  attrib("line") = String( lineNum );
 }
 
 } }

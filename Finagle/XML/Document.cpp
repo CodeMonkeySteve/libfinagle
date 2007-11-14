@@ -28,10 +28,14 @@ using namespace std;
 using namespace Finagle;
 using namespace XML;
 
-static Array<Element::Ref> Elements;
-static void elStart( void *, const char *name, const char **attrs );
-static void elEnd( void *, const char *name );
-static void elData( void *, const XML_Char *text, int len );
+struct Context {
+  Node::Ref first, last;
+  Element::Ref cur;
+};
+
+static void elStart( void *ctxPtr, const char *name, const char **attrs );
+static void elEnd( void *ctxPtr, const char *name );
+static void elData( void *ctxPtr, const XML_Char *str, int len );
 
 
 //! \brief Loads the XML document from #src.
@@ -56,39 +60,20 @@ void Document::save( void ) const
   if ( !out )
     throw File::OpenEx( _src, ios::out );
 
-  render( out );
+  _root->render( out );
 }
 
 
-//! \brief Parses the XML document from a string
-void Document::parse( String const &in, String const &srcName )
-{
-  clear();
-  if ( in.empty() )
-    return;
-
-  XML_Parser parser = XML_ParserCreate(0);
-  XML_SetElementHandler( parser, elStart, elEnd );
-  XML_SetCharacterDataHandler( parser, elData );
-
-//  int done = 1;
-  if ( XML_Parse( parser, in, in.length(), 1 ) == XML_STATUS_ERROR )
-    throw ParseEx( srcName, XML_GetCurrentLineNumber( parser ), XML_ErrorString( XML_GetErrorCode( parser ) ) );
-
-  XML_ParserFree( parser );
-
-  Element::operator=( Elements.front() );
-  Elements.clear();
-}
-
-
-//! \brief Parses the XML document from an input stream
+//! \brief Parses the XML document from an input stream.
 void Document::parse( std::istream &in, String const &srcName )
 {
+  _root = 0;
   if ( !in )
     return;
 
+  Context ctx;
   XML_Parser parser = XML_ParserCreate(0);
+  XML_SetUserData( parser, &ctx );
   XML_SetElementHandler( parser, elStart, elEnd );
   XML_SetCharacterDataHandler( parser, elData );
 
@@ -105,43 +90,61 @@ void Document::parse( std::istream &in, String const &srcName )
 
   XML_ParserFree( parser );
 
-  Element::operator=( Elements.front() );
-  Elements.clear();
+  _root = ctx.first;
 }
 
 
-static void elStart( void *, const char *name, const char **attrs )
+static void elStart( void *ctxPtr, const char *name, const char **attrs )
 {
-  Element::Ref xml = new Element(name);
+  Context &ctx( *(Context *) ctxPtr );
 
-  if ( !Elements.empty() )
-    *(Elements.back()) += xml;
-
-  Elements.push_back( xml );
-
-  Element::AttribMap &attribs = xml->attribs();
+  Element::Ref el = new Element(name);
+  Element::AttribMap &attribs = el->attribs();
   for ( const char **attr = attrs; *attr; attr += 2 )
     attribs.insert( attr[0], attr[1] );
+
+  if ( !ctx.first )
+    ctx.first = ctx.last = Node::Ref(el);
+  else
+  if ( !ctx.cur ) {
+    el->insertAfter( ctx.last );
+    ctx.last = Node::Ref(el);
+  } else
+    ctx.cur->lastChild( Node::Ref(el) );
+
+  ctx.cur = el;
 }
 
-static void elData( void *, XML_Char const *text, int len )
+static void elData( void *ctxPtr, XML_Char const *str, int len )
 {
-  Element::Ref xml;
-  String t( text, len );
+  Context &ctx( *(Context *) ctxPtr );
+  String text( str, len );
 
-  // Ignore whitespace
-  if ( t.trim().empty() )
+  // Ignore whitespace (?)
+  if ( text.trim().empty() )
     return;
 
-  xml = Elements.empty() ? Element::Ref(new Element) : Elements.back();
-  xml->append( t );
+  if ( !ctx.first )
+    ctx.first = ctx.last = new Text(text);
+  else
+  if ( !ctx.cur ) {
+    Text::Ref t( ctx.last );
+    if ( t )
+      t->text() += text;
+    else {
+      t = new Text(text);
+      t->insertAfter( Node::Ref(ctx.last) );
+      ctx.last = Node::Ref(t);
+    }
+  } else
+    ctx.cur->append( text );
 }
 
-static void elEnd( void *, const char *name )
+static void elEnd( void *ctxPtr, const char *name )
 {
-  FINAGLE_ASSERT( !Elements.empty() );
-  FINAGLE_ASSERT( Elements.back()->name() == name );
+  Context &ctx( *(Context *) ctxPtr );
 
-  if ( Elements.size() > 1 )
-    Elements.pop_back();
+  FINAGLE_ASSERT( ctx.cur );
+  FINAGLE_ASSERT( ctx.cur->name() == name );
+  ctx.cur = Element::Ref(ctx.cur->parent());
 }

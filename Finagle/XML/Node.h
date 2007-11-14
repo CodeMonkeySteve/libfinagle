@@ -1,5 +1,5 @@
 /*!
-** \file Node.cpp
+** \file Node.h
 ** \author Steve Sloan <steve@finagle.org>
 ** \date Sun Nov 11 2007
 ** Copyright (C) 2007 by Steve Sloan
@@ -25,7 +25,6 @@
 #include <ostream>
 #include <Finagle/ReferencedObject.h>
 #include <Finagle/TextString.h>
-#include <Finagle/XML/Iterator.h>
 
 namespace Finagle {  namespace XML {
 
@@ -33,8 +32,6 @@ class Node : public ReferenceCount {
 public:
   typedef ObjectRef<Node> Ref;
   typedef ObjectRef<const Node> ConstRef;
-  typedef Iterator<Node const> ConstIterator;
-  typedef Iterator<Node> Iterator;
 
 public:
   Node( void );
