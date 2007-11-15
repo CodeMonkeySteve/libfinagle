@@ -27,7 +27,10 @@
 
 namespace Finagle {
 
-//! \brief Reference-counting smart pointer.
+/*! \brief Reference-counting smart pointer.
+**
+** \sa ReferenceCount.
+*/
 template <typename Type, typename RType = Type &, typename PType = Type *>
 class ObjectRef {
 public:
@@ -84,7 +87,7 @@ protected:
 **
 ** This class implements a reference count, suitable for inheriting into
 ** classes which are referenced with ObjectRef.  A referenced object need not
-** necessarily inherit ReferenceCount, but it must provide the following
+** necessarily inherit ReferenceCount, but it must provide the same
 ** functions.
 */
 class ReferenceCount {
