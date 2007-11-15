@@ -29,7 +29,7 @@ namespace Finagle {
 
 /*! \brief Reference-counting smart pointer.
 **
-** \sa ReferenceCount.
+** \sa ReferenceCount, ObjectRefIterator and ObjectRefConstIterator.
 */
 template <typename Type, typename RType = Type &, typename PType = Type *>
 class ObjectRef {
@@ -39,6 +39,7 @@ public:
   typedef PType PtrType;
 
 public:
+  //! Exception thrown when attempting to dereference an ObjectRef of \c 0.
   class NullRefEx : public std::exception {
   public:
     NullRefEx( const char *func )
@@ -66,17 +67,17 @@ public:
   bool operator ==( ObjectRef<Type,RType,PType> const &ref ) const;
   bool operator ==( PtrType ptr ) const;
 
-  Type const &operator *( void ) const;
+  Type const &operator *( void ) const  throw( NullRefEx );
   Type const *operator ->( void ) const;
 
-  operator Type const &( void ) const;
+  operator Type const &( void ) const  throw( NullRefEx );
   operator Type const *( void ) const;
 
-  RefType operator *( void );
+  RefType operator *( void )  throw( NullRefEx );
   PtrType operator ->( void );
 
-  operator RefType( void );
-  operator PtrType( void );
+  operator RType( void )  throw( NullRefEx );
+  operator PType( void );
 
 protected:
   PtrType _ptr;
@@ -92,19 +93,11 @@ protected:
 */
 class ReferenceCount {
 public:
-  //! Sets reference count to \c 0.
   ReferenceCount( void );
-
-  //! Sets reference count to \c 0.
   ReferenceCount( ReferenceCount const & );
 
-  //! Incremements reference count
   void ref( void ) const;
-
-  //! Decrements reference count.  Returns \c true if the new reference count is \c 0.
   bool deref( void ) const;
-
-  //! Returns the reference count.
   unsigned refs( void ) const;
 
 protected:
@@ -170,6 +163,7 @@ public:
 #define CHECK_PTR() \
   if ( !_ptr )  throw NullRefEx( __FUNCTION__ );
 
+//! Initializes the reference to point to \a ptr (may be \c 0).
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::ObjectRef( PtrType ptr )
 : _ptr( ptr )
@@ -177,6 +171,7 @@ inline ObjectRef<Type, RType, PType>::ObjectRef( PtrType ptr )
   if ( _ptr )  _ptr->ref();
 }
 
+//! Initializes the reference to point to \a ref.
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::ObjectRef( RefType ref )
 : _ptr( &ref )
@@ -184,6 +179,7 @@ inline ObjectRef<Type, RType, PType>::ObjectRef( RefType ref )
   ref.ref();
 }
 
+//! Initializes the reference to point to \a ref.
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::ObjectRef( ObjectRef<Type,RType,PType> const &ref )
 : _ptr( ref._ptr )
@@ -223,6 +219,10 @@ inline bool ObjectRef<Type, RType, PType>::operator ==( PtrType ptr ) const
 }
 
 
+/*! \brief Initializes the reference to point to the derived object \a ptr.
+**
+** Uses \c dynamic_cast to convert the object of \a OtherType to \a Type.
+*/
 template <typename Type, typename RType, typename PType>
 template <typename OtherType>
 ObjectRef<Type, RType, PType>::ObjectRef( OtherType *ptr )
@@ -231,6 +231,10 @@ ObjectRef<Type, RType, PType>::ObjectRef( OtherType *ptr )
   if ( _ptr )  _ptr->ref();
 }
 
+/*! \brief Initializes the reference to point to the derived object \a ref.
+**
+** Uses \c dynamic_cast and \c const_cast to convert the object of \a OtherType to \a Type.
+*/
 template <typename Type, typename RType, typename PType>
 template <typename OtherType>
 ObjectRef<Type, RType, PType>::ObjectRef( ObjectRef<OtherType> const &ref )
@@ -239,6 +243,7 @@ ObjectRef<Type, RType, PType>::ObjectRef( ObjectRef<OtherType> const &ref )
   if ( _ptr )  _ptr->ref();
 }
 
+//! Assignment operator
 template <typename Type, typename RType, typename PType>
 ObjectRef<Type, RType, PType> &ObjectRef<Type, RType, PType>::operator =( ObjectRef<Type,RType,PType> ref )
 {
@@ -252,27 +257,36 @@ ObjectRef<Type, RType, PType> &ObjectRef<Type, RType, PType>::operator =( Object
   return *this;
 }
 
+/*! \brief Returns a const-reference to the object.
+**
+** Will throw NullRefEx if the object reference is \c 0.
+*/
 template <typename Type, typename RType, typename PType>
-inline Type const &ObjectRef<Type, RType, PType>::operator *( void ) const
+inline Type const &ObjectRef<Type, RType, PType>::operator *( void ) const  throw( NullRefEx )
 {
   CHECK_PTR();
   return *_ptr;
 }
 
+//! \brief Returns a pointer to the object (may be \c 0).
 template <typename Type, typename RType, typename PType>
 inline Type const *ObjectRef<Type, RType, PType>::operator ->( void ) const
 {
-  CHECK_PTR();
   return _ptr;
 }
 
+/*! \brief Returns a const-reference to the object.
+**
+** Will throw NullRefEx if the object reference is \c 0.
+*/
 template <typename Type, typename RType, typename PType>
-inline ObjectRef<Type, RType, PType>::operator Type const &( void ) const
+inline ObjectRef<Type, RType, PType>::operator Type const &( void ) const  throw( NullRefEx )
 {
   CHECK_PTR();
   return *_ptr;
 }
 
+//! Returns a const-pointer to the object (may be \c 0).
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::operator Type const *( void ) const
 {
@@ -280,27 +294,36 @@ inline ObjectRef<Type, RType, PType>::operator Type const *( void ) const
 }
 
 
+/*! \brief Returns a reference to the object.
+**
+** Will throw NullRefEx if the object reference is \c 0.
+*/
 template <typename Type, typename RType, typename PType>
-inline RType ObjectRef<Type, RType, PType>::operator *( void )
+inline RType ObjectRef<Type, RType, PType>::operator *( void )  throw( NullRefEx )
 {
   CHECK_PTR();
   return *_ptr;
 }
 
+//! Returns a pointer to the object (may be \c 0).
 template <typename Type, typename RType, typename PType>
 inline PType ObjectRef<Type, RType, PType>::operator ->( void )
 {
-  CHECK_PTR();
   return _ptr;
 }
 
+/*! \brief Returns a reference to the object.
+**
+** Will throw NullRefEx if the object reference is \c 0.
+*/
 template <typename Type, typename RType, typename PType>
-inline ObjectRef<Type, RType, PType>::operator RType( void )
+inline ObjectRef<Type, RType, PType>::operator RType( void )  throw( NullRefEx )
 {
   CHECK_PTR();
   return *_ptr;
 }
 
+//! Returns a pointer to the object (may be \c 0).
 template <typename Type, typename RType, typename PType>
 inline ObjectRef<Type, RType, PType>::operator PType( void )
 {
@@ -344,7 +367,7 @@ inline ReferenceCount::ReferenceCount( ReferenceCount const & )
 
 /*! \brief Incremements the reference count.
 **
-** \warning this function \e may not be thread-safe
+** \warning this function \e may not be thread-safe.
 */
 inline void ReferenceCount::ref( void ) const
 {
@@ -353,7 +376,7 @@ inline void ReferenceCount::ref( void ) const
 
 /*! \brief Decremements the reference count and returns \c true if it's \c 0.
 **
-** \warning this function is \e not thread-safe
+** \warning this function \e is not thread-safe.
 */
 inline bool ReferenceCount::deref( void ) const
 {

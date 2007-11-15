@@ -65,7 +65,7 @@ void Document::save( void ) const
 
 
 //! \brief Parses the XML document from an input stream.
-void Document::parse( istream &in, String const &srcName )
+void Document::parse( std::istream &in, String const &srcName )
 {
   _root = 0;
   if ( !in )
