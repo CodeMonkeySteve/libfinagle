@@ -25,6 +25,9 @@ namespace Finagle {
 */
 class LogEntry : public XML::Element {
 public:
+  typedef ObjectRef<LogEntry> Ref;
+
+public:
   LogEntry( String const &name, String const &level = String() );
   LogEntry( String const &name, String const &level, const char *file, unsigned line, String const &func );
   LogEntry( String const &name, String const &level, String const &id, const char *file, unsigned line, String const &func );

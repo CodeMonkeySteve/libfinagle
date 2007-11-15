@@ -20,29 +20,27 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>Finagle/XML/test/testXML</activetarget>
+      <activetarget>Finagle/test/testFinagle</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
       <mainprogram/>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle>MutexTest</testFinagle>
+        <testFinagle>ExceptionTest</testFinagle>
         <xmltest/>
         <testxpath/>
-        <testXML/>
+        <testXML></testXML>
       </runarguments>
       <debugarguments>
         <testFinagle>ExceptionTest</testFinagle>
         <xmltest/>
         <testxpath/>
-        <testXML>ElementTest</testXML>
+        <testXML></testXML>
       </debugarguments>
       <cwd>
-        <testFinagle/>
-        <xmltest>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./tinyxml/test</xmltest>
-        <testxpath>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./tinyxpath/test</testxpath>
-        <testXML/>
+        <testFinagle>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./Finagle/test</testFinagle>
+        <testXML></testXML>
       </cwd>
       <programargs/>
       <globaldebugarguments/>

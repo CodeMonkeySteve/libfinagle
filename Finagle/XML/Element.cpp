@@ -86,7 +86,10 @@ void Element::render( std::ostream &out ) const
     return;
   }
   out << ">";
-  Node::render( out );
+
+  for ( ConstIterator n( _firstChild ); n; ++n )
+    n->render( out );
+
   closeTag( out );
 }
 

@@ -36,13 +36,17 @@ namespace Finagle {
 **
 ** Adds a virtual function for providing the error string, as well as caching for (static) error strings.
 */
-class Exception : public std::exception, public LogEntry {
+class Exception : public std::exception {
 public:
   Exception( void );
   Exception( String const &str );
  ~Exception( void ) throw() {}
 
+
   const char *what( void ) const throw();
+
+protected:
+  LogEntry::Ref _log;
 };
 
 /*! \class Finagle::SystemEx
