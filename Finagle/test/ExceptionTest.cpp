@@ -30,7 +30,7 @@ class ExceptionTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( ExceptionTest );
   CPPUNIT_TEST( testCreateDestroy );
-//  CPPUNIT_TEST( testThrow );
+  CPPUNIT_TEST( testThrow );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -44,10 +44,6 @@ CPPUNIT_TEST_SUITE_REGISTRATION( ExceptionTest );
 void ExceptionTest::testCreateDestroy( void )
 {
   CPPUNIT_ASSERT_NO_THROW( Exception() );
-
-  Exception ex( "This is a test" );
-cout << ex << endl;
-
   CPPUNIT_ASSERT_NO_THROW( Exception( "This is a test" ) );
 }
 

@@ -38,15 +38,14 @@ namespace Finagle {
 */
 class Exception : public std::exception {
 public:
-  Exception( void );
-  Exception( String const &str );
+  Exception( String const &str = String() );
  ~Exception( void ) throw() {}
 
-
+  XML::Element const &xwhat( void ) const throw();
   const char *what( void ) const throw();
 
 protected:
-  LogEntry::Ref _log;
+  LogEntry::Ref _what;
 };
 
 /*! \class Finagle::SystemEx
@@ -63,33 +62,33 @@ public:
 
 // INLINE IMPLEMENTATION ******************************************************
 
-//! Default constructor
-inline Exception::Exception( void )
-: LogEntry( "exception" )
-{
-  attribs()["time"] = String( (unsigned) DateTime::now().calTime() );
-}
-
 //! Sets the error to string \a str.
 inline Exception::Exception( String const &str )
-: LogEntry( "exception" )
+: _what( new LogEntry("exception") )
 {
-  attribs()["time"] = String( (unsigned) DateTime::now().calTime() );
-  append( str );
+  _what->attrib("time") = String( (unsigned) DateTime::now().calTime() );
+  if ( !str.empty() )
+    _what->append( str );
 }
 
-//! Returns the element text as a C-style string.
+//! Returns the error description as an XML element.
+inline XML::Element const &Exception::xwhat( void ) const throw()
+{
+  return _what;
+}
+
+//! Returns the error description as C-style string.
 inline const char *Exception::what( void ) const throw()
 {
-  return XML::Element::text();
+  return _what->text();
 }
 
 
 inline SystemEx::SystemEx( String const &str, int errCode )
 : Exception( str + " (" + sysErrStr( errCode ) + ")" )
 {
-  attribs()["code"] = String( errCode );
-  attribs()["msg"] = sysErrStr( errCode );
+  _what->attrib("code") = String( errCode );
+  _what->attrib("msg") = sysErrStr( errCode );
 }
 
 //! \brief Returns the platform-specific error code for the last operation.

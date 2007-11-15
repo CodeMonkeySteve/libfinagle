@@ -64,7 +64,7 @@ void *Thread::run( void *This )
     t->_exitVal = t->exec();
   }
   catch ( Finagle::Exception &ex ) {
-    Finagle::Log() += ex;
+    Finagle::Log() += ex.xwhat();
   }
   catch ( std::exception &ex ) {
     LOG_ERROR << "Unhandled exception: " << ex.what();

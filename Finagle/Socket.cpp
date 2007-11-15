@@ -308,5 +308,5 @@ Socket::IOEx::IOEx( std::ios::openmode mode )
     err << "accessing";
 
   err << " socket ";
-  append( err.str() );
+  _what->append( err.str() );
 }

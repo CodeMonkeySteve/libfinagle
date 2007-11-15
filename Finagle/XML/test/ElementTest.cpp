@@ -76,6 +76,12 @@ void ElementTest::testCreateDestroy( void )
   CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->next() );
   CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->firstChild() );
   CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->lastChild() );
+
+  Element::Ref el;
+  CPPUNIT_ASSERT_NO_THROW( el = new Element( "foo", "splat" ) );
+  CPPUNIT_ASSERT( el->firstChild() );
+  CPPUNIT_ASSERT_EQUAL( el->firstChild(), el->lastChild() );
+  CPPUNIT_ASSERT( Text::Ref( el->firstChild() ) );
 }
 
 

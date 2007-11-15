@@ -79,6 +79,8 @@ struct ByteOrder {
   #error Unknown byte order!
 #endif
 
+};
+
 //! \typedef LittleEndian
 //! Provides a functor to byte-swap to little-endian (i.e. Intel) byte order.
 
@@ -117,8 +119,6 @@ inline void Reverse::operator ()( QWord *qw )
         ((QW & 0x0000FF0000000000ULL) >> 24) |
         ((QW & 0x00FF000000000000ULL) >> 40) |
         ((QW & 0xFF00000000000000ULL) >> 56);
-}
-
 }
 
 }

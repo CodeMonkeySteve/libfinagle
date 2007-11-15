@@ -175,8 +175,8 @@ File::Ex::Ex( FilePath const &path, std::ios::openmode mode )
   if ( mode & ios::app )    modeStr += "a";
   if ( mode & ios::trunc )  modeStr += "t";
 
-  attribs()["path"] = path;
-  attribs()["mode"] = modeStr;
+  _what->attrib("path") = path;
+  _what->attrib("mode") = modeStr;
 }
 
 File::OpenEx::OpenEx( FilePath const &path, std::ios::openmode mode )
@@ -195,7 +195,7 @@ File::OpenEx::OpenEx( FilePath const &path, std::ios::openmode mode )
   if ( mode & ios::out )
     err << "writing";
 
-  append( err.str() );
+  _what->append( err.str() );
 }
 
 File::IOEx::IOEx( FilePath const &path, std::ios::openmode mode )
@@ -215,6 +215,6 @@ File::IOEx::IOEx( FilePath const &path, std::ios::openmode mode )
 
   err << "  file " << path;
 
-  append( err.str() );
+  _what->append( err.str() );
 }
 
