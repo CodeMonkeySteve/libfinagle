@@ -26,6 +26,11 @@
 
 namespace Finagle {  namespace XML {
 
+/*! \brief Utility class for iterating across nodes of a particular type.
+**
+** Iterates across a node collection, starting with the node passed to the constructor.  Nodes which are not of type
+** \a Type are ignored.  If \a Type \e is Node, all nodes are iterated.
+*/
 template <typename Type = Node>
 class Iterator {
 public:
@@ -56,6 +61,10 @@ protected:
   Node::Ref _node;
 };
 
+/*! \brief Utility class for iterating across nodes of a particular type.
+**
+** \sa Iterator.
+*/
 template <typename Type = Node>
 class ConstIterator : public Iterator<Type const> {
 public:
@@ -68,10 +77,15 @@ public:
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
+//! Default constructor
 template <typename Type>
 inline Iterator<Type>::Iterator( void )
 {}
 
+/*! \brief Initializes the iterator to point to \a node.
+**
+** If \a node is not of type \a Type, finds the next sibling node which is (if any).
+*/
 template <typename Type>
 inline Iterator<Type>::Iterator( Node::Ref node )
 : _node(node)
@@ -82,36 +96,42 @@ inline Iterator<Type>::Iterator( Node::Ref node )
   }
 }
 
+//! Returns \c true if the iterator points to a valid node.
 template <typename Type>
 inline Iterator<Type>::operator bool( void ) const
 {
   return _node;
 }
 
+//! Returns an ObjectRef to the iterated object (may be \c 0).
 template <typename Type>
 inline Iterator<Type>::operator TypeRef( void )
 {
   return _node;
 }
 
+//! Returns a reference to the iterated object.
 template <typename Type>
 inline Type &Iterator<Type>::operator *( void )
 {
   return TypeRef(_node);
 }
 
+//! Returns a pointer to the iterated object (may be \c 0).
 template <typename Type>
 inline Type *Iterator<Type>::operator ->( void )
 {
   return TypeRef(_node);
 }
 
+//! Returns a reference to the iterated object.
 template <typename Type>
 inline Iterator<Type>::operator Type &( void )
 {
   return TypeRef(_node);
 }
 
+//! Returns a pointer to the iterated object (may be \c 0).
 template <typename Type>
 inline Iterator<Type>::operator Type *( void )
 {
@@ -119,6 +139,7 @@ inline Iterator<Type>::operator Type *( void )
 }
 
 
+//! Moves the iterator to the parent node.
 template <typename Type>
 inline Iterator<Type> &Iterator<Type>::toParent( void )
 {
@@ -130,6 +151,7 @@ inline Iterator<Type> &Iterator<Type>::toParent( void )
   return *this;
 }
 
+//! Moves the iterator to the previous sibling node.
 template <typename Type>
 inline Iterator<Type> &Iterator<Type>::toPrev( void )
 {
@@ -141,6 +163,7 @@ inline Iterator<Type> &Iterator<Type>::toPrev( void )
   return *this;
 }
 
+//! Moves the iterator to the next sibling node.
 template <typename Type>
 inline Iterator<Type> &Iterator<Type>::toNext( void )
 {

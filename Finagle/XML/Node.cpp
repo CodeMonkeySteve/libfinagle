@@ -25,6 +25,16 @@ using namespace std;
 using namespace Finagle;
 using namespace XML;
 
+/*! \namespace Finagle::XML
+** \brief provides %XML parsing, representation, iteration, and output.
+*/
+
+/*! \class Finagle::XML::Node
+** \brief Base class for all %XML nodes.
+**
+** Provides basic functionality for tracking a node's siblings and parent, as well as adding and removing nodes.
+*/
+
 //! Inserts this node before \a sib.
 void Node::insertBefore( Node::Ref sib )
 {
@@ -88,7 +98,9 @@ void Node::insert( Node::Ref child )
 }
 
 /*! \internal
-** \brief Clears the node's DOM pointers (should only be done after removing)
+** \brief Clears the node's parent and sibling references.
+**
+** \warning This should only be called \e after the node has been removed from its parent.
 */
 void Node::clear( void )
 {

@@ -64,6 +64,7 @@ extern std::ostream &operator <<( std::ostream &out, Node const &node );
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
+//! Initializes the node with no parent or siblings.
 inline Node::Node( void )
 {}
 
@@ -109,7 +110,7 @@ inline Node::Ref Node::next( void )
   return _next;
 }
 
-
+//! Renders the \a node to the output stream \a out (in %XML form).
 inline std::ostream &operator <<( std::ostream &out, Node const &node )
 {
   node.render( out );

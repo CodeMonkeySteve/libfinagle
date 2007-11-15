@@ -102,6 +102,7 @@ extern String escape( String const &str );
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
+//! Copy constructor
 inline Element::Element( Element const &that )
 : Node( that ), _name( that._name ), _attribs( that._attribs )
 {}
@@ -111,6 +112,7 @@ inline Element::~Element( void )
   clear();
 }
 
+//! Assignment operator
 inline Element &Element::operator =( Element const &that )
 {
   _name = that._name;
@@ -126,11 +128,13 @@ inline bool Element::empty() const
   return _attribs.empty() && !hasChildren();
 }
 
+//! Returns \c true if the element is \e not #empty.
 inline Element::operator bool( void ) const
 {
   return !empty();
 }
 
+//! Returns \c true if the element contains child nodes.
 inline bool Element::hasChildren( void ) const
 {
   return _firstChild;
@@ -185,34 +189,48 @@ inline Node *Element::lastChild( Node *child )
 }
 
 
+//! Returns the element's tag name.
 inline String const &Element::name( void ) const
 {
   return _name;
 }
 
+//! Returns the element's attributes.
 inline Element::AttribMap const &Element::attribs( void ) const
 {
   return _attribs;
 }
 
+//! Returns the value of the attribute \a attrib.
 inline String const &Element::attrib( String const &attrib ) const
 {
   return attribs()[attrib];
 }
 
+/*! \brief Text node accessor
+**
+** If the element's last node is a Text node, returns its value.  Otherwise returns String::nil.
+*/
 inline String const &Element::text( void ) const
 {
   XML::Text::ConstRef t( _lastChild );
   return t ? t->text() : String::nil;
 }
 
-//! Attribute index
+/*! \brief Attribute index
+**
+** \sa attrib.
+*/
 inline String const &Element::operator[]( const char *attrib ) const
 {
   return Element::attrib(attrib);
 }
 
-//! Child element index
+/*! \brief Child element index
+**
+** Returns a reference to the first child node with name \a name.  If no such child node exists, returns a reference
+** to Element::nil.
+*/
 inline Element const &Element::operator()( String const &name ) const
 {
   for ( ConstElementIterator i( firstChild() ); i; ++i ) {
@@ -223,22 +241,28 @@ inline Element const &Element::operator()( String const &name ) const
 }
 
 
+//! Sets the element's tag name.
 inline void Element::name( String const &name )
 {
   _name = name;
 }
 
+//! Returns the element's attributes.
 inline Element::AttribMap &Element::attribs( void )
 {
   return _attribs;
 }
 
+//! Returns the value of the attribute \a attrib.
 inline String &Element::attrib( String const &attrib )
 {
   return attribs()[attrib];
 }
 
-//! Attribute index
+/*! \brief Attribute index
+**
+** \sa attrib.
+*/
 inline String &Element::operator[]( const char *attrib )
 {
   return Element::attrib(attrib);
@@ -258,24 +282,39 @@ inline Element &Element::append( Node &node )
   return append( &node );
 }
 
+/*! \brief Appends the string \a str.
+**
+** \sa append.
+*/
 template <>
 inline Element &Element::operator <<( String const &str )
 {
   return append( str );
 }
 
+/*! \brief Appends the element \a el.
+**
+** \sa append.
+*/
 template <>
 inline Element &Element::operator <<( Element::Ref el )
 {
   return append( el );
 }
 
+/*! \brief Appends the element \a el.
+**
+** \sa append.
+*/
 inline Element &Element::operator +=( Element::Ref el )
 {
   return append( el );
 }
 
 
+/*! \internal
+** \brief Renders the node's closing tag.
+*/
 inline void Element::closeTag( std::ostream &out ) const
 {
   out << "</" << name() << ">";

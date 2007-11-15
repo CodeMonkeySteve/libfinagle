@@ -54,6 +54,7 @@ protected:
   Node::Ref _root;
 };
 
+//! %Exception thrown when %XML parsing fails.
 struct ParseEx : public Exception {
   ParseEx( String const &src, unsigned line, String const &err );
 };
@@ -66,12 +67,14 @@ extern std::ostream &operator <<( std::ostream &out, Document const &doc );
 inline Document::Document( void )
 {}
 
+//! Constructs a document and attempts to load it from the file \a src.
 inline Document::Document( FilePath const &src )
 : _src(src)
 {
   load();
 }
 
+//! Constructs a document and attempts to load it from the string \a xml.
 inline Document::Document( String const &xml )
 {
   parse( xml );
@@ -83,18 +86,20 @@ inline FilePath const &Document::src( void ) const
   return _src;
 }
 
+//! Returns the document's root node (may be \c 0).
 inline Node::ConstRef Document::root( void ) const
 {
   return Node::ConstRef(_root);
 }
 
+//! Returns the document's root node (may be \c 0).
 inline Node::Ref Document::root( void )
 {
   return _root;
 }
 
 
-//! \brief Parses the XML document from a string.
+//! \brief Parses the %XML document from a string.
 inline void Document::parse( String const &in, String const &srcName )
 {
   std::istringstream strm( in );
@@ -102,14 +107,14 @@ inline void Document::parse( String const &in, String const &srcName )
 }
 
 
-//! \brief Parses the XML document from an input stream
+//! \brief Parses the %XML document from an input stream
 inline std::istream &operator >>( std::istream &in, Document &doc )
 {
   doc.parse( in );
   return in;
 }
 
-//! \brief Writes the XML document to an output stream
+//! \brief Writes the %XML document to an output stream
 inline std::ostream &operator <<( std::ostream &out, Document const &doc )
 {
   doc.root()->render( out );

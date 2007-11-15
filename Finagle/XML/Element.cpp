@@ -25,9 +25,20 @@ using namespace std;
 using namespace Finagle;
 using namespace XML;
 
+/*! \class Finagle::XML::Element
+** \brief Represents an element node.
+**
+** An Element Node may have, in addition to siblings and a parent (as provided by Node), any number of attributes and child nodes.
+** It also provides convenience functions for searching child nodes, and for accessing a child Text node.
+*/
+
+/*! \brief A do-nothing element.
+**
+** \sa Element::operator().
+*/
 const Element Element::nil( "" );
 
-
+//! Initializes the element with \a name and (optionally) a Text node containing \a text.
 Element::Element( String const &name, String const &text )
 : _name(name)
 {
@@ -49,6 +60,11 @@ void Element::clear( void )
 }
 
 
+/*! \brief Appends the text in \a str to a child Text node.
+**
+** If the element's last node is a Text node, appends the text to that.  Otherwise, creates a new Text node and inserts
+** it into the element as the last child node.
+*/
 Element &Element::append( String const &str )
 {
   Text::Ref textNode( _lastChild );
@@ -60,6 +76,11 @@ Element &Element::append( String const &str )
   return *this;
 }
 
+/*! \brief Appends \a node as a child node.
+**
+** If \a node is a Text node, and the element's last node is also a Text node, appends the text in \a node to the element's
+** Text node.  Otherwise, inserts \a node into the element as the last child node.
+*/
 Element &Element::append( Node::Ref node )
 {
   Text::Ref a( _lastChild ), b( node );
@@ -117,6 +138,9 @@ void Element::remove( Node::Ref child )
 }
 
 
+/*! \internal
+** \brief Renders the element's openning tag (including attributes).
+*/
 void Element::openTag( std::ostream &out ) const
 {
   out << "<" << name();
@@ -130,6 +154,7 @@ void Element::openTag( std::ostream &out ) const
 }
 
 
+//! Utility function to escape a string using %XML entities, such that it's suitable for representing an attribute value.
 String XML::escape( String const &str )
 {
   String s;
@@ -189,29 +214,5 @@ void XML::Element::prettyRender( std::ostream &out, unsigned indent ) const
     out << endl;
   } else
     out << " />" << endl;
-}
-*/
-
-/*
-void Element::dump( unsigned indent ) const
-{
-  if ( name().empty() && text().empty() && elements().empty() )
-    return;
-
-  cerr << String( indent * 2, ' ' );
-  if ( !name().empty() ) {
-    cerr << name() << ":";
-
-    for ( XML::Element::AttribMap::ConstIterator a = attribs().begin(); a != attribs().end(); ++a )
-      cerr << " " << a.key() << "='" << *a << "'";
-  } else {
-    FINAGLE_ASSERT( elements().empty() );
-    cerr << '"' << text() << '"';
-  }
-
-  cerr << endl;
-
-  for ( XML::Element::ConstIterator e = elements().begin(); e != elements().end(); ++e )
-    e->dump( indent + 1 );
 }
 */

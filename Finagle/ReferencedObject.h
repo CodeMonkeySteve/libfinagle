@@ -39,7 +39,7 @@ public:
   typedef PType PtrType;
 
 public:
-  //! Exception thrown when attempting to dereference an ObjectRef of \c 0.
+  //! %Exception thrown when attempting to dereference an ObjectRef of \c 0.
   class NullRefEx : public std::exception {
   public:
     NullRefEx( const char *func )

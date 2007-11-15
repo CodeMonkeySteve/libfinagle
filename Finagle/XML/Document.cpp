@@ -28,6 +28,15 @@ using namespace std;
 using namespace Finagle;
 using namespace XML;
 
+/*! \class Finagle::XML::Document
+** \brief Represents an %XML document.
+**
+**
+*/
+
+/*! \internal
+** \brief Contains the %XML parsing context and nodes.
+*/
 struct Context {
   Node::Ref first, last;
   Element::Ref cur;
@@ -38,7 +47,7 @@ static void elEnd( void *ctxPtr, const char *name );
 static void elData( void *ctxPtr, const XML_Char *str, int len );
 
 
-//! \brief Loads the XML document from #src.
+//! \brief Loads the %XML document from #src.
 void Document::load( void )
 {
   ifstream in;
@@ -51,7 +60,7 @@ void Document::load( void )
 }
 
 
-//! \brief Saves the XML document to #src.
+//! \brief Saves the %XML document to #src.
 void Document::save( void ) const
 {
   ofstream out;
@@ -64,7 +73,7 @@ void Document::save( void ) const
 }
 
 
-//! \brief Parses the XML document from an input stream.
+//! \brief Parses the %XML document from an input stream.
 void Document::parse( std::istream &in, String const &srcName )
 {
   _root = 0;
@@ -93,7 +102,9 @@ void Document::parse( std::istream &in, String const &srcName )
   _root = ctx.first;
 }
 
-
+/*! \internal
+** \c expat callback function for element start tags.
+*/
 static void elStart( void *ctxPtr, const char *name, const char **attrs )
 {
   Context &ctx( *(Context *) ctxPtr );
@@ -115,6 +126,9 @@ static void elStart( void *ctxPtr, const char *name, const char **attrs )
   ctx.cur = el;
 }
 
+/*! \internal
+** \c expat callback function for text nodes.
+*/
 static void elData( void *ctxPtr, XML_Char const *str, int len )
 {
   Context &ctx( *(Context *) ctxPtr );
@@ -140,6 +154,9 @@ static void elData( void *ctxPtr, XML_Char const *str, int len )
     ctx.cur->append( text );
 }
 
+/*! \internal
+** \c expat callback function for element end tags.
+*/
 static void elEnd( void *ctxPtr, const char *name )
 {
   Context &ctx( *(Context *) ctxPtr );

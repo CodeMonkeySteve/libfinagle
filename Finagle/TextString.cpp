@@ -29,6 +29,10 @@
 using namespace std;
 using namespace Finagle;
 
+/*! \brief An empty string
+**
+** Equivalent to String().
+*/
 const String String::nil;
 
 //! String conversion exception

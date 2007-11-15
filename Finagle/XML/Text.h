@@ -26,6 +26,7 @@
 
 namespace Finagle {  namespace XML {
 
+//! \brief Represents a text node
 class Text : public Node {
 public:
   typedef ObjectRef<Text> Ref;
@@ -37,6 +38,7 @@ public:
   String const &text( void ) const;
   String &text( void );
 
+  void clear( void );
   void render( std::ostream &out ) const;
 
 protected:
@@ -45,18 +47,26 @@ protected:
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
+//! Construct a text node with the given \a text content.
 inline Text::Text( String const &text )
 : _text(text)
 {}
 
+//! Returns the node's content.
 inline String const &Text::text( void ) const
 {
   return _text;
 }
 
+//! Returns the node's content.
 inline String &Text::text( void )
 {
   return _text;
+}
+
+inline void Text::clear( void )
+{
+  _text.clear();
 }
 
 inline void Text::render( std::ostream &out ) const

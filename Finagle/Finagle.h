@@ -44,7 +44,7 @@
 #include <Finagle/Util.h>
 
 /*!
-** \brief Wraps all classes, types, and functions in the Finagle library.
+** \brief Wraps all classes, types, and functions in the %Finagle library.
 **
 ** Also includes \c sigslot, and \c std::endl (for convenience).
 */
