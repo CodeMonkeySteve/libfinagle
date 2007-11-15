@@ -78,7 +78,7 @@ inline Iterator<Type>::Iterator( Node::Ref node )
 {
   while ( _node ) {
     if ( TypeRef(_node) )  break;
-    node = node->next();
+    _node = _node->next();
   }
 }
 

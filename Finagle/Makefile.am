@@ -13,7 +13,7 @@ libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp Compress.cpp Configure.cpp \
 	Thread.cpp Timer.cpp UUID.cpp Util.cpp WaitCondition.cpp
 
 libFinagle_la_LDFLAGS = -no-undefined -version-info @LIB_CURRENT@:@LIB_REVISION@:@LIB_AGE@ -release @FINAGLE_VERSION@
-libFinagle_la_LIBADD = $(top_builddir)/Finagle/XML/libXML.a $(PTHREAD_LIBS) \
+libFinagle_la_LIBADD = $(top_builddir)/Finagle/XML/libXML.la $(PTHREAD_LIBS) \
 	$(expat_LIBS) $(libpcre_LIBS) $(openssl_LIBS) $(uuid_LIBS) $(z_LIBS)
 
 library_includedir=$(includedir)/$(PACKAGE)-$(VERSION)/Finagle

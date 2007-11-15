@@ -30,7 +30,7 @@
         <testFinagle>MutexTest</testFinagle>
         <xmltest/>
         <testxpath/>
-        <testXML></testXML>
+        <testXML/>
       </runarguments>
       <debugarguments>
         <testFinagle>ExceptionTest</testFinagle>
@@ -42,7 +42,7 @@
         <testFinagle/>
         <xmltest>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./tinyxml/test</xmltest>
         <testxpath>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./tinyxpath/test</testxpath>
-        <testXML>/home/ssloan/src/vigilos/branches/llama/libFinagle/debug/./Finagle/XML/test</testXML>
+        <testXML/>
       </cwd>
       <programargs/>
       <globaldebugarguments/>

@@ -31,9 +31,7 @@ class DocumentTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( DocumentTest );
   CPPUNIT_TEST( testCreateDestroy );
-/*  CPPUNIT_TEST( testInsert );
   CPPUNIT_TEST( testChildIndex );
-  CPPUNIT_TEST( testRender );*/
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -41,9 +39,7 @@ public:
   void tearDown( void );
 
   void testCreateDestroy( void );
-//   void testInsert( void );
-//   void testChildIndex( void );
-//   void testRender( void );
+  void testChildIndex( void );
 
 protected:
   Document *_doc;
@@ -52,11 +48,14 @@ protected:
 static String TestContent =
   "<document>"
   "  Intro text"
-  "  <stuff name='foo'>Foo's Text</stuff>"
-  "  <stuff name='bar'>"
-  "    Bar's Text"
-  "    <etc name='son-of-bar'>Splat</etc>"
+  "  <stuff name='foo'>"
+  "    Some text"
+  "    <item value='42'>Forty-Two</item>"
+  "    <item value='83'>Eight-Three</item>"
+  "    <item value='3.14159'>Pi (yum!)</item>"
+  "    Some more text"
   "  </stuff>"
+  "  <stuff name='bar'>Bar's Text</stuff>"
   "  Outro text"
   "</document>";
 
@@ -70,22 +69,32 @@ void DocumentTest::setUp( void )
 
 void DocumentTest::tearDown( void )
 {
-  CPPUNIT_ASSERT_NO_THROW( delete _doc );
+  CPPUNIT_ASSERT_NO_THROW( _doc = 0 );
 }
 
 
 void DocumentTest::testCreateDestroy( void )
 {
-/*  CPPUNIT_ASSERT_EQUAL( String("foo"), _el->name() );
-  CPPUNIT_ASSERT_EQUAL( 0U,            _el->attribs().size() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->next() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->firstChild() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->lastChild() );*/
-}
-/*
+  Element::Ref root( _doc->root() );
 
+  CPPUNIT_ASSERT( root );
+  CPPUNIT_ASSERT( root->hasChildren() );
+  CPPUNIT_ASSERT_EQUAL( String("document"), root->name() );
+}
+
+
+void DocumentTest::testChildIndex( void )
+{
+  Element::Ref root( _doc->root() );
+
+  CPPUNIT_ASSERT( root );
+  CPPUNIT_ASSERT( (*root)("stuff") );
+  CPPUNIT_ASSERT( (*root)("stuff")("item") );
+  CPPUNIT_ASSERT_EQUAL( 42U, (*root)("stuff")("item")["value"].as<unsigned>() );
+}
+
+
+/*
 void DocumentTest::testAppendStr( void )
 {
   String str( "this is a test" );
@@ -182,27 +191,6 @@ void DocumentTest::testInsert( void )
 }
 
 
-void DocumentTest::testChildIndex( void )
-{
-  Document::Ref el, tmp;
-  tmp = (Document *) _el->lastChild( new Document("bar") );
-  CPPUNIT_ASSERT_EQUAL( (Document const *) tmp, &(*_el)("bar") );
-  el = tmp;
-
-  tmp = (Document *) el->lastChild( new Document("baaz") );
-  CPPUNIT_ASSERT_EQUAL( (Document const *) tmp, &(*el)("baaz") );
-  el = tmp;
-
-  tmp = (Document *) el->lastChild( new Document("splat") );
-  CPPUNIT_ASSERT_EQUAL( (Document const *) tmp, &(*el)("splat") );
-  CPPUNIT_ASSERT_EQUAL( (Document const *) tmp, &(*_el)("bar")("baaz")("splat") );
-  el = tmp;
-
-  el->attrib("value") = "42";
-  CPPUNIT_ASSERT_EQUAL( String("42"), el->attrib("value") );
-
-  CPPUNIT_ASSERT_EQUAL( 42U, (*_el)("bar")("baaz")("splat")["value"].as<unsigned>() );
-}
 
 
 void DocumentTest::testRender( void )
