@@ -20,7 +20,7 @@ SRPMDIR ?= $(RPMDIR)/SRPMS
 pkgs-install: pkgs
 	@mkdir -p $(RPMDIR) $(SRPMDIR)
 	@cp $(RPM_PATHS) $(RPMDIR)
-	@cp $(SRPM_PATHS) $(SRPMDIR)
+	@cp $(SRPM_PATH) $(SRPMDIR)
 
 $(SRPM_PATH):
 	$(MAKE) dist-bzip2
