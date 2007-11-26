@@ -194,8 +194,9 @@ void StringTest::testNoCaseOut( void )
 {
   std::string s( "this is a test" );
   NoCase nc( s );
+  NoCase const &ncr( nc );
 
   std::ostringstream out;
-  out << nc;
-  CPPUNIT_ASSERT_EQUAL( s, out.str() );
+  out << nc << ncr;
+  CPPUNIT_ASSERT_EQUAL( s + s, out.str() );
 }

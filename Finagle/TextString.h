@@ -134,6 +134,7 @@ public:
 inline bool operator ==( std::string const &a, NoCase const &b ) {  return b.compare( a.c_str() ) == 0;  }
 inline bool operator ==( NoCase const &a, const char *b ) {  return a.compare( b ) == 0;  }
 inline bool operator ==( NoCase const &a, std::string const &b ) {  return a.compare( b.c_str() ) == 0;  }
+inline std::ostream &operator <<( std::ostream &out, NoCase const &str ) {  return out << str.c_str();  }
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
