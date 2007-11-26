@@ -35,12 +35,16 @@ class StringTest : public CppUnit::TestFixture
   CPPUNIT_TEST( testInitializers );
   CPPUNIT_TEST( testConversions );
   CPPUNIT_TEST( testSplit );
+  CPPUNIT_TEST( testNoCase );
+  CPPUNIT_TEST( testNoCaseOut );
   CPPUNIT_TEST_SUITE_END();
 
 public:
   void testInitializers( void );
   void testConversions( void );
   void testSplit( void );
+  void testNoCase( void );
+  void testNoCaseOut( void );
 };
 
 
@@ -169,3 +173,29 @@ void StringTest::testSplit( void )
   }
 }
 
+
+void StringTest::testNoCase( void )
+{
+  String s( "this is a test" );
+  NoCase nc( s );
+
+  CPPUNIT_ASSERT( nc == s );
+  CPPUNIT_ASSERT( s == nc );
+
+  CPPUNIT_ASSERT( nc == String::toUpper(s) );
+  CPPUNIT_ASSERT( String::toUpper(s) == nc );
+
+  CPPUNIT_ASSERT( nc == String::toLower(s) );
+  CPPUNIT_ASSERT( String::toLower(s) == nc );
+}
+
+
+void StringTest::testNoCaseOut( void )
+{
+  std::string s( "this is a test" );
+  NoCase nc( s );
+
+  std::ostringstream out;
+  out << nc;
+  CPPUNIT_ASSERT_EQUAL( s, out.str() );
+}

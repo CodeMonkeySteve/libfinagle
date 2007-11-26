@@ -109,6 +109,7 @@ private:
   void throwConversionEx( String const &src, std::type_info const &dest ) const;
 };
 
+template <> bool String::to<bool>( bool &val ) const;
 
 //! Case-insensitive character traits
 struct NoCaseChar : public std::char_traits<char> {
@@ -123,15 +124,16 @@ struct NoCaseChar : public std::char_traits<char> {
 class NoCase : public std::basic_string<char, NoCaseChar> {
 public:
   NoCase( void ) {}
-  NoCase( const char *Str ) : std::basic_string<char, NoCaseChar>( Str ) {}
-  NoCase( const char *Str, unsigned Len ) : std::basic_string<char, NoCaseChar>( Str, Len ) {}
-  NoCase( String const &Str ) : std::basic_string<char, NoCaseChar>( Str ) {}
+  NoCase( const char *str ) : std::basic_string<char, NoCaseChar>( str ) {}
+  NoCase( const char *str, unsigned len ) : std::basic_string<char, NoCaseChar>( str, len ) {}
+  NoCase( std::string const &str ) : std::basic_string<char, NoCaseChar>( str.c_str() ) {}
 
   operator const char *( void ) {  return c_str();  }
 };
 
-template <> bool String::to<bool>( bool &val ) const;
-std::ostream &operator <<( std::ostream &out, NoCase const &Str );
+inline bool operator ==( std::string const &a, NoCase const &b ) {  return b.compare( a.c_str() ) == 0;  }
+inline bool operator ==( NoCase const &a, const char *b ) {  return a.compare( b ) == 0;  }
+inline bool operator ==( NoCase const &a, std::string const &b ) {  return a.compare( b.c_str() ) == 0;  }
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
@@ -242,17 +244,6 @@ inline String String::substr( size_type pos, size_type len ) const
   return std::string::substr( pos, len );
 }
 
-/*
-inline String::reference String::operator[]( size_type n )
-{
-  return std::string::operator[]( n );
-}
-
-inline String::const_reference String::operator[]( size_type n ) const
-{
-  return std::string::operator[]( n );
-}
-*/
 
 //! Joins two strings
 inline String operator +( String const &left, String const &right )
@@ -300,12 +291,6 @@ inline String String::toUpper( String const &str )
 inline String String::trim( String const &str, const char *chars )
 {
   return String(str).trim(chars);
-}
-
-//! Stream output operator
-inline std::ostream &operator <<( std::ostream &out, NoCase const &str )
-{
-  return out << str;
 }
 
 // TEMPLATE IMPLEMENTATION ********************************************************************************************************
