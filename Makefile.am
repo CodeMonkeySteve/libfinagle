@@ -22,5 +22,6 @@ pkgs-install: pkgs
 	@cp $(RPM_PATHS) $(RPMDIR)
 	@cp $(SRPM_PATHS) $(SRPMDIR)
 
-$(SRPM_PATH): @PACKAGE@.spec.in $(DIST_SOURCES) dist-bzip2
+$(SRPM_PATH):
+	$(MAKE) dist-bzip2
 	rpmbuild -ta $(distdir).tar.bz2
