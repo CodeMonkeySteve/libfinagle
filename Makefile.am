@@ -12,9 +12,9 @@ EXTRA_DIST += @PACKAGE@.spec @PACKAGE@.spec.in
 RPM_PATH_FMT = $(shell rpm --eval '%{_rpmdir}/%{_build_name_fmt}')
 SRPM_PATH_FMT = $(subst %{ARCH},src,$(shell rpm --eval '%{_srcrpmdir}/%{_build_name_fmt}'))
 RPM_PATHS = $(shell rpm -q --qf "$(RPM_PATH_FMT) " --specfile @PACKAGE@.spec)
-SRPM_PATHS = $(shell rpm -q --qf "$(SRPM_PATH_FMT)\n" --specfile @PACKAGE@.spec | head -n 1)
+SRPM_PATH = $(shell rpm -q --qf "$(SRPM_PATH_FMT)\n" --specfile @PACKAGE@.spec | head -n 1)
 
-pkgs: $(RPM_PATHS) $(SRPM_PATHS)
+pkgs: $(SRPM_PATH) $(RPM_PATHS)
 
 SRPMDIR ?= $(RPMDIR)/SRPMS
 pkgs-install: pkgs
@@ -22,5 +22,5 @@ pkgs-install: pkgs
 	@cp $(RPM_PATHS) $(RPMDIR)
 	@cp $(SRPM_PATHS) $(SRPMDIR)
 
-$(RPM_PATHS) $(SRPM_PATHS): @PACKAGE@.spec.in $(DIST_SOURCES) dist-bzip2
+$(SRPM_PATH): @PACKAGE@.spec.in $(DIST_SOURCES) dist-bzip2
 	rpmbuild -ta $(distdir).tar.bz2
