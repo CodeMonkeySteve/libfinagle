@@ -50,46 +50,9 @@ Element::Element( String const &name, String const &text )
 //! Removes all attributes and child nodes
 void Element::clear( void )
 {
-  for ( Node::Ref child( _firstChild ), next; child; child = next ) {
-    next = child->next();
-    Node::remove( child );
-  }
-
-  _firstChild = _lastChild = 0;
+  NodeList::clear();
   Node::clear();
-}
-
-
-/*! \brief Appends the text in \a str to a child Text node.
-**
-** If the element's last node is a Text node, appends the text to that.  Otherwise, creates a new Text node and inserts
-** it into the element as the last child node.
-*/
-Element &Element::append( String const &str )
-{
-  Text::Ref textNode( _lastChild );
-  if ( textNode )
-    textNode->text() += str;
-  else
-    lastChild( new Text(str) );
-
-  return *this;
-}
-
-/*! \brief Appends \a node as a child node.
-**
-** If \a node is a Text node, and the element's last node is also a Text node, appends the text in \a node to the element's
-** Text node.  Otherwise, inserts \a node into the element as the last child node.
-*/
-Element &Element::append( Node::Ref node )
-{
-  Text::Ref a( _lastChild ), b( node );
-  if ( a && b )
-    a->text() += b->text();
-  else
-    lastChild( node );
-
-  return *this;
+  _attribs.clear();
 }
 
 
@@ -102,39 +65,27 @@ void Element::render( std::ostream &out ) const
       out << " " << e.key() << "='" << escape( e.val() ) << "'";
   }
 
-  if ( !_lastChild ) {
+  if ( NodeList::empty() ) {
     out << "/>";
     return;
   }
   out << ">";
 
-  for ( ConstIterator n( _firstChild ); n; ++n )
-    n->render( out );
-
+  NodeList::render( out );
   closeTag( out );
 }
 
 
-void Element::insert( Node::Ref child )
+void Element::insert( Node::Ref node )
 {
-  Node::insert( child );
-
-  if ( !child->prev() )
-    _firstChild = child;
-
-  if ( !child->next() )
-    _lastChild = child;
+  Node::insert( node );
+  NodeList::insert( node );
 }
 
-void Element::remove( Node::Ref child )
+void Element::remove( Node::Ref node )
 {
-  if ( _firstChild == child )
-    _firstChild = child->next();
-
-  if ( _lastChild == child )
-    _lastChild = child->prev();
-
-  Node::remove( child );
+  NodeList::remove( node );
+  Node::remove( node );
 }
 
 
@@ -187,7 +138,7 @@ void XML::Element::prettyRender( std::ostream &out, unsigned indent ) const
   if ( _name.empty() ) {
     // Text-only element
     out << escape( _text ) << endl;
-    return;
+    return;void
   }
 
   out << "<" << _name;

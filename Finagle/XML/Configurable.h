@@ -1,7 +1,7 @@
 /*!
-** \file Configure.h
+** \file Configurable.h
 ** \author Steve Sloan <steve@finagle.org>
-** \date Fri Dec 31 2004
+** \date Wed Nov 28 2007
 ** Copyright (C) 2004 by Steve Sloan <steve@inagle.org>
 **
 ** This program is free software; you can redistribute it and/or modify it
@@ -19,10 +19,10 @@
 ** http://www.gnu.org/copyleft/gpl.html
 */
 
-#ifndef FINAGLE_CONFIGURE_H
-#define FINAGLE_CONFIGURE_H
+#ifndef FINAGLE_XML_CONFIGURABLE_H
+#define FINAGLE_XML_CONFIGURABLE_H
 
-#include <Finagle/Exception.h>
+// #include <Finagle/Exception.h>
 
 namespace Finagle {  namespace XML {
 
@@ -31,28 +31,22 @@ public:
   typedef ObjectRef<Configurable> Ref;
 
 public:
-  typedef Finagle::Exception Exception;
-  struct InvalidTagEx : public Exception {
-    InvalidTagEx( const char *tag, const char *wrongTag );
-  };
-  struct InvalidAttribEx : public Exception {
-    InvalidAttribEx( const char *tag, const char *attrib, const char *wrongVal, const char *rightVal );
-  };
+//   typedef Finagle::Exception Exception;
+//   struct InvalidTagEx : public Exception {
+//     InvalidTagEx( const char *tag, const char *wrongTag );
+//   };
+//   struct InvalidAttribEx : public Exception {
+//     InvalidAttribEx( const char *tag, const char *attrib, const char *wrongVal, const char *rightVal );
+//   };
 
 public:
   Configurable( String const &tag );
   virtual ~Configurable( void ) {}
 
-  String const &tag( void ) const;
+//  String const &tag( void ) const;
 
   virtual void configure( XML::Element const &el );
   virtual XML::Element::Ref configuration( void ) const;
-
-public:
-  static Configurable::Ref deserialize( XML::Element const &el );
-
-protected:
-  String _name;
 };
 
 // INLINE IMPLEMENTATION ******************************************************

@@ -52,9 +52,10 @@ public:
   virtual void render( std::ostream &out ) const;
 
 protected:
-  virtual void insert( Node::Ref child );
-  virtual void remove( Node::Ref child );
+  virtual void insert( Node::Ref node );
+  virtual void remove( Node::Ref node );
   virtual void clear( void );
+  friend class NodeList;
 
 protected:
   Node::Ref _parent, _prev, _next;
@@ -80,13 +81,13 @@ inline Node::ConstRef Node::parent( void ) const
   return ConstRef(_parent);
 }
 
-//! Returns the previous sibling node (or \c 0, if this is the parent's first child).
+//! Returns the previous sibling node (or \c 0, if this is the parent's first node).
 inline Node::ConstRef Node::prev( void ) const
 {
   return ConstRef(_prev);
 }
 
-//! Returns the next sibling node (or \c 0, if this is the parent's last child).
+//! Returns the next sibling node (or \c 0, if this is the parent's last node).
 inline Node::ConstRef Node::next( void ) const
 {
   return ConstRef(_next);
@@ -98,13 +99,13 @@ inline Node::Ref Node::parent( void )
   return _parent;
 }
 
-//! Returns the previous sibling node (or \c 0, if this is the parent's first child).
+//! Returns the previous sibling node (or \c 0, if this is the parent's first node).
 inline Node::Ref Node::prev( void )
 {
   return _prev;
 }
 
-//! Returns the next sibling node (or \c 0, if this is the parent's last child).
+//! Returns the next sibling node (or \c 0, if this is the parent's last node).
 inline Node::Ref Node::next( void )
 {
   return _next;

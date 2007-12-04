@@ -127,7 +127,7 @@ void LogToStream::onMsg( Element const &msg )
     _stream << string( 11, ' ' );
 */
 
-  Text::ConstRef t( msg.lastChild() );
+  Text::ConstRef t( msg.last() );
   if ( t && !t->text().empty() ) {
     if ( level == "error" )
       _stream << "ERROR: ";
@@ -141,7 +141,7 @@ void LogToStream::onMsg( Element const &msg )
     _stream << t->text() << endl;
   }
 
-  for ( Element::ConstElementIterator el( msg.firstChild() ); el; ++el )
+  for ( Element::ConstElementIterator el( msg.first() ); el; ++el )
     onMsg( *el );
 }
 

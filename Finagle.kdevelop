@@ -20,7 +20,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>Finagle/test/testFinagle</activetarget>
+      <activetarget>Finagle/XML/test/testXML</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>

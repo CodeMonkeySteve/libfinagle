@@ -82,9 +82,9 @@ void Node::render( std::ostream &out ) const
 **
 ** Use Node::remove() to remove a particular node.
 */
-void Node::remove( Node::Ref child )
+void Node::remove( Node::Ref node )
 {
-  child->clear();
+  node->clear();
 }
 
 /*! \internal
@@ -92,9 +92,9 @@ void Node::remove( Node::Ref child )
 **
 ** Use #insertBefore or #insertAfter to add a node.
 */
-void Node::insert( Node::Ref child )
+void Node::insert( Node::Ref node )
 {
-  child->_parent = this;
+  node->_parent = this;
 }
 
 /*! \internal

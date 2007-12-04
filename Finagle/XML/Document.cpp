@@ -38,7 +38,7 @@ using namespace XML;
 ** \brief Contains the %XML parsing context and nodes.
 */
 struct Context {
-  Node::Ref first, last;
+  NodeList nodes;
   Element::Ref cur;
 };
 
@@ -99,7 +99,7 @@ void Document::parse( std::istream &in, String const &srcName )
 
   XML_ParserFree( parser );
 
-  _root = ctx.first;
+  _root = ctx.nodes.first();
 }
 
 /*! \internal
@@ -114,14 +114,10 @@ static void elStart( void *ctxPtr, const char *name, const char **attrs )
   for ( const char **attr = attrs; *attr; attr += 2 )
     attribs.insert( attr[0], attr[1] );
 
-  if ( !ctx.first )
-    ctx.first = ctx.last = Node::Ref(el);
+  if ( ctx.cur )
+    ctx.cur->append( Node::Ref(el) );
   else
-  if ( !ctx.cur ) {
-    el->insertAfter( ctx.last );
-    ctx.last = Node::Ref(el);
-  } else
-    ctx.cur->lastChild( Node::Ref(el) );
+    ctx.nodes.append( Node::Ref(el) );
 
   ctx.cur = el;
 }
@@ -138,20 +134,7 @@ static void elData( void *ctxPtr, XML_Char const *str, int len )
   if ( text.trim().empty() )
     return;
 
-  if ( !ctx.first )
-    ctx.first = ctx.last = new Text(text);
-  else
-  if ( !ctx.cur ) {
-    Text::Ref t( ctx.last );
-    if ( t )
-      t->text() += text;
-    else {
-      t = new Text(text);
-      t->insertAfter( Node::Ref(ctx.last) );
-      ctx.last = Node::Ref(t);
-    }
-  } else
-    ctx.cur->append( text );
+  ctx.nodes.append( text );
 }
 
 /*! \internal

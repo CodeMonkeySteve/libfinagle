@@ -1,7 +1,7 @@
 /*!
-** \file Configure.cpp
+** \file Configurable.cpp
 ** \author Steve Sloan <steve@finagle.org>
-** \date Fri Dec 31 2004
+** \date Wed Nov 28 2007
 ** Copyright (C) 2004-2006 by Steve Sloan <steve@inagle.org>
 **
 ** This program is free software; you can redistribute it and/or modify it
@@ -19,7 +19,8 @@
 ** http://www.gnu.org/copyleft/gpl.html
 */
 
-#include "Constructable.h"
+#include "Finagle/Factory.h"
+#include "Configurable.h"
 
 using namespace Finagle;
 using namespace XML;

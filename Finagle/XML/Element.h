@@ -22,24 +22,20 @@
 #ifndef FINAGLE_XML_ELEMENT_H
 #define FINAGLE_XML_ELEMENT_H
 
-#include <ext/functional>   // for compose1()
 #include <Finagle/Map.h>
 #include <Finagle/TextString.h>
-#include <Finagle/XML/Node.h>
+#include <Finagle/XML/NodeList.h>
 #include <Finagle/XML/Text.h>
-#include <Finagle/XML/Iterator.h>
 
 namespace Finagle {  namespace XML {
 
-class Element : public Node {
+class Element : public Node, public NodeList {
 public:
   typedef ObjectRef<Element> Ref;
   typedef ObjectRef<const Element> ConstRef;
   typedef Map<String, String> AttribMap;
 
-  typedef XML::Iterator<Node>    Iterator;
   typedef XML::Iterator<Element> ElementIterator;
-  typedef XML::ConstIterator<Node>    ConstIterator;
   typedef XML::ConstIterator<Element> ConstElementIterator;
 
   static const Element nil;
@@ -55,17 +51,9 @@ public:
   bool hasChildren( void ) const;
   void render( std::ostream &out ) const;
 
-  Node::ConstRef firstChild( void ) const;
-  Node::ConstRef lastChild( void ) const;
-  Node::Ref firstChild( void );
-  Node::Ref lastChild( void );
-  Node *firstChild( Node *child );
-  Node *lastChild( Node *child );
-
   String const &name( void ) const;
   AttribMap const &attribs( void ) const;
   String const &attrib( String const &attrib ) const;
-  String const &text( void ) const;
   String  const &operator[]( const char *attrib ) const;
   Element const &operator()( String const &name ) const;
 
@@ -74,20 +62,20 @@ public:
   String &attrib( String const &attrib );
   String  &operator[]( const char *attrib );
 
-  void clear( void );
-
-  Element &append( String const &str );
-  Element &append( Node &node );
-  Element &append( Node::Ref node );
+  Element &append( String const &str ) {  return (Element &) NodeList::append(str);  }
+  Element &append( Node &node )        {  return (Element &) NodeList::append(node);  }
+  Element &append( Node::Ref node )    {  return (Element &) NodeList::append(node);  }
 
   template <typename T>  Element &operator <<( T t );
   template <typename T>  Element &operator <<( String const &str );
   template <typename T>  Element &operator <<( Element::Ref el );
   Element &operator +=( Element::Ref el );
 
+  void clear( void );
+
 protected:
-  void insert( Node::Ref child );
-  void remove( Node::Ref child );
+  virtual void insert( Node::Ref node );
+  virtual void remove( Node::Ref node );
 
   void openTag( std::ostream &out ) const;
   void closeTag( std::ostream &out ) const;
@@ -95,7 +83,6 @@ protected:
 protected:
   String _name;
   AttribMap _attribs;
-  Node::Ref _firstChild, _lastChild;
 };
 
 extern String escape( String const &str );
@@ -137,55 +124,7 @@ inline Element::operator bool( void ) const
 //! Returns \c true if the element contains child nodes.
 inline bool Element::hasChildren( void ) const
 {
-  return _firstChild;
-}
-
-
-//! Returns the first child node (or \c 0, if this element has no children).
-inline Node::ConstRef Element::firstChild( void ) const
-{
-  return Node::ConstRef(_firstChild);
-}
-
-//! Returns the last child node (or \c 0, if this element has no children).
-inline Node::ConstRef Element::lastChild( void ) const
-{
-  return Node::ConstRef(_lastChild);
-}
-
-//! Returns the first child node (or \c 0, if this element has no children).
-inline Node::Ref Element::firstChild( void )
-{
-  return _firstChild;
-}
-
-//! Returns the last child node (or \c 0, if this element has no children).
-inline Node::Ref Element::lastChild( void )
-{
-  return _lastChild;
-}
-
-
-//! Inserts \a child as the first child node.
-inline Node *Element::firstChild( Node *child )
-{
-  if ( !hasChildren() )
-    insert( child );
-  else
-    child->insertBefore( _firstChild );
-
-  return child;
-}
-
-//! Inserts \a child as the last child node.
-inline Node *Element::lastChild( Node *child )
-{
-  if ( !_lastChild )
-    insert( child );
-  else
-    child->insertAfter( _lastChild );
-
-  return child;
+  return ! NodeList::empty();
 }
 
 
@@ -207,16 +146,6 @@ inline String const &Element::attrib( String const &attrib ) const
   return attribs()[attrib];
 }
 
-/*! \brief Text node accessor
-**
-** If the element's last node is a Text node, returns its value.  Otherwise returns String::nil.
-*/
-inline String const &Element::text( void ) const
-{
-  XML::Text::ConstRef t( _lastChild );
-  return t ? t->text() : String::nil;
-}
-
 /*! \brief Attribute index
 **
 ** \sa attrib.
@@ -233,7 +162,7 @@ inline String const &Element::operator[]( const char *attrib ) const
 */
 inline Element const &Element::operator()( String const &name ) const
 {
-  for ( ConstElementIterator i( firstChild() ); i; ++i ) {
+  for ( ConstElementIterator i( first() ); i; ++i ) {
     if ( i->name() == name )
       return i;
   }
@@ -268,18 +197,16 @@ inline String &Element::operator[]( const char *attrib )
   return Element::attrib(attrib);
 }
 
-
+/*! \brief Appends any object \a t (as a string).
+**
+** \sa append.
+*/
 template <typename T>
 inline Element &Element::operator <<( T t )
 {
   std::ostringstream s;
   s << t;
-  return append( s.str() );
-}
-
-inline Element &Element::append( Node &node )
-{
-  return append( &node );
+  return (Element &) append( s.str() );
 }
 
 /*! \brief Appends the string \a str.
@@ -289,7 +216,7 @@ inline Element &Element::append( Node &node )
 template <>
 inline Element &Element::operator <<( String const &str )
 {
-  return append( str );
+  return (Element &) append( str );
 }
 
 /*! \brief Appends the element \a el.
@@ -299,7 +226,7 @@ inline Element &Element::operator <<( String const &str )
 template <>
 inline Element &Element::operator <<( Element::Ref el )
 {
-  return append( el );
+  return (Element &) append( Node::Ref(el) );
 }
 
 /*! \brief Appends the element \a el.
@@ -308,7 +235,7 @@ inline Element &Element::operator <<( Element::Ref el )
 */
 inline Element &Element::operator +=( Element::Ref el )
 {
-  return append( el );
+  return (Element &) append( Node::Ref(el) );
 }
 
 
