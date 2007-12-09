@@ -23,6 +23,7 @@
 #define FINAGLE_XML_NODE_H
 
 #include <ostream>
+#include <sstream>
 #include <Finagle/ReferencedObject.h>
 #include <Finagle/TextString.h>
 
@@ -50,6 +51,7 @@ public:
   void remove( void );
 
   virtual void render( std::ostream &out ) const;
+  virtual String asString( void ) const;
 
 protected:
   virtual void insert( Node::Ref node );
@@ -110,6 +112,7 @@ inline Node::Ref Node::next( void )
 {
   return _next;
 }
+
 
 //! Renders the \a node to the output stream \a out (in %XML form).
 inline std::ostream &operator <<( std::ostream &out, Node const &node )

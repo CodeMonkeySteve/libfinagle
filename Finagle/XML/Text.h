@@ -39,7 +39,9 @@ public:
   String &text( void );
 
   void clear( void );
+
   void render( std::ostream &out ) const;
+  operator String( void ) const;
 
 protected:
   String _text;
@@ -73,6 +75,11 @@ inline void Text::render( std::ostream &out ) const
 {
   if ( !_text.empty() )
     out << _text;
+}
+
+inline Text::operator String( void ) const
+{
+  return _text;
 }
 
 

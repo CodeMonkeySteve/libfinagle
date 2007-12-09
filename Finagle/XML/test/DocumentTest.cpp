@@ -68,7 +68,7 @@ void DocumentTest::setUp( void )
 
 void DocumentTest::tearDown( void )
 {
-  CPPUNIT_ASSERT_NO_THROW( _doc = 0 );
+  CPPUNIT_ASSERT_NO_THROW( delete _doc );
 }
 
 

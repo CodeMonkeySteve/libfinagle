@@ -25,12 +25,10 @@
 using namespace Finagle;
 using namespace XML;
 
+#if 0
 /*!
-** \class Finagle::Configurable
-**
 */
-
-void Configurable::configure( XML::Element const &el )
+bool Configurable::configure( XML::Element const &el )
 {
   if ( !_name.empty() && (_name != el.name()) )
     throw InvalidTagEx( el.name(), _name );
@@ -51,3 +49,4 @@ Configurable::Ref Configurable::deserialize( XML::Element const &el )
   Configurable::Ref obj = Factories()[el.name()]->construct( el );
   return obj;
 }
+#endif

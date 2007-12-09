@@ -71,10 +71,18 @@ void Node::remove( void )
 }
 
 /*! \internal
-** \brief Renders this node (including all children) to the given output stream.
+** \brief Renders this node to the given output stream.
 */
 void Node::render( std::ostream &out ) const
 {}
+
+//! Renders the \a node as a \c String (in %XML form).
+String Node::asString( void ) const
+{
+  std::ostringstream out;
+  out << *this;
+  return out.str();
+}
 
 
 /*! \internal

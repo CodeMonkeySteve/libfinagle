@@ -22,50 +22,33 @@
 #ifndef FINAGLE_XML_CONFIGURABLE_H
 #define FINAGLE_XML_CONFIGURABLE_H
 
-// #include <Finagle/Exception.h>
+#include <Finagle/XML/Element.h>
 
 namespace Finagle {  namespace XML {
+
+/*!
+** \class Finagle::Configurable
+** \brief Abstract base class XML-configurable classes
+*/
 
 class Configurable : virtual public ReferenceCount {
 public:
   typedef ObjectRef<Configurable> Ref;
 
 public:
-//   typedef Finagle::Exception Exception;
-//   struct InvalidTagEx : public Exception {
-//     InvalidTagEx( const char *tag, const char *wrongTag );
-//   };
-//   struct InvalidAttribEx : public Exception {
-//     InvalidAttribEx( const char *tag, const char *attrib, const char *wrongVal, const char *rightVal );
-//   };
+  Configurable( void );
+  virtual ~Configurable( void );
 
-public:
-  Configurable( String const &tag );
-  virtual ~Configurable( void ) {}
-
-//  String const &tag( void ) const;
-
-  virtual void configure( XML::Element const &el );
-  virtual XML::Element::Ref configuration( void ) const;
+  virtual bool configure( XML::Element const &config ) = 0;
+  virtual XML::Element::Ref configuration( void ) const = 0;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
 
-inline Configurable::Configurable( String const &tag )
-: _name( tag )
+inline Configurable::Configurable( void )
 {}
 
-inline String const &Configurable::tag( void ) const
-{
-  return _name;
-}
-
-inline Configurable::InvalidTagEx::InvalidTagEx( const char *tag, const char *wrongTag )
-: Exception( String( "Wrong tag for type " ) + tag + ": \"" + wrongTag + "\"" )
-{}
-
-inline Configurable::InvalidAttribEx::InvalidAttribEx( const char *tag, const char *attrib, const char *wrongVal, const char *rightVal )
-: Exception( String( tag ) + " has invalid attribute \"" + attrib + "\" -- \"" + wrongVal + "\" should be " + rightVal )
+inline Configurable::~Configurable( void )
 {}
 
 } }

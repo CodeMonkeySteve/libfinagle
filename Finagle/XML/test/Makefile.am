@@ -5,7 +5,8 @@ TESTS = $(check_PROGRAMS)
 
 check_PROGRAMS = testXML
 
-testXML_SOURCES = DocumentTest.cpp ElementTest.cpp NodeTest.cpp TestXML.cpp
+testXML_SOURCES = CollectionTest.cpp DocumentTest.cpp ElementTest.cpp \
+	NodeTest.cpp TestXML.cpp
 testXML_LDADD = $(top_builddir)/Finagle/libFinagle.la
 
 testXML_CXXFLAGS = $(CPPUNIT_CFLAGS) 
