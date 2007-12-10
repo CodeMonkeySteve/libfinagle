@@ -46,11 +46,14 @@ public:
   virtual String const &objIDAttrib( void ) const = 0;
 };
 
-#define WITH_OBJECT_ELEMENT( TAG, ATTRIB )                                                          \
-public:                                                                                             \
-   virtual String const &objName( void ) const     {  static const String s(TAG);      return s;  } \
-   virtual String const &objIDAttrib( void ) const {  static const String s(#ATTRIB);  return s;  } \
-   virtual String const &id( void ) const          {  return (String const &) ATTRIB();  }
+#define WITH_OBJECT_ELEMENT( TAG, ATTRIB )                      \
+public:                                                         \
+   virtual Finagle::String const &objName( void ) const         \
+     {  static const Finagle::String s(TAG);  return s;  }      \
+   virtual Finagle::String const &objIDAttrib( void ) const     \
+     {  static const Finagle::String s(#ATTRIB);  return s;  }  \
+   virtual Finagle::String const &id( void ) const              \
+     {  return (Finagle::String const &) ATTRIB();  }
 
 
 } }
