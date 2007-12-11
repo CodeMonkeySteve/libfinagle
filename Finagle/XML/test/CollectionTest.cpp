@@ -29,7 +29,7 @@ using namespace Finagle;
 using namespace XML;
 
 class Person : public Object {
-  WITH_OBJECT_ELEMENT( "person", name );
+  WITH_OBJECT_ELEMENT( "person", "name", name() );
 
 public:
   Person( String const &name = String() )
