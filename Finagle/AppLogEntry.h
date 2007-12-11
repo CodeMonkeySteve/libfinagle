@@ -8,8 +8,8 @@
 ** documentation for any purpose can only be granted in writing by Vigilos, Inc.
 */
 
-#ifndef APPLOGENTRY_H
-#define APPLOGENTRY_H
+#ifndef FINAGLE_APPLOGENTRY_H
+#define FINAGLE_APPLOGENTRY_H
 
 #include <Finagle/FilePath.h>
 #include <Finagle/DateTime.h>

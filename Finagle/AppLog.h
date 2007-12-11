@@ -39,6 +39,7 @@ using std::endl;
 class AppLog {
 public:
   AppLog( void ) : _guard() {}
+  AppLog &operator <<( XML::Element const &msg );
   AppLog &operator +=( XML::Element const &msg );
 
   static String msgToText( XML::Element const &msg );
@@ -149,6 +150,11 @@ protected:
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *************************************************************************************************
+
+inline AppLog &AppLog::operator +=( XML::Element const &msg )
+{
+  return operator <<( msg );
+}
 
 inline AppLog::Logger::Logger( void )
 {

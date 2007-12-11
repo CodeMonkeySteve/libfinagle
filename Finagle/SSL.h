@@ -19,8 +19,8 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_SSLSOCKET_H
-#define FINAGLE_SSLSOCKET_H
+#ifndef FINAGLE_SSL_H
+#define FINAGLE_SSL_H
 
 #include <Finagle/Socket.h>
 #include <Finagle/FilePath.h>

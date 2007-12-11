@@ -42,7 +42,7 @@ using namespace XML;
 */
 
 //! Add an XML element (e.g. a \a msg) to the log.
-AppLog &AppLog::operator +=( Element const &msg )
+AppLog &AppLog::operator <<( Element const &msg )
 {
   if ( msg.empty() )
     return *this;
