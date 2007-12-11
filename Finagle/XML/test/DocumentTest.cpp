@@ -87,6 +87,7 @@ void DocumentTest::testChildIndex( void )
   Element::Ref root( _doc->root() );
 
   CPPUNIT_ASSERT( root );
+  CPPUNIT_ASSERT( !(*root)("nonesuch") );
   CPPUNIT_ASSERT( (*root)("stuff") );
   CPPUNIT_ASSERT( (*root)("stuff")("item") );
   CPPUNIT_ASSERT_EQUAL( 42U, (*root)("stuff")("item")["value"].as<unsigned>() );

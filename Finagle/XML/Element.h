@@ -46,8 +46,8 @@ public:
   Element &operator =( Element const &that );
  ~Element();
 
-  bool empty() const;
   operator bool( void ) const;
+  bool empty() const;
   bool hasChildren( void ) const;
   void render( std::ostream &out ) const;
 
@@ -60,7 +60,7 @@ public:
   void name( String const &name );
   AttribMap &attribs( void );
   String &attrib( String const &attrib );
-  String  &operator[]( const char *attrib );
+  String &operator[]( const char *attrib );
 
   Element &append( String const &str ) {  return (Element &) NodeList::append(str);  }
   Element &append( Node &node )        {  return (Element &) NodeList::append(node);  }
@@ -115,10 +115,10 @@ inline bool Element::empty() const
   return _attribs.empty() && !hasChildren();
 }
 
-//! Returns \c true if the element is \e not #empty.
+//! Returns \c true if the element has a name (i.e. is not #nil).
 inline Element::operator bool( void ) const
 {
-  return !empty();
+  return ! _name.empty();
 }
 
 //! Returns \c true if the element contains child nodes.

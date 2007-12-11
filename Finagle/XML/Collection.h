@@ -56,6 +56,8 @@ bool Collection<Class, MapType>::configure( XML::Element const &config )
   static const String ObjName( Class().objName() );
   static const String ObjIDAttrib( Class().objIDAttrib() );
 
+String n( ObjName ), o( ObjIDAttrib );
+
   String const &elName( config.name() );
   if ( elName == ObjName ) {
     String oid( config[ObjIDAttrib] );
