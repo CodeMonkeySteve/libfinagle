@@ -124,8 +124,8 @@ inline std::ostream &operator <<( std::ostream &out, Document const &doc )
 inline ParseEx::ParseEx( String const &src, unsigned lineNum, String const &err )
 : Exception( "XML (" + src + ": " + String( lineNum ) + "): " + err )
 {
-  _what->attrib("src") = src;
-  _what->attrib("line") = String( lineNum );
+  attrib("src") = src;
+  attrib("line") = String( lineNum );
 }
 
 } }

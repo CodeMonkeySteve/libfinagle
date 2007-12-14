@@ -1,7 +1,6 @@
 METASOURCES = AUTO
 SUBDIRS = XML test
-INCLUDES = -I$(top_srcdir) $(PTHREAD_CFLAGS) $(expat_CFLAGS) \
-	$(libpcre_CFLAGS) $(openssl_CFLAGS) $(uuid_CFLAGS) $(z_CFLAGS)
+INCLUDES = -I$(top_srcdir) $(PTHREAD_CFLAGS) $(expat_CFLAGS) $(libpcre_CFLAGS) $(openssl_CFLAGS) $(uuid_CFLAGS) $(z_CFLAGS)
 AM_CXXFLAGS = -Wall
 
 lib_LTLIBRARIES = libFinagle.la

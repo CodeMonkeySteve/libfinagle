@@ -34,6 +34,7 @@ public:
 
 public:
   Text( String const &text = String() );
+  virtual Node::Ref dup( void ) const;
 
   String const &text( void ) const;
   String &text( void );
@@ -53,6 +54,11 @@ protected:
 inline Text::Text( String const &text )
 : _text(text)
 {}
+
+inline Node::Ref Text::dup( void ) const
+{
+  return new Text( *this );
+}
 
 //! Returns the node's content.
 inline String const &Text::text( void ) const

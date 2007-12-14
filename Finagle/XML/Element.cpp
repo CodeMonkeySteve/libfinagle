@@ -46,6 +46,11 @@ Element::Element( String const &name, String const &text )
     insert( new Text(text) );
 }
 
+Node::Ref Element::dup( void ) const
+{
+  return new Element( *this );
+}
+
 
 //! Removes all attributes and child nodes
 void Element::clear( void )

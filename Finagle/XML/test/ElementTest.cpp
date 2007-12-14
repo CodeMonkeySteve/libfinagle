@@ -79,9 +79,15 @@ void ElementTest::testCreateDestroy( void )
 
   Element::Ref el;
   CPPUNIT_ASSERT_NO_THROW( el = new Element( "foo", "splat" ) );
+  CPPUNIT_ASSERT_EQUAL( String("foo"), el->name() );
   CPPUNIT_ASSERT( el->first() );
   CPPUNIT_ASSERT_EQUAL( el->first(), el->last() );
-  CPPUNIT_ASSERT( Text::Ref( el->first() ) );
+  CPPUNIT_ASSERT_EQUAL( String("splat"), el->text() );
+  CPPUNIT_ASSERT_EQUAL( el->text(), Text::Ref( el->first() )->text() );
+
+  Element::Ref el2( el->dup() );
+  CPPUNIT_ASSERT_EQUAL( el->name(), el2->name() );
+  CPPUNIT_ASSERT_EQUAL( el->text(), el2->text() );
 }
 
 
@@ -147,7 +153,7 @@ void ElementTest::testAppendElem( void )
 
 void ElementTest::testInsert( void )
 {
-  Node::Ref a( new Node ), b( new Node ), c( new Node );
+  Node::Ref a( new Text("foo") ), b( new Text("bar") ), c( new Text("baaz") );
 
   CPPUNIT_ASSERT( !_el->hasChildren() );
 

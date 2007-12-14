@@ -34,8 +34,10 @@ public:
   typedef XML::ConstIterator<Node> ConstIterator;
 
 public:
-  NodeList( void );
-  virtual ~NodeList( void );
+  NodeList( void ) {}
+  NodeList( NodeList const &that );
+  virtual Node::Ref dup( void ) const;
+  virtual ~NodeList( void ) {}
 
   bool empty() const;
   String const &text( void ) const;
@@ -63,12 +65,6 @@ protected:
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
-
-inline NodeList::NodeList( void )
-{}
-
-inline NodeList::~NodeList( void )
-{}
 
 inline bool NodeList::empty() const
 {

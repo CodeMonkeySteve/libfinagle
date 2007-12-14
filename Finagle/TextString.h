@@ -47,11 +47,11 @@ public:
 public:
   String( void );
   String( char ch );
-  String( const char *Str );
-  String( const char *Str, unsigned Len );
-  String( const std::string &Str, size_type Pos = 0, size_type Len = npos );
-  String( String const &str, size_type Pos = 0, size_type Len = npos );
-  String( unsigned Count, char Ch );
+  String( const char *str );
+  String( const char *str, unsigned len );
+  String( const std::string &str, size_type pos = 0, size_type len = npos );
+  String( String const &str, size_type pos = 0, size_type len = npos );
+  String( unsigned count, char ch );
   String( unsigned num );
   String( int num );
   String( unsigned long num );
@@ -62,7 +62,7 @@ public:
   operator const char *( void ) const;
   operator bool( void ) const;
 
-  static String hex( unsigned Num, unsigned Digits = 2 );
+  static String hex( unsigned num, unsigned digits = 2 );
 
   String &makeLower( void );
   String &makeUpper( void );
@@ -85,7 +85,7 @@ public: // Conversions
   bool to( Type &dest, Type const &defVal ) const;
 
 public: // Return-type wrappers
-  String substr( size_type Pos = 0, size_type Len = npos ) const;
+  String substr( size_type pos = 0, size_type len = npos ) const;
 
   template <typename Type>
   reference operator[]( Type n ) {  return std::string::operator[]( size_type(n) );  }
@@ -147,42 +147,42 @@ inline String::String( char ch )
 : std::string( 1, ch )
 {}
 
-//! Initializes the string to \a Str (null-terminated).  If \a Str is 0,
+//! Initializes the string to \a str (null-terminated).  If \a str is 0,
 //! initializes to the empty string.
-inline String::String( const char *Str )
-: std::string( Str ? Str : "" )
+inline String::String( const char *str )
+: std::string( str ? str : "" )
 {}
 
-//! Initializes the string to \a Str, with the first \a Len characters.
-inline String::String( const char *Str, unsigned Len )
-: std::string( Str, Len )
+//! Initializes the string to \a str, with the first \a len characters.
+inline String::String( const char *str, unsigned len )
+: std::string( str, len )
 {}
 
-//! Initializes the string to the substring of \a Str, with the \a Len characters
-//! starting at \a Pos.  \a Pos and \a Len default to all of \a Str.
-inline String::String( const std::string &Str, size_type Pos, size_type Len )
-: std::string( Str, Pos, Len )
+//! Initializes the string to the substring of \a str, with the \a len characters
+//! starting at \a pos.  \a pos and \a len default to all of \a str.
+inline String::String( const std::string &str, size_type pos, size_type len )
+: std::string( str, pos, len )
 {}
 
-//! Initializes the string to the substring of \a Str, with the \a Len characters
-//! starting at \a Pos.  \a Pos and \a Len default to all of \a Str.
+//! Initializes the string to the substring of \a str, with the \a len characters
+//! starting at \a pos.  \a pos and \a len default to all of \a str.
 inline String::String( String const &str, size_type pos, size_type len )
 : std::string( str, pos, len )
 {}
 
-//! Initializes the string with \a Count copies of \a CH.
-inline String::String( unsigned Count, char Ch )
-: std::string( Count, Ch )
+//! Initializes the string with \a count copies of \a ch.
+inline String::String( unsigned count, char ch )
+: std::string( count, ch )
 {}
 
 //! Initializes the string with the decimal representation of \a num.
-//! \note This is contratry to the STL version of \c string(int).
+//! \note This is contrary to the STL version of \c string(int).
 inline String::String( unsigned num )
 : std::string( String::format( "%u", num ) )
 {}
 
 //! Initializes the string with the decimal representation of \a num.
-//! \note This is contratry to the STL version of \c string(int).
+//! \note This is contrary to the STL version of \c string(int).
 inline String::String( int num )
 : std::string( String::format( "%d", num ) )
 {}

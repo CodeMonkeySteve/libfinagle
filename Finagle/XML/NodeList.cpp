@@ -29,6 +29,17 @@ using namespace XML;
 ** \brief Represents a linear collection of node.
 */
 
+NodeList::NodeList( NodeList const &that )
+{
+  for ( ConstIterator node( that.first() ); node; ++node )
+    last( node->dup() );
+}
+
+Node::Ref NodeList::dup( void ) const
+{
+  return (Node *) new NodeList( *this );
+}
+
 //! Removes all nodes
 void NodeList::clear( void )
 {

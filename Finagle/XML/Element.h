@@ -43,8 +43,9 @@ public:
 public:
   explicit Element( String const &name, String const &text = String() );
   Element( Element const &that );
-  Element &operator =( Element const &that );
+  virtual Node::Ref dup( void ) const;
  ~Element();
+  Element &operator =( Element const &that );
 
   operator bool( void ) const;
   bool empty() const;
@@ -91,7 +92,8 @@ extern String escape( String const &str );
 
 //! Copy constructor
 inline Element::Element( Element const &that )
-: Node( that ), _name( that._name ), _attribs( that._attribs )
+: NodeList(that),
+  _name( that._name ), _attribs( that._attribs )
 {}
 
 inline Element::~Element( void )

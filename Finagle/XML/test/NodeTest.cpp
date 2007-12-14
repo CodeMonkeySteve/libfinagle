@@ -43,6 +43,12 @@ public:
   void testInsertBefore( void );
   void testInsertAfter( void );
 
+  class Node : public XML::Node {
+  public:
+    Node( void ) {}
+    virtual XML::Node::Ref dup( void ) const {  return new Node;  }
+  };
+
 protected:
   Node::Ref _node;
 };

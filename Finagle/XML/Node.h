@@ -36,6 +36,7 @@ public:
 
 public:
   Node( void );
+  virtual Node::Ref dup( void ) const = 0;
   virtual ~Node( void );
 
   Node::ConstRef parent( void ) const;
@@ -58,6 +59,8 @@ protected:
   virtual void remove( Node::Ref node );
   virtual void clear( void );
   friend class NodeList;
+
+  Node( Node const & ) {}
 
 protected:
   Node::Ref _parent, _prev, _next;

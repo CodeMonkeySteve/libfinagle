@@ -44,6 +44,12 @@ public:
   XML::Element const &xwhat( void ) const throw();
   const char *what( void ) const throw();
 
+  // Pass-through operators
+  String const &attrib( String const &attrib ) const;
+  String &attrib( String const &attrib );
+  Exception &operator <<( String const &str );
+  operator LogEntry const &( void ) const {  return *_what;  }
+
 protected:
   LogEntry::Ref _what;
 };
@@ -81,6 +87,24 @@ inline XML::Element const &Exception::xwhat( void ) const throw()
 inline const char *Exception::what( void ) const throw()
 {
   return _what->text();
+}
+
+
+inline String const &Exception::attrib( String const &attrib ) const
+{
+  return _what->attrib( attrib );
+}
+
+inline String &Exception::attrib( String const &attrib )
+{
+  return _what->attrib( attrib );
+}
+
+
+inline Exception &Exception::operator <<( String const &str )
+{
+  *_what << str;
+  return *this;
 }
 
 
