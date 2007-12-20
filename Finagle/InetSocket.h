@@ -56,10 +56,8 @@ public:
   };
 
 public:
-  InetSocket( void ) {}
-
-  InetSocket( Addr const &addr, int sockDesc = -1, Socket const *src = 0  )
-  : Socket( sockDesc, src ), _addr( addr ) {}
+  InetSocket( void );
+  InetSocket( Addr const &addr, int sockDesc = -1  );
 
   Addr const &addr( void ) const;
   void addr( Addr const &addr );
@@ -153,6 +151,13 @@ inline InetSocket::Addr::operator String( void ) const
   return _host.name() + ":" + String(_port);
 }
 
+
+inline InetSocket::InetSocket( void )
+{}
+
+inline InetSocket::InetSocket( Addr const &addr, int sockDesc )
+: Socket( sockDesc ), _addr( addr )
+{}
 
 inline InetSocket::Addr const &InetSocket::addr( void ) const
 {

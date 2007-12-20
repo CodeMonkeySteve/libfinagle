@@ -54,7 +54,7 @@ public:
   signal0<> disconnected;
 
 public:
-  Socket( int sockDesc = -1, Socket const *src = 0  );
+  Socket( int sockDesc = -1 );
   virtual ~Socket( void );
   static Socket::Ref fromSpec( String const &spec );
 

@@ -51,10 +51,8 @@ public:
   };
 
 public:
-  UnixSocket( void ) {}
-
-  UnixSocket( Addr const &addr, int sockDesc = -1, Socket const *src = 0  )
-  : Socket( sockDesc, src ), _addr( addr ) {}
+  UnixSocket( void );
+  UnixSocket( Addr const &addr, int sockDesc = -1 );
 
   Addr const &addr( void ) const;
   void addr( Addr const &addr );
@@ -132,6 +130,13 @@ inline UnixSocket::Addr::operator String( void ) const
   return _path;
 }
 
+
+inline UnixSocket::UnixSocket( void )
+{}
+
+inline UnixSocket::UnixSocket( Addr const &addr, int sockDesc  )
+: Socket( sockDesc ), _addr( addr )
+{}
 
 inline UnixSocket::Addr const &UnixSocket::addr( void ) const
 {

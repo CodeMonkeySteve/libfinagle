@@ -48,14 +48,15 @@ using namespace Finagle;
 /*! \brief Creates a socket from an existing file descriptor
 ** If \a sockDesc is non-0, binds to an existing socket.
 */
-Socket::Socket( int sockDesc, Socket const * )
+Socket::Socket( int sockDesc )
 : FileDescWatcher(sockDesc), _error(0)
 {
-  if ( sockDesc != -1 ) {
-    setBlocking( true );
-    setReceiveBuff( 256 );
-    setSendBuff( 256 );
-  }
+  if ( sockDesc == -1 )
+    return;
+
+  setBlocking( true );
+  setReceiveBuff( 256 );
+  setSendBuff( 256 );
 }
 
 Socket::~Socket( void )
