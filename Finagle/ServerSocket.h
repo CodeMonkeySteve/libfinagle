@@ -76,11 +76,11 @@ void ServerSocket<SockType>::onReadable( void )
 
   Socket::Ref sock;
   if ( len > sizeof(((sockaddr *) 0)->sa_family) ) {
-    sock = new SockType( Addr( newSockAddr, len ), sockDesc, this );
+    sock = new SockType( Addr( newSockAddr, len ), sockDesc );
   } else {
     // Unix-domain sockets (among others?) don't provide an address (just family), so in these cases assume the
     // listening socket's address
-    sock = new SockType( SockType::addr(), sockDesc, this );
+    sock = new SockType( SockType::addr(), sockDesc );
   }
 
   delete [] (char *) newSockAddr;
