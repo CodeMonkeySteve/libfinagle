@@ -1,7 +1,7 @@
 /*!
 ** \file MutexTest.cpp
-** \date Thu Apr 5 2007
 ** \author Steve Sloan <steve@finagle.org>
+** \date Thu Apr 5 2007
 ** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it

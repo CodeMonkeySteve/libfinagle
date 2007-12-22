@@ -1,7 +1,7 @@
 /*!
 ** \file StringTest.cpp
-** \date Mon May 8 2007
 ** \author Steve Sloan <steve@finagle.org>
+** \date Mon May 8 2007
 ** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it

@@ -1,7 +1,7 @@
 /*!
 ** \file ObjectRefTest.cpp
-** \date Mon Oct 1 2007
 ** \author Steve Sloan <steve@finagle.org>
+** \date Mon Oct 1 2007
 ** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it

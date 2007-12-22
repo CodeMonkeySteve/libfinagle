@@ -61,6 +61,9 @@ AppLog &AppLog::operator <<( Element const &msg )
 ** \sa Finagle::LogToStream, Finagle::LogToFile
 */
 
+AppLog::Logger::~Logger( void )
+{}
+
 /*! \brief Creates an AppLog Logger instance from a specification string (e.g. from the command line or config file)
 ** Where \a spec is one of:
 **  * [xml|text]:stdout

@@ -35,7 +35,7 @@ public:
   typedef ObjectRef<const Element> ConstRef;
   typedef Map<String, String> AttribMap;
 
-  typedef XML::Iterator<Element> ElementIterator;
+  typedef XML::Iterator<Element>      ElementIterator;
   typedef XML::ConstIterator<Element> ConstElementIterator;
 
   static const Element nil;

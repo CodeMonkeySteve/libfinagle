@@ -55,7 +55,7 @@ public:
     typedef ObjectRefConstIterator<List<Logger::Ref>::Iterator> ConstIterator;
 
     Logger( void );
-    virtual ~Logger( void ) {}
+    virtual ~Logger( void );
     static Logger::Ref fromSpec( String const &spec, bool debug = false );
     virtual void onMsg( XML::Element const &msg ) = 0;
   };
@@ -68,63 +68,6 @@ protected:
 
 //! The application log singleton
 static Singleton<AppLog> Log;
-
-//! A log message
-class LogMsg : public LogEntry {
-public:
-  LogMsg( String const &level )
-  : LogEntry( "Msg", level ) {}
-
-  LogMsg( String const &level, const char *file, unsigned line, String const &func )
-  : LogEntry( "Msg", level, file, line, func ) {}
-
-  LogMsg( String const &level, String const &id, const char *file, unsigned line, String const &func )
-  : LogEntry( "Msg", level, id, file, line, func ) {}
-};
-
-//! A Debug log message
-class LogDebug : public LogMsg {
-public:
-  LogDebug( const char *file, unsigned line, String const &func, String const &module = String() )
-  : LogMsg( "debug", file, line, func )
-  {
-    if ( module )
-      attribs()["module"] = module;
-  }
-};
-
-//! An Info log message
-class LogInfo : public LogMsg {
-public:
-  LogInfo( void )
-  : LogMsg( "info" ) {}
-};
-
-//! A Warning log message
-class LogWarn : public LogMsg {
-public:
-  LogWarn( const char *file, unsigned line, String const &func )
-  : LogMsg( "warn", file, line, func ) {}
-};
-
-//! An Error log message
-class LogErr : public LogMsg {
-public:
-  LogErr( const char *file, unsigned line, String const &func )
-  : LogMsg( "error", file, line, func ) {}
-};
-
-//! A (failed) Assertion log message
-class LogAssert : public LogErr {
-public:
-  LogAssert( String const &expr, const char *file, unsigned line, String const &func )
-  : LogErr( file, line, func )
-  {
-    attribs()["class"] = "assert";
-    attribs()["expr"] = expr;
-  }
-};
-
 
 class LogToStream : public AppLog::Logger {
 public:
@@ -185,13 +128,14 @@ inline String const &LogToFile::base( void ) const
   return _base;
 }
 
-#define LOG_DEBUG        Finagle::Log() += Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_DEBUGM( m )  Finagle::Log() += Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__, m )
-#define LOG_INFO         Finagle::Log() += Finagle::LogInfo()
-#define LOG_WARN         Finagle::Log() += Finagle::LogWarn( __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_WARNL( l )   Finagle::Log() += Finagle::LogWarn( l, __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_ERROR        Finagle::Log() += Finagle::LogErr( __FILE__, __LINE__, __FUNCTION__ )
-#define LOG_ERRORL( l )  Finagle::Log() += Finagle::LogErr( l, __FILE__, __LINE__, __FUNCTION__ )
+// Note: must use "Log+=" in these macros, as it has a lower precedence than "Log<<".
+#define LOG_DEBUG        Finagle::Log() += XML::Element::Ref( new Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_DEBUGM( m )  Finagle::Log() += XML::Element::Ref( new Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__, m ) )
+#define LOG_INFO         Finagle::Log() += XML::Element::Ref( new Finagle::LogInfo )
+#define LOG_WARN         Finagle::Log() += XML::Element::Ref( new Finagle::LogWarn( __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_WARNL( l )   Finagle::Log() += XML::Element::Ref( new Finagle::LogWarn( l, __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_ERROR        Finagle::Log() += XML::Element::Ref( new Finagle::LogErr( __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_ERRORL( l )  Finagle::Log() += XML::Element::Ref( new Finagle::LogErr( l, __FILE__, __LINE__, __FUNCTION__ ) )
 
 #define FINAGLE_ASSERT( e ) \
   if ( !(e) ) {  Finagle::Log() += Finagle::LogAssert( #e, __FILE__, __LINE__, __FUNCTION__ );  }

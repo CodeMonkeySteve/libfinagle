@@ -1,7 +1,7 @@
 /*!
 ** \file UUID.cpp
-** \date Mon Sep 24 2007
 ** \author Steve Sloan <steve@finagle.org>
+** \date Mon Sep 24 2007
 ** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it

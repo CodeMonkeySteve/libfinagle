@@ -1,7 +1,7 @@
 /*!
-** \file UtilTest.cpp
+** \file AppLogTest.cpp
 ** \author Steve Sloan <steve@finagle.org>
-** \date Mon May 8 2007
+** \date Thu Dec 20 2007
 ** Copyright (C) 2007 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
@@ -19,35 +19,55 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
-#include <sstream>
 #include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/Util.h>
+#include <Finagle/AppLog.h>
 
 using namespace std;
 using namespace Finagle;
 
-class UtilTest : public CppUnit::TestFixture
+class LogToString : public LogToStream {
+public:
+  LogToString( void )
+  : LogToStream( _strm.rdbuf() ) {}
+
+  string str( void ) const {  return _strm.str();  }
+
+public:
+  ostringstream _strm;
+};
+
+class AppLogTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( UtilTest );
-  CPPUNIT_TEST( testRand );
+  CPPUNIT_TEST_SUITE( AppLogTest );
+  CPPUNIT_TEST( testLog );
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  void testRand( void );
+  void setUp( void );
+  void tearDown( void );
+
+  void testLog( void );
+
+protected:
+  ObjectRef<LogToString> _logger;
 };
 
+CPPUNIT_TEST_SUITE_REGISTRATION( AppLogTest );
 
-CPPUNIT_TEST_SUITE_REGISTRATION( UtilTest );
-
-void UtilTest::testRand( void )
+void AppLogTest::setUp( void )
 {
-  Range<int> r( 0, 0 );
-  for ( unsigned i = 0; i < 10; ++i ) {
-    int n = rand() % 100000;
-    if ( n < r.lower() )  r.lower(n);
-    if ( n > r.upper() )  r.upper(n);
-  }
-
-  CPPUNIT_ASSERT( r.height() > 10000 );
+  CPPUNIT_ASSERT_NO_THROW( _logger = new LogToString );
 }
+
+void AppLogTest::tearDown( void )
+{
+  CPPUNIT_ASSERT_NO_THROW( _logger = 0 );
+}
+
+void AppLogTest::testLog( void )
+{
+  String s( "This is a test" );
+  CPPUNIT_ASSERT_NO_THROW( LOG_INFO << s );
+  CPPUNIT_ASSERT_EQUAL( s + "\n", String(_logger->str()) );
+}
+

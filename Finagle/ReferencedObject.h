@@ -340,6 +340,13 @@ inline bool operator <( ObjectRef<Type> const &a, ObjectRef<Type> const &b )
 }
 
 //! Pass-through operator
+template <typename Type, typename SrcType>
+inline Type &operator <<( ObjectRef<Type> obj, SrcType const &t )
+{
+  return *obj << t;
+}
+
+//! Pass-through operator
 template <typename Type>
 inline std::ostream &operator <<( std::ostream &out, ObjectRef<Type> const &obj )
 {
