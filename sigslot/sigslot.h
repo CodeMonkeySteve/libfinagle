@@ -82,40 +82,39 @@
 #include <list>
 
 // Standard defines (STS) *****************************************************
-#define SIGSLOT_PURE_ISO
 
 #ifdef _WIN32
-#ifndef WIN32
-  #define WIN32
-#endif
-#undef  SIGSLOT_USE_POSIX_THREADS
+  #ifndef WIN32
+    #define WIN32
+  #endif
+  #undef  SIGSLOT_USE_POSIX_THREADS
+  #define SIGSLOT_PURE_ISO
 #else
-#define SIGSLOT_USE_POSIX_THREADS
+  #define SIGSLOT_USE_POSIX_THREADS
 #endif
 
 // ****************************************************************************
 
 #if defined(SIGSLOT_PURE_ISO) || (!defined(WIN32) && !defined(__GNUG__) && !defined(SIGSLOT_USE_POSIX_THREADS))
-#	define _SIGSLOT_SINGLE_THREADED
+  #define _SIGSLOT_SINGLE_THREADED
 #elif defined(WIN32)
-#	define _SIGSLOT_HAS_WIN32_THREADS
-# define _WINSOCKAPI_
-#	include <windows.h>
+  #define _SIGSLOT_HAS_WIN32_THREADS
+  #define _WINSOCKAPI_
+  #include <windows.h>
 #elif defined(__GNUG__) || defined(SIGSLOT_USE_POSIX_THREADS)
-#	define _SIGSLOT_HAS_POSIX_THREADS
-#	include <pthread.h>
+  #define _SIGSLOT_HAS_POSIX_THREADS
+  #include <pthread.h>
 #else
-#	define _SIGSLOT_SINGLE_THREADED
+  #define _SIGSLOT_SINGLE_THREADED
 #endif
 
 #ifndef SIGSLOT_DEFAULT_MT_POLICY
-#	ifdef _SIGSLOT_SINGLE_THREADED
-#		define SIGSLOT_DEFAULT_MT_POLICY single_threaded
-#	else
-#		define SIGSLOT_DEFAULT_MT_POLICY multi_threaded_local
-#	endif
+  #ifdef _SIGSLOT_SINGLE_THREADED
+    #define SIGSLOT_DEFAULT_MT_POLICY single_threaded
+  #else
+    #define SIGSLOT_DEFAULT_MT_POLICY multi_threaded_local
+  #endif
 #endif
-
 
 namespace sigslot {
 
