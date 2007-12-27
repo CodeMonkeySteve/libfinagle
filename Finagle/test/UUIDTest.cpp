@@ -21,6 +21,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <Finagle/UUID.h>
+#include <Finagle/Map.h>
 
 using namespace std;
 using namespace Finagle;
@@ -32,6 +33,7 @@ class UUIDTest : public CppUnit::TestFixture
   CPPUNIT_TEST( testGenerate );
   CPPUNIT_TEST( testImport );
   CPPUNIT_TEST( testExport );
+  CPPUNIT_TEST( testMap );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -39,6 +41,7 @@ public:
   void testGenerate( void );
   void testImport( void );
   void testExport( void );
+  void testMap( void );
 };
 
 
@@ -102,3 +105,15 @@ void UUIDTest::testExport( void )
 }
 
 
+void UUIDTest::testMap( void )
+{
+  Map<UUID, String> map;
+  UUID a( true ), b( true );
+  String A( "Bob" ), B( "Fred" );
+
+  map.insert( a, A );
+  map.insert( b, B );
+
+  CPPUNIT_ASSERT_EQUAL( map[a], A );
+  CPPUNIT_ASSERT_EQUAL( map[b], B );
+}

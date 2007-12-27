@@ -38,15 +38,15 @@ public:
   static const UUID nil;
 
 public:
-  UUID( void );
+  UUID( bool generate = false );
   UUID( String const &str );
   UUID( UUID const &id );
   UUID &operator =( UUID const &id );
  ~UUID( void );
 
-  bool operator ==( UUID const &id );
-  bool operator !=( UUID const &id );
-  bool operator <( UUID const &id );
+  bool operator ==( UUID const &id ) const;
+  bool operator !=( UUID const &id ) const;
+  bool operator <( UUID const &id ) const;
 
   bool isNil( void ) const;
   operator String( void ) const;
@@ -68,11 +68,13 @@ std::ostream &operator <<( std::ostream &out, UUID const &ID );
   }                                          \
 }
 
-//! Creates a \c nil id.
-inline UUID::UUID( void )
+//! Creates a \c nil id.  if \a generate is \c true, creates a new UUID.
+inline UUID::UUID( bool generate )
 : _uuid(0)
 {
   UUID_ASSERT( uuid_create( &_uuid ) );
+  if ( generate )
+    UUID::generate();
 }
 
 //! Creates an id by parsing string \a str.
@@ -102,19 +104,19 @@ inline UUID::~UUID( void )
 }
 
 
-inline bool UUID::operator ==( UUID const &id )
+inline bool UUID::operator ==( UUID const &id ) const
 {
   int res = 0;
   UUID_ASSERT( uuid_compare( _uuid, id._uuid, &res ) );
   return res == 0;
 }
 
-inline bool UUID::operator !=( UUID const &id )
+inline bool UUID::operator !=( UUID const &id ) const
 {
   return ! operator==(id);
 }
 
-inline bool UUID::operator <( UUID const &id )
+inline bool UUID::operator <( UUID const &id ) const
 {
   int res = 0;
   UUID_ASSERT( uuid_compare( _uuid, id._uuid, &res ) );
