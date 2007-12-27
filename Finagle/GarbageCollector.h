@@ -23,9 +23,8 @@
 #define FINAGLE_GARBAGECOLLECTOR_H
 
 #include <Finagle/AppLoop.h>
+#include <Finagle/List.h>
 #include <Finagle/ReferencedObject.h>
-#include <sigslot/sigslot.h>
-#include <Finagle/Array.h>
 
 namespace Finagle {
 
@@ -35,25 +34,35 @@ using namespace sigslot;
 template <typename Class>
 class GarbageCollector : public has_slots<> {
 public:
-  GarbageCollector( void ) {}
-  GarbageCollector &operator +=( ObjectRef<Class> Obj );
+  GarbageCollector( void );
+ ~GarbageCollector( void );
+  GarbageCollector &operator +=( ObjectRef<Class> obj );
 
-protected:
   void collect( void );
 
 protected:
-  List<ObjectRef<Class> > Items;
+  List<ObjectRef<Class> > _trash;
 };
 
 // TEMPLATE IMPLEMENTATION ****************************************************
 
 template <typename Class>
-GarbageCollector<Class> &GarbageCollector<Class>::operator +=( ObjectRef<Class> Obj )
-{
-  Items.push_back( Obj );
+GarbageCollector<Class>::GarbageCollector( void )
+{}
 
-  if ( Items.size() == 1 )
-    AppLoop::Idle.connect( this, &GarbageCollector<Class>::collect );
+template <typename Class>
+GarbageCollector<Class>::~GarbageCollector( void )
+{
+  collect();
+}
+
+template <typename Class>
+GarbageCollector<Class> &GarbageCollector<Class>::operator +=( ObjectRef<Class> obj )
+{
+  _trash.push_back( obj );
+
+  if ( _trash.size() == 1 )
+    AppLoop::idle.connect( this, &GarbageCollector<Class>::collect );
 
   return *this;
 }
@@ -61,16 +70,16 @@ GarbageCollector<Class> &GarbageCollector<Class>::operator +=( ObjectRef<Class> 
 template <typename Class>
 void GarbageCollector<Class>::collect( void )
 {
-  for ( List<ObjectRef<Class> >::Iterator Obj = Items.begin(); Obj != Items.end(); ) {
-    if ( (*Obj)->refCount() == 1 ) {
-      *Obj = 0;
-      Items.erase( Obj++ );
+  for ( typename List<ObjectRef<Class> >::Iterator obj = _trash.begin(); obj != _trash.end(); ) {
+    if ( (*obj)->refs() == 1 ) {
+      *obj = 0;
+      _trash.erase( obj++ );
     } else
-      ++Obj;
+      ++obj;
   }
 
-  if ( Items.empty() )
-    AppLoop::Idle.disconnect( this );
+  if ( _trash.empty() )
+    AppLoop::idle.disconnect( this );
 }
 
 }
