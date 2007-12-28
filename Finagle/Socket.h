@@ -51,9 +51,6 @@ public:
   typedef std::streambuf::int_type    int_type;
 
 public:
-  signal0<> disconnected;
-
-public:
   Socket( int sockDesc = -1 );
   virtual ~Socket( void );
   static Socket::Ref fromSpec( String const &spec );
@@ -66,15 +63,15 @@ public:
   virtual void disconnect( void );
   virtual bool isConnected( void ) const;
 
-  virtual int send( const char *Data, unsigned Len );
-  virtual int receive( char *Data, unsigned Len );
+  virtual int send( const char *data, unsigned len );
+  virtual int receive( char *data, unsigned len );
 
   virtual int error( void ) const;
   virtual String errorStr( void ) const;
 
-  bool setBlocking( bool Enabled );
-  void setReceiveBuff( unsigned Size );
-  void setSendBuff( unsigned Size );
+  bool setBlocking( bool enabled );
+  void setReceiveBuff( unsigned size );
+  void setSendBuff( unsigned size );
 
   int_type overflow( int_type Ch = std::streambuf::traits_type::eof() );
   int_type underflow( void );

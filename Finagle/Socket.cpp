@@ -131,24 +131,22 @@ void Socket::disconnect( void )
 }
 
 
-//! Attempts to send \a Len bytes of \a Data to the socket.
-int Socket::send( const char *Data, unsigned Len )
+//! Attempts to send \a len bytes of \a data to the socket.
+int Socket::send( const char *data, unsigned len )
 {
   if ( !isConnected() )
     return -1;
 
-  int Res = ::send( fd(), Data, Len, 0 );
-  if ( Res != -1 )
-    return Res;
+  int res = ::send( fd(), data, len, 0 );
+  if ( res != -1 )
+    return res;
 
   if ( SystemEx::sysErrCode() == EWOULDBLOCK )
     return 0;
 
   disconnect();
-
   if ( (SystemEx::sysErrCode() == ENOTCONN) || (SystemEx::sysErrCode() == ECONNRESET) || (SystemEx::sysErrCode() == EPIPE) ) {
     _error = 0;
-    disconnected();
   } else {
     _error = SystemEx::sysErrCode();
     LOG_ERROR << "Socket write error (" << (String) addr() << "): " << SystemEx::sysErrStr();
@@ -157,30 +155,27 @@ int Socket::send( const char *Data, unsigned Len )
 }
 
 
-//! Sends \a Len bytes of \a Data to the socket.
-int Socket::receive( char *Data, unsigned Len )
+//! Sends \a len bytes of \a data to the socket.
+int Socket::receive( char *data, unsigned len )
 {
   if ( !isConnected() )
     return 0;
 
-  int Res = ::recv( fd(), Data, Len, 0 );
-  if ( Res == 0 ) {
+  int res = ::recv( fd(), data, len, 0 );
+  if ( res == 0 ) {
     disconnect();
-    disconnected();
     return -1;
   }
 
-  if ( Res != -1 )
-    return Res;
+  if ( res != -1 )
+    return res;
 
   if ( SystemEx::sysErrCode() == EWOULDBLOCK )
     return 0;
 
   disconnect();
-
   if ( (SystemEx::sysErrCode() == ENOTCONN) || (SystemEx::sysErrCode() == ECONNRESET) || (SystemEx::sysErrCode() == EPIPE) ) {
     _error = 0;
-    disconnected();
   } else {
     _error = SystemEx::sysErrCode();
     LOG_ERROR << "Socket read error (" << (String) addr() << "): " << SystemEx::sysErrStr() << " (" << _error << ")";
@@ -190,12 +185,12 @@ int Socket::receive( char *Data, unsigned Len )
 
 
 //! Enables or disables blocking I/O.
-bool Socket::setBlocking( bool Enabled )
+bool Socket::setBlocking( bool enabled )
 {
   // Make socket non-blocking
-  unsigned long Val = Enabled ? 0 : 1;
+  unsigned long val = enabled ? 0 : 1;
 
-  if ( ioctl( fd(), FIONBIO, &Val ) != -1 )
+  if ( ioctl( fd(), FIONBIO, &val ) != -1 )
     return true;
 
   disconnect();
@@ -228,23 +223,23 @@ Socket::int_type Socket::sync( void )
   if ( !isConnected() )
     return -1;
 
-  streamsize BytesOut = pptr() - pbase();
-  while ( BytesOut ) {
-    const streamsize BytesSent = send( pbase(), BytesOut );
-    if ( !BytesSent || (BytesSent == -1) )
+  streamsize bytesOut = pptr() - pbase();
+  while ( bytesOut ) {
+    const streamsize bytesSent = send( pbase(), bytesOut );
+    if ( !bytesSent || (bytesSent == -1) )
       return -1;
 
-    if ( BytesSent < BytesOut )
-      memmove( pbase(), pbase() + BytesSent, BytesOut - BytesSent );
+    if ( bytesSent < bytesOut )
+      memmove( pbase(), pbase() + bytesSent, bytesOut - bytesSent );
 
-    pbump( -BytesSent );
-    BytesOut -= BytesSent;
+    pbump( -bytesSent );
+    bytesOut -= bytesSent;
   }
 
   return 0;
 }
 
-Socket::int_type Socket::overflow( int_type Ch )
+Socket::int_type Socket::overflow( int_type ch )
 {
   if ( !isConnected() )
     return traits::eof();
@@ -255,11 +250,11 @@ Socket::int_type Socket::overflow( int_type Ch )
     return traits::eof();
 
   if ( (epptr() - pptr()) == 0 ) {
-    char_type c = traits::to_char_type( Ch );
-    return (send( &c, sizeof( c ) ) == sizeof( c )) ? 0 : -1;
+    char_type c = traits::to_char_type( ch );
+    return (send( &c, sizeof( c ) ) == sizeof( c )) ? 0 : traits::eof();
   }
 
-  *pptr() = traits::to_char_type( Ch );
+  *pptr() = traits::to_char_type( ch );
   pbump( 1 );
   return 0;
 }
