@@ -25,12 +25,11 @@
 #include <Finagle/AppLoop.h>
 #include <Finagle/List.h>
 #include <Finagle/ReferencedObject.h>
+#include <sigslot/sigslot.h>
 
 namespace Finagle {
 
-using namespace sigslot;
-
-//!\brief Provides garbage collection for ReferencedObject.
+//!\brief Provides garbage collection for ObjectRefs.
 template <typename Class>
 class GarbageCollector : public has_slots<> {
 public:
@@ -39,6 +38,9 @@ public:
   GarbageCollector &operator +=( ObjectRef<Class> obj );
 
   void collect( void );
+
+public:
+  sigslot::signal1<ObjectRef<Class> > onCollect;
 
 protected:
   List<ObjectRef<Class> > _trash;
@@ -71,11 +73,13 @@ template <typename Class>
 void GarbageCollector<Class>::collect( void )
 {
   for ( typename List<ObjectRef<Class> >::Iterator obj = _trash.begin(); obj != _trash.end(); ) {
-    if ( (*obj)->refs() == 1 ) {
-      *obj = 0;
-      _trash.erase( obj++ );
-    } else
-      ++obj;
+    if ( (*obj)->refs() > 1 ) {  ++obj;  continue;  }
+
+    onCollect( *obj );
+    if ( (*obj)->refs() > 1 ) {  ++obj;  continue;  }
+
+    *obj = 0;
+    _trash.erase( obj++ );
   }
 
   if ( _trash.empty() )

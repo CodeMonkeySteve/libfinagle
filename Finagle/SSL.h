@@ -191,7 +191,6 @@ int Socket<SockType>::send( const char *data, unsigned len )
 
 //  if ( (SystemEx::sysErrCode() == ENOTCONN) || (SystemEx::sysErrCode() == ECONNRESET) ) {
 //    _error = 0;
-//    disconnected();
 //  } else {
 //    _error = SystemEx::sysErrCode();
 

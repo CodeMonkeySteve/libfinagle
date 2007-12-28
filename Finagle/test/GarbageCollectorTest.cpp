@@ -35,7 +35,7 @@ public:
 
 unsigned Dummy::Instances = 0;
 
-class GarbageCollectorTest : public CppUnit::TestFixture
+class GarbageCollectorTest : public CppUnit::TestFixture, public has_slots<>
 {
   CPPUNIT_TEST_SUITE( GarbageCollectorTest );
   CPPUNIT_TEST( testDummy );
@@ -47,6 +47,11 @@ public:
   void testDummy( void );
   void testAdd( void );
   void testCollect( void );
+
+  void onCollect( Dummy::Ref ) {  _collectCount++;  }
+
+protected:
+  unsigned _collectCount;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( GarbageCollectorTest );
@@ -81,6 +86,9 @@ void GarbageCollectorTest::testAdd( void )
 void GarbageCollectorTest::testCollect( void )
 {
   GarbageCollector<Dummy> gc;
+  gc.onCollect.connect( this, &GarbageCollectorTest::onCollect );
+  _collectCount = 0;
+
   CPPUNIT_ASSERT_EQUAL( 0U, Dummy::Instances );
 
   Dummy::Ref d( new Dummy );
@@ -94,6 +102,8 @@ void GarbageCollectorTest::testCollect( void )
   d = 0;
   CPPUNIT_ASSERT_EQUAL( 1U, Dummy::Instances );
 
+  CPPUNIT_ASSERT_EQUAL( 0U, _collectCount );
   gc.collect();
+  CPPUNIT_ASSERT_EQUAL( 1U, _collectCount );
   CPPUNIT_ASSERT_EQUAL( 0U, Dummy::Instances );
 }
