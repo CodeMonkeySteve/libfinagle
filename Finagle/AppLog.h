@@ -51,8 +51,8 @@ public:
   class Logger : public has_slots<>, public ReferenceCount {
   public:
     typedef ObjectPtr<Logger> Ptr;
-    typedef ObjectRefIterator<List<Logger::Ptr>::Iterator> Iterator;
-    typedef ObjectRefConstIterator<List<Logger::Ptr>::Iterator> ConstIterator;
+    typedef ObjectPtrIterator<List<Logger::Ptr>::Iterator> Iterator;
+    typedef ObjectPtrConstIterator<List<Logger::Ptr>::Iterator> ConstIterator;
 
     Logger( void );
     virtual ~Logger( void );

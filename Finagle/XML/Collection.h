@@ -30,8 +30,8 @@ template <typename Class, typename MapType = Map<String, ObjectPtr<Class> > >
 class Collection : public Configurable, public MapType {
 public:
   typedef MapType Map;
-  typedef ObjectRefIterator<typename Map::Iterator> Iterator;
-  typedef ObjectRefConstIterator<typename Map::ConstIterator> ConstIterator;
+  typedef ObjectPtrIterator<typename Map::Iterator> Iterator;
+  typedef ObjectPtrConstIterator<typename Map::ConstIterator> ConstIterator;
 
 public:
   Collection( String const &tag );

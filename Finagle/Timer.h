@@ -23,7 +23,7 @@
 #define FINAGLE_ALARM_H
 
 #include <Finagle/AppLoop.h>
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 #include <Finagle/List.h>
 #include <Finagle/DateTime.h>
 #include <Finagle/Singleton.h>

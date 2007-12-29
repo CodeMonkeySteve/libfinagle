@@ -23,7 +23,7 @@
 #define FINAGLE_SINGLETON_H
 
 #include <Finagle/Mutex.h>
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 
 namespace Finagle {
 

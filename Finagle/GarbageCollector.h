@@ -24,12 +24,12 @@
 
 #include <Finagle/AppLoop.h>
 #include <Finagle/List.h>
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 #include <sigslot/sigslot.h>
 
 namespace Finagle {
 
-//!\brief Provides garbage collection for ObjectRefs.
+//!\brief Provides garbage collection for ObjectPtrs.
 template <typename Class>
 class GarbageCollector : public has_slots<> {
 public:

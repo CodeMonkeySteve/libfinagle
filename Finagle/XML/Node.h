@@ -24,7 +24,7 @@
 
 #include <ostream>
 #include <sstream>
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 #include <Finagle/TextString.h>
 
 namespace Finagle {  namespace XML {

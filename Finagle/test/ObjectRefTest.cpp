@@ -1,5 +1,5 @@
 /*!
-** \file ObjectRefTest.cpp
+** \file ObjectPtrTest.cpp
 ** \author Steve Sloan <steve@finagle.org>
 ** \date Mon Oct 1 2007
 ** Copyright (C) 2007 by Steve Sloan
@@ -21,14 +21,14 @@
 
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 
 using namespace std;
 using namespace Finagle;
 
-class ObjectRefTest : public CppUnit::TestFixture
+class ObjectPtrTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( ObjectRefTest );
+  CPPUNIT_TEST_SUITE( ObjectPtrTest );
   CPPUNIT_TEST( testDynamicCast );
   CPPUNIT_TEST_SUITE_END();
 
@@ -37,7 +37,7 @@ public:
 };
 
 
-CPPUNIT_TEST_SUITE_REGISTRATION( ObjectRefTest );
+CPPUNIT_TEST_SUITE_REGISTRATION( ObjectPtrTest );
 
 struct Base : public ReferenceCount {
   typedef ObjectPtr<Base> Ptr;
@@ -62,7 +62,7 @@ std::ostream &operator <<( std::ostream &out, Foo const &f ) {  return out << "F
 std::ostream &operator <<( std::ostream &out, Bar const &b ) {  return out << "Bar";  }
 
 
-void ObjectRefTest::testDynamicCast( void )
+void ObjectPtrTest::testDynamicCast( void )
 {
   for ( unsigned i = 0; i < 10000; ++i ) {
     {

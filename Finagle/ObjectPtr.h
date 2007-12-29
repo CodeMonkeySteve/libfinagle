@@ -1,5 +1,5 @@
 /*!
-** \file ReferencedObject.h
+** \file ObjectPtr.h
 ** \author Steve Sloan <steve@finagle.org>
 ** \date Sat Nov 1 2003
 ** Copyright (C) 2004 by Steve Sloan
@@ -19,17 +19,18 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_REFERENCEDOBJECT_H
-#define FINAGLE_REFERENCEDOBJECT_H
+#ifndef FINAGLE_OBJECTPTR_H
+#define FINAGLE_OBJECTPTR_H
 
 #include <exception>
+#include <Finagle/ReferenceCount.h>
 #include <Finagle/TextString.h>
 
 namespace Finagle {
 
 /*! \brief Reference-counting smart pointer.
 **
-** \sa ReferenceCount, ObjectRefIterator and ObjectRefConstIterator.
+** \sa ReferenceCount, ObjectPtrIterator and ObjectPtrConstIterator.
 */
 template <typename Type, typename RType = Type &, typename PType = Type *>
 class ObjectPtr {
@@ -84,42 +85,21 @@ protected:
 };
 
 
-/*! \brief Simple reference-counting implementation (suitable for ObjectPtr)
-**
-** This class implements a reference count, suitable for inheriting into
-** classes which are referenced with ObjectPtr.  A referenced object need not
-** necessarily inherit ReferenceCount, but it must provide the same
-** functions.
-*/
-class ReferenceCount {
-public:
-  ReferenceCount( void );
-  ReferenceCount( ReferenceCount const & );
-
-  void ref( void ) const;
-  bool deref( void ) const;
-  unsigned refs( void ) const;
-
-protected:
-  mutable unsigned _refs;
-};
-
-
 /*! \brief Iterator for ObjectPtr containers.
 **
 ** Provides easier access to containers (e.g. List, Array, etc.) whos
 ** elements are object references.
 */
 template <typename IterType>
-class ObjectRefIterator : public IterType {
+class ObjectPtrIterator : public IterType {
 public:
   typedef typename IterType::value_type::ObjType  ObjType;
   typedef typename IterType::value_type::RefType  RefType;
   typedef typename IterType::value_type::PtrType  PtrType;
 
 public:
-  ObjectRefIterator( void ) {}
-  ObjectRefIterator( IterType const &it ) : IterType( it ) {}
+  ObjectPtrIterator( void ) {}
+  ObjectPtrIterator( IterType const &it ) : IterType( it ) {}
 
 public:
   RefType operator  *( void ) {  return  **((IterType) *this);  }
@@ -138,15 +118,15 @@ public:
 ** elements are object references.
 */
 template <typename IterType>
-class ObjectRefConstIterator : public IterType {
+class ObjectPtrConstIterator : public IterType {
 public:
   typedef typename IterType::value_type::ObjType const  ObjType;
   typedef typename IterType::value_type::ObjType const &RefType;
   typedef typename IterType::value_type::ObjType const *PtrType;
 
 public:
-  ObjectRefConstIterator( void ) {}
-  ObjectRefConstIterator( const IterType &it ) : IterType( it ) {}
+  ObjectPtrConstIterator( void ) {}
+  ObjectPtrConstIterator( const IterType &it ) : IterType( it ) {}
 
 public:
   RefType operator  *( void ) {  return  **((IterType) *this);  }
@@ -359,43 +339,6 @@ inline std::istream &operator >>( std::ostream &in, ObjectPtr<Type> &obj )
 {
   return in >> *obj;
 }
-
-// REFERENCE COUNT ----------------------------------------------------------------------------------------------------------------
-
-//! Initializes the reference count to \c 0.
-inline ReferenceCount::ReferenceCount( void )
-: _refs(0)
-{}
-
-//! Initializes the reference count to \c 0.
-inline ReferenceCount::ReferenceCount( ReferenceCount const & )
-: _refs(0)
-{}
-
-/*! \brief Incremements the reference count.
-**
-** \warning this function \e may not be thread-safe.
-*/
-inline void ReferenceCount::ref( void ) const
-{
-  _refs++;
-}
-
-/*! \brief Decremements the reference count and returns \c true if it's \c 0.
-**
-** \warning this function \e is not thread-safe.
-*/
-inline bool ReferenceCount::deref( void ) const
-{
-  return --_refs == 0;
-}
-
-//! Returns the reference count.
-inline unsigned ReferenceCount::refs( void ) const
-{
-  return _refs;
-}
-
 
 }
 

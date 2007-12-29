@@ -23,7 +23,7 @@
 #define FINAGLE_FACTORY_H
 
 #include <Finagle/Map.h>
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 //#include <Finagle/String.h>
 
 namespace Finagle {

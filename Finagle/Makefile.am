@@ -20,8 +20,8 @@ library_include_HEADERS = AppLog.h AppLogEntry.h AppLoop.h Array.h ByteArray.h \
 	ByteOrder.h Compress.h DataStream.h DateTime.h DateTimeMask.h Dir.h Exception.h \
 	Factory.h File.h FileDescWatcher.h FilePath.h FileSystem.h Finagle.h \
 	GarbageCollector.h IPAddress.h InetSocket.h List.h MD5.h Map.h MapIterator.h MemTrace.h \
-	MultiMap.h Mutex.h OptionParser.h OrderedMap.h PThreadEx.h PriorityMutex.h \
-	PriorityQueue.h Property.h Queue.h Range.h Rate.h Rectangle.h ReferencedObject.h \
+	MultiMap.h Mutex.h ObjectPtr.h OptionParser.h OrderedMap.h PThreadEx.h PriorityMutex.h \
+	PriorityQueue.h Property.h Queue.h Range.h Rate.h Rectangle.h ReferenceCount.h \
 	RegEx.h SSL.h Schedule.h ServerSocket.h Set.h Singleton.h SizedQueue.h Socket.h \
 	StreamIO.h TextString.h Thread.h ThreadFunc.h Timer.h UUID.h UnixSocket.h Util.h \
 	WaitCondition.h

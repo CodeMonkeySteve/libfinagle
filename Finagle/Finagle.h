@@ -39,7 +39,7 @@
 #include <Finagle/OrderedMap.h>
 #include <Finagle/OptionParser.h>
 #include <Finagle/Set.h>
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 #include <Finagle/StreamIO.h>
 #include <Finagle/Util.h>
 

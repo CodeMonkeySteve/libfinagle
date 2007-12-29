@@ -22,7 +22,7 @@
 #ifndef FINAGLE_FILEDESCWATCHER_H
 #define FINAGLE_FILEDESCWATCHER_H
 
-#include <Finagle/ReferencedObject.h>
+#include <Finagle/ObjectPtr.h>
 #include <Finagle/List.h>
 #include <Finagle/Singleton.h>
 #include <sigslot/sigslot.h>
