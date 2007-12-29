@@ -74,10 +74,6 @@ void GarbageCollector<Class>::collect( void )
 {
   for ( typename List<ObjectRef<Class> >::Iterator obj = _trash.begin(); obj != _trash.end(); ) {
     if ( (*obj)->refs() > 1 ) {  ++obj;  continue;  }
-
-    onCollect( *obj );
-    if ( (*obj)->refs() > 1 ) {  ++obj;  continue;  }
-
     *obj = 0;
     _trash.erase( obj++ );
   }

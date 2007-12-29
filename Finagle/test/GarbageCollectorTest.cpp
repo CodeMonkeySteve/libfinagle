@@ -47,11 +47,6 @@ public:
   void testDummy( void );
   void testAdd( void );
   void testCollect( void );
-
-  void onCollect( Dummy::Ref ) {  _collectCount++;  }
-
-protected:
-  unsigned _collectCount;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( GarbageCollectorTest );
@@ -86,8 +81,6 @@ void GarbageCollectorTest::testAdd( void )
 void GarbageCollectorTest::testCollect( void )
 {
   GarbageCollector<Dummy> gc;
-  gc.onCollect.connect( this, &GarbageCollectorTest::onCollect );
-  _collectCount = 0;
 
   CPPUNIT_ASSERT_EQUAL( 0U, Dummy::Instances );
 
@@ -98,12 +91,9 @@ void GarbageCollectorTest::testCollect( void )
   gc += d;
   CPPUNIT_ASSERT_EQUAL( 1U, Dummy::Instances );
   CPPUNIT_ASSERT_EQUAL( 2U, d->refs() );
-
   d = 0;
-  CPPUNIT_ASSERT_EQUAL( 1U, Dummy::Instances );
 
-  CPPUNIT_ASSERT_EQUAL( 0U, _collectCount );
-  gc.collect();
-  CPPUNIT_ASSERT_EQUAL( 1U, _collectCount );
+  CPPUNIT_ASSERT_EQUAL( 1U, Dummy::Instances );
+  AppLoop::process();
   CPPUNIT_ASSERT_EQUAL( 0U, Dummy::Instances );
 }

@@ -45,7 +45,7 @@ void Mutex::init( void )
 ** lock object falls out of scope, it unlocks the mutex.
 **
 ** This method of mutex locking is strongly encouraged over calling
-** Mutex::lock() and Mutex::unlock() as it ensures that no "danling
+** Mutex::lock() and Mutex::unlock() as it ensures that no "dangling
 ** mutex locks" will occur.  This can be crucial when, for example, using
 ** exceptions.
 **
