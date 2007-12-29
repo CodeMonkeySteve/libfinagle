@@ -22,7 +22,7 @@ library_include_HEADERS = AppLog.h AppLogEntry.h AppLoop.h Array.h ByteArray.h \
 	GarbageCollector.h IPAddress.h InetSocket.h List.h MD5.h Map.h MapIterator.h MemTrace.h \
 	MultiMap.h Mutex.h ObjectPtr.h OptionParser.h OrderedMap.h PThreadEx.h PriorityMutex.h \
 	PriorityQueue.h Property.h Queue.h Range.h Rate.h Rectangle.h ReferenceCount.h \
-	RegEx.h SSL.h Schedule.h ServerSocket.h Set.h Singleton.h SizedQueue.h Socket.h \
+	RegEx.h SSL.h ServerSocket.h Set.h Singleton.h SizedQueue.h Socket.h \
 	StreamIO.h TextString.h Thread.h ThreadFunc.h Timer.h UUID.h UnixSocket.h Util.h \
 	WaitCondition.h
 
