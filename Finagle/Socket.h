@@ -45,7 +45,7 @@ public:
   };
 
 public:
-  typedef Finagle::ObjectPtr<Socket> Ref;
+  typedef Finagle::ObjectPtr<Socket> Ptr;
   typedef std::streambuf::traits_type traits;
   typedef std::streambuf::char_type   char_type;
   typedef std::streambuf::int_type    int_type;
