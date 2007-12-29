@@ -31,8 +31,8 @@ namespace Finagle {  namespace XML {
 
 class Element : public Node, public NodeList {
 public:
-  typedef ObjectRef<Element> Ref;
-  typedef ObjectRef<const Element> ConstRef;
+  typedef ObjectPtr<Element> Ptr;
+  typedef ObjectPtr<const Element> ConstPtr;
   typedef Map<String, String> AttribMap;
 
   typedef XML::Iterator<Element>      ElementIterator;
@@ -43,7 +43,7 @@ public:
 public:
   explicit Element( String const &name, String const &text = String() );
   Element( Element const &that );
-  virtual Node::Ref dup( void ) const;
+  virtual Node::Ptr dup( void ) const;
  ~Element();
   Element &operator =( Element const &that );
 
@@ -65,18 +65,18 @@ public:
 
   Element &append( String const &str ) {  return (Element &) NodeList::append(str);  }
   Element &append( Node &node )        {  return (Element &) NodeList::append(node);  }
-  Element &append( Node::Ref node )    {  return (Element &) NodeList::append(node);  }
+  Element &append( Node::Ptr node )    {  return (Element &) NodeList::append(node);  }
 
   template <typename T>  Element &operator <<( T t );
   template <typename T>  Element &operator <<( String const &str );
-  template <typename T>  Element &operator <<( Element::Ref el );
-  Element &operator +=( Element::Ref el );
+  template <typename T>  Element &operator <<( Element::Ptr el );
+  Element &operator +=( Element::Ptr el );
 
   void clear( void );
 
 protected:
-  virtual void insert( Node::Ref node );
-  virtual void remove( Node::Ref node );
+  virtual void insert( Node::Ptr node );
+  virtual void remove( Node::Ptr node );
 
   void openTag( std::ostream &out ) const;
   void closeTag( std::ostream &out ) const;
@@ -226,18 +226,18 @@ inline Element &Element::operator <<( String const &str )
 ** \sa append.
 */
 template <>
-inline Element &Element::operator <<( Element::Ref el )
+inline Element &Element::operator <<( Element::Ptr el )
 {
-  return (Element &) append( Node::Ref(el) );
+  return (Element &) append( Node::Ptr(el) );
 }
 
 /*! \brief Appends the element \a el.
 **
 ** \sa append.
 */
-inline Element &Element::operator +=( Element::Ref el )
+inline Element &Element::operator +=( Element::Ptr el )
 {
-  return (Element &) append( Node::Ref(el) );
+  return (Element &) append( Node::Ptr(el) );
 }
 
 

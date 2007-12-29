@@ -73,7 +73,7 @@ Socket::~Socket( void )
 ** If \a spec names an existing file, a UnixSocket is created.  Otherwise, \a spec is assumed to be an Internet
 ** Address (i.e. host:port), and an INetSocket is created.
 */
-Socket::Ref Socket::fromSpec( String const &spec )
+Socket::Ptr Socket::fromSpec( String const &spec )
 {
   File sockAddr( spec );
   if ( sockAddr.exists() )

@@ -30,8 +30,8 @@ namespace Finagle {  namespace XML {
 
 class Document {
 public:
-  typedef ObjectRef<Document> Ref;
-  typedef ObjectRef<const Document> ConstRef;
+  typedef ObjectPtr<Document> Ptr;
+  typedef ObjectPtr<const Document> ConstPtr;
 
 public:
   Document( void );
@@ -40,8 +40,8 @@ public:
 
   FilePath const &src( void ) const;
 
-  Node::ConstRef root( void ) const;
-  Node::Ref root( void );
+  Node::ConstPtr root( void ) const;
+  Node::Ptr root( void );
 
   void load( void );
   void save( void ) const;
@@ -51,7 +51,7 @@ public:
 
 protected:
   FilePath _src;
-  Node::Ref _root;
+  Node::Ptr _root;
 };
 
 //! %Exception thrown when %XML parsing fails.
@@ -87,13 +87,13 @@ inline FilePath const &Document::src( void ) const
 }
 
 //! Returns the document's root node (may be \c 0).
-inline Node::ConstRef Document::root( void ) const
+inline Node::ConstPtr Document::root( void ) const
 {
-  return Node::ConstRef(_root);
+  return Node::ConstPtr(_root);
 }
 
 //! Returns the document's root node (may be \c 0).
-inline Node::Ref Document::root( void )
+inline Node::Ptr Document::root( void )
 {
   return _root;
 }

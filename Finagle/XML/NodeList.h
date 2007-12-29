@@ -36,32 +36,32 @@ public:
 public:
   NodeList( void ) {}
   NodeList( NodeList const &that );
-  virtual Node::Ref dup( void ) const;
+  virtual Node::Ptr dup( void ) const;
   virtual ~NodeList( void ) {}
 
   bool empty() const;
   String const &text( void ) const;
   void render( std::ostream &out ) const;
 
-  Node::ConstRef first( void ) const;
-  Node::ConstRef last( void ) const;
-  Node::Ref first( void );
-  Node::Ref last( void );
+  Node::ConstPtr first( void ) const;
+  Node::ConstPtr last( void ) const;
+  Node::Ptr first( void );
+  Node::Ptr last( void );
   Node *first( Node *node );
   Node *last( Node *node );
 
   NodeList &append( String const &str );
   NodeList &append( Node &node );
-  NodeList &append( Node::Ref node );
+  NodeList &append( Node::Ptr node );
 
   void clear( void );
 
 protected:
-  virtual void insert( Node::Ref node );
-  virtual void remove( Node::Ref node );
+  virtual void insert( Node::Ptr node );
+  virtual void remove( Node::Ptr node );
 
 protected:
-  Node::Ref _first, _last;
+  Node::Ptr _first, _last;
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
@@ -77,30 +77,30 @@ inline bool NodeList::empty() const
 */
 inline String const &NodeList::text( void ) const
 {
-  XML::Text::ConstRef t( _last );
+  XML::Text::ConstPtr t( _last );
   return t ? t->text() : String::nil;
 }
 
 //! Returns the first node (or \c 0, if the list is empty).
-inline Node::ConstRef NodeList::first( void ) const
+inline Node::ConstPtr NodeList::first( void ) const
 {
-  return Node::ConstRef(_first);
+  return Node::ConstPtr(_first);
 }
 
 //! Returns the last node (or \c 0, if the list is empty).
-inline Node::ConstRef NodeList::last( void ) const
+inline Node::ConstPtr NodeList::last( void ) const
 {
-  return Node::ConstRef(_last);
+  return Node::ConstPtr(_last);
 }
 
 //! Returns the first node (or \c 0, if the list is empty).
-inline Node::Ref NodeList::first( void )
+inline Node::Ptr NodeList::first( void )
 {
   return _first;
 }
 
 //! Returns the last node (or \c 0, if the list is empty).
-inline Node::Ref NodeList::last( void )
+inline Node::Ptr NodeList::last( void )
 {
   return _last;
 }

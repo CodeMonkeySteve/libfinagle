@@ -31,39 +31,39 @@ namespace Finagle {  namespace XML {
 
 class Node : public ReferenceCount {
 public:
-  typedef ObjectRef<Node> Ref;
-  typedef ObjectRef<const Node> ConstRef;
+  typedef ObjectPtr<Node> Ptr;
+  typedef ObjectPtr<const Node> ConstPtr;
 
 public:
   Node( void );
-  virtual Node::Ref dup( void ) const = 0;
+  virtual Node::Ptr dup( void ) const = 0;
   virtual ~Node( void );
 
-  Node::ConstRef parent( void ) const;
-  Node::ConstRef prev( void ) const;
-  Node::ConstRef next( void ) const;
+  Node::ConstPtr parent( void ) const;
+  Node::ConstPtr prev( void ) const;
+  Node::ConstPtr next( void ) const;
 
-  Node::Ref parent( void );
-  Node::Ref prev( void );
-  Node::Ref next( void );
+  Node::Ptr parent( void );
+  Node::Ptr prev( void );
+  Node::Ptr next( void );
 
-  void insertBefore( Node::Ref sib );
-  void insertAfter( Node::Ref sib );
+  void insertBefore( Node::Ptr sib );
+  void insertAfter( Node::Ptr sib );
   void remove( void );
 
   virtual void render( std::ostream &out ) const;
   virtual String asString( void ) const;
 
 protected:
-  virtual void insert( Node::Ref node );
-  virtual void remove( Node::Ref node );
+  virtual void insert( Node::Ptr node );
+  virtual void remove( Node::Ptr node );
   virtual void clear( void );
   friend class NodeList;
 
   Node( Node const & ) {}
 
 protected:
-  Node::Ref _parent, _prev, _next;
+  Node::Ptr _parent, _prev, _next;
 };
 
 extern std::ostream &operator <<( std::ostream &out, Node const &node );
@@ -81,37 +81,37 @@ inline Node::~Node( void )
 
 
 //! Returns the parent node (or \c 0, if this is the root node).
-inline Node::ConstRef Node::parent( void ) const
+inline Node::ConstPtr Node::parent( void ) const
 {
-  return ConstRef(_parent);
+  return ConstPtr(_parent);
 }
 
 //! Returns the previous sibling node (or \c 0, if this is the parent's first node).
-inline Node::ConstRef Node::prev( void ) const
+inline Node::ConstPtr Node::prev( void ) const
 {
-  return ConstRef(_prev);
+  return ConstPtr(_prev);
 }
 
 //! Returns the next sibling node (or \c 0, if this is the parent's last node).
-inline Node::ConstRef Node::next( void ) const
+inline Node::ConstPtr Node::next( void ) const
 {
-  return ConstRef(_next);
+  return ConstPtr(_next);
 }
 
 //! Returns the parent node (or \c 0, if this is the root node).
-inline Node::Ref Node::parent( void )
+inline Node::Ptr Node::parent( void )
 {
   return _parent;
 }
 
 //! Returns the previous sibling node (or \c 0, if this is the parent's first node).
-inline Node::Ref Node::prev( void )
+inline Node::Ptr Node::prev( void )
 {
   return _prev;
 }
 
 //! Returns the next sibling node (or \c 0, if this is the parent's last node).
-inline Node::Ref Node::next( void )
+inline Node::Ptr Node::next( void )
 {
   return _next;
 }

@@ -44,15 +44,15 @@ CPPUNIT_TEST_SUITE_REGISTRATION( FactoryTest );
 
 
 struct Base : public ReferenceCount {
-  typedef ObjectRef<Base> Ref;
+  typedef ObjectPtr<Base> Ptr;
   virtual const char *name( void ) const = 0;
 };
 struct Foo : public Base {
-  typedef ObjectRef<Foo> Ref;
+  typedef ObjectPtr<Foo> Ptr;
   const char *name( void ) const {  return "Foo";  }
 };
 struct Bar : public Base {
-  typedef ObjectRef<Bar> Ref;
+  typedef ObjectPtr<Bar> Ptr;
   const char *name( void ) const {  return "Bar";  }
 };
 
@@ -65,14 +65,14 @@ static ClassFactory<Bar, Base>  _barFactory( String(Bar().name()), _multiFactory
 
 void FactoryTest::testCreate( void )
 {
-  Foo::Ref foo = 0;
+  Foo::Ptr foo = 0;
   CPPUNIT_ASSERT_NO_THROW( foo = _factory() );
   CPPUNIT_ASSERT_EQUAL( String("Foo"), String(foo->name()) );
 }
 
 void FactoryTest::testMultiCreate( void )
 {
-  Base::Ref b = 0;
+  Base::Ptr b = 0;
   CPPUNIT_ASSERT_NO_THROW( b = _multiFactory( Foo().name() ) );
   CPPUNIT_ASSERT_EQUAL( String("Foo"), String(b->name()) );
 

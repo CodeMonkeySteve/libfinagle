@@ -30,24 +30,24 @@ namespace Finagle {
 class Schedule : public XML::Configurable {
 public:
   static const char * const Tag;
-  typedef ObjectRef<Schedule> Ref;
-  typedef ObjectRef<Schedule const> ConstRef;
+  typedef ObjectPtr<Schedule> Ptr;
+  typedef ObjectPtr<Schedule const> ConstPtr;
 
 public:
   Schedule( void );
 
   bool operator ()( DateTime const &When ) const;
-  bool apply( DateTime const &When, Configurable::Ref Target ) const;
+  bool apply( DateTime const &When, Configurable::Ptr Target ) const;
 
   void configure( XML::Element const &El );
-  XML::Element::Ref configuration( void ) const;
+  XML::Element::Ptr configuration( void ) const;
 
   bool operator <( Schedule const &that ) const {  return this < &that;  }
 
 protected:
   DateTimeMask Begin, End;
-  List<Schedule::Ref> SubSched;
-  XML::Element::Ref Config;
+  List<Schedule::Ptr> SubSched;
+  XML::Element::Ptr Config;
 
   friend class Schedulable;
 };
@@ -55,18 +55,18 @@ protected:
 
 class Schedulable : public XML::Configurable {
 public:
-  typedef ObjectRef<Schedule> Ref;
-  typedef ObjectRef<Schedule const> ConstRef;
+  typedef ObjectPtr<Schedule> Ptr;
+  typedef ObjectPtr<Schedule const> ConstPtr;
 
 public:
   Schedulable( const char *Tag = 0 );
  ~Schedulable( void );
 
   void configure( XML::Element const &El );
-  XML::Element::Ref configuration( void ) const;
+  XML::Element::Ptr configuration( void ) const;
 
 protected:
-  typedef Map<Schedulable::Ref, List<Schedule::ConstRef> > Map;
+  typedef Map<Schedulable::Ptr, List<Schedule::ConstPtr> > Map;
   static Map Master;
 
   static void init( void );

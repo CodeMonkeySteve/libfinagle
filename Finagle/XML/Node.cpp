@@ -36,7 +36,7 @@ using namespace XML;
 */
 
 //! Inserts this node before \a sib.
-void Node::insertBefore( Node::Ref sib )
+void Node::insertBefore( Node::Ptr sib )
 {
   _next = sib;
   _prev = sib->_prev;
@@ -48,7 +48,7 @@ void Node::insertBefore( Node::Ref sib )
 }
 
 //! Inserts this node after \a sib.
-void Node::insertAfter( Node::Ref sib )
+void Node::insertAfter( Node::Ptr sib )
 {
   _prev = sib;
   _next = sib->_next;
@@ -90,7 +90,7 @@ String Node::asString( void ) const
 **
 ** Use Node::remove() to remove a particular node.
 */
-void Node::remove( Node::Ref node )
+void Node::remove( Node::Ptr node )
 {
   node->clear();
 }
@@ -100,7 +100,7 @@ void Node::remove( Node::Ref node )
 **
 ** Use #insertBefore or #insertAfter to add a node.
 */
-void Node::insert( Node::Ref node )
+void Node::insert( Node::Ptr node )
 {
   node->_parent = this;
 }

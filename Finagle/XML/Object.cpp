@@ -38,9 +38,9 @@ bool Object::configure( XML::Element const &config )
   return !selfID || (selfID == config[objIDAttrib()]);
 }
 
-XML::Element::Ref Object::configuration( void ) const
+XML::Element::Ptr Object::configuration( void ) const
 {
-  XML::Element::Ref config( new XML::Element( objName() ) );
+  XML::Element::Ptr config( new XML::Element( objName() ) );
   String oid( id() );
   if ( oid )
     (*config)[objIDAttrib()] = oid;

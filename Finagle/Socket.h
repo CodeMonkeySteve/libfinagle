@@ -45,7 +45,7 @@ public:
   };
 
 public:
-  typedef Finagle::ObjectRef<Socket> Ref;
+  typedef Finagle::ObjectPtr<Socket> Ref;
   typedef std::streambuf::traits_type traits;
   typedef std::streambuf::char_type   char_type;
   typedef std::streambuf::int_type    int_type;
@@ -53,7 +53,7 @@ public:
 public:
   Socket( int sockDesc = -1 );
   virtual ~Socket( void );
-  static Socket::Ref fromSpec( String const &spec );
+  static Socket::Ptr fromSpec( String const &spec );
 
   virtual Socket::Addr const &addr( void ) const = 0;
 

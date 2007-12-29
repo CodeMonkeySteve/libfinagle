@@ -29,7 +29,7 @@ using namespace AppLoop;
 ** \brief Provides a high-resolution timer.
 **
 ** Example: \code
-** Timer::Ref timer = Timer::Recurring( 1.0 );
+** Timer::Ptr timer = Timer::Recurring( 1.0 );
 ** timer->connect( handlerInstance, &HandlerClass::eventHandler );
 ** timer->start();
 ** \endcode

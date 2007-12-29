@@ -29,12 +29,12 @@ namespace Finagle {  namespace XML {
 //! \brief Represents a text node
 class Text : public Node {
 public:
-  typedef ObjectRef<Text> Ref;
-  typedef ObjectRef<Text const> ConstRef;
+  typedef ObjectPtr<Text> Ptr;
+  typedef ObjectPtr<Text const> ConstPtr;
 
 public:
   Text( String const &text = String() );
-  virtual Node::Ref dup( void ) const;
+  virtual Node::Ptr dup( void ) const;
 
   String const &text( void ) const;
   String &text( void );
@@ -55,7 +55,7 @@ inline Text::Text( String const &text )
 : _text(text)
 {}
 
-inline Node::Ref Text::dup( void ) const
+inline Node::Ptr Text::dup( void ) const
 {
   return new Text( *this );
 }

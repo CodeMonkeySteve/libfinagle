@@ -35,7 +35,7 @@ NodeList::NodeList( NodeList const &that )
     last( node->dup() );
 }
 
-Node::Ref NodeList::dup( void ) const
+Node::Ptr NodeList::dup( void ) const
 {
   return (Node *) new NodeList( *this );
 }
@@ -43,7 +43,7 @@ Node::Ref NodeList::dup( void ) const
 //! Removes all nodes
 void NodeList::clear( void )
 {
-  for ( Node::Ref node( _first ), next; node; node = next ) {
+  for ( Node::Ptr node( _first ), next; node; node = next ) {
     next = node->next();
     node->clear();
   }
@@ -58,7 +58,7 @@ void NodeList::clear( void )
 */
 NodeList &NodeList::append( String const &str )
 {
-  Text::Ref textNode( _last );
+  Text::Ptr textNode( _last );
   if ( textNode )
     textNode->text() += str;
   else
@@ -72,9 +72,9 @@ NodeList &NodeList::append( String const &str )
 ** If \a node is a Text node, and the last node is also a Text node, appends the text in \a node to the last
 ** Text node.  Otherwise, appends \a node to the list.
 */
-NodeList &NodeList::append( Node::Ref node )
+NodeList &NodeList::append( Node::Ptr node )
 {
-  Text::Ref a( _last ), b( node );
+  Text::Ptr a( _last ), b( node );
   if ( a && b )
     a->text() += b->text();
   else
@@ -91,7 +91,7 @@ void NodeList::render( std::ostream &out ) const
 }
 
 
-void NodeList::insert( Node::Ref node )
+void NodeList::insert( Node::Ptr node )
 {
   if ( !node->prev() )
     _first = node;
@@ -101,7 +101,7 @@ void NodeList::insert( Node::Ref node )
 }
 
 
-void NodeList::remove( Node::Ref node )
+void NodeList::remove( Node::Ptr node )
 {
   if ( _first == node )
     _first = node->next();

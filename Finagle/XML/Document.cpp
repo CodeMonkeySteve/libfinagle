@@ -39,7 +39,7 @@ using namespace XML;
 */
 struct Context {
   NodeList nodes;
-  Element::Ref cur;
+  Element::Ptr cur;
 };
 
 static void elStart( void *ctxPtr, const char *name, const char **attrs );
@@ -109,15 +109,15 @@ static void elStart( void *ctxPtr, const char *name, const char **attrs )
 {
   Context &ctx( *(Context *) ctxPtr );
 
-  Element::Ref el = new Element(name);
+  Element::Ptr el = new Element(name);
   Element::AttribMap &attribs = el->attribs();
   for ( const char **attr = attrs; *attr; attr += 2 )
     attribs.insert( attr[0], attr[1] );
 
   if ( ctx.cur )
-    ctx.cur->append( Node::Ref(el) );
+    ctx.cur->append( Node::Ptr(el) );
   else
-    ctx.nodes.append( Node::Ref(el) );
+    ctx.nodes.append( Node::Ptr(el) );
 
   ctx.cur = el;
 }
@@ -146,5 +146,5 @@ static void elEnd( void *ctxPtr, const char *name )
 
   FINAGLE_ASSERT( ctx.cur );
   FINAGLE_ASSERT( ctx.cur->name() == name );
-  ctx.cur = Element::Ref(ctx.cur->parent());
+  ctx.cur = Element::Ptr(ctx.cur->parent());
 }

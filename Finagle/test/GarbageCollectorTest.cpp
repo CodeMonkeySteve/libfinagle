@@ -27,7 +27,7 @@ using namespace Finagle;
 
 class Dummy : public ReferenceCount {
 public:
-  typedef ObjectRef<Dummy> Ref;
+  typedef ObjectPtr<Dummy> Ptr;
   static unsigned Instances;
   Dummy( void ) {  Instances++;  }
  ~Dummy( void ) {  Instances--;  }
@@ -64,7 +64,7 @@ void GarbageCollectorTest::testDummy( void )
 
 void GarbageCollectorTest::testAdd( void )
 {
-  Dummy::Ref d;
+  Dummy::Ptr d;
   CPPUNIT_ASSERT_EQUAL( 0U, Dummy::Instances );
   {
     GarbageCollector<Dummy> gc;
@@ -84,7 +84,7 @@ void GarbageCollectorTest::testCollect( void )
 
   CPPUNIT_ASSERT_EQUAL( 0U, Dummy::Instances );
 
-  Dummy::Ref d( new Dummy );
+  Dummy::Ptr d( new Dummy );
   CPPUNIT_ASSERT_EQUAL( 1U, Dummy::Instances );
   CPPUNIT_ASSERT_EQUAL( 1U, d->refs() );
 

@@ -33,14 +33,14 @@ namespace Finagle {  namespace XML {
 
 class Configurable : virtual public ReferenceCount {
 public:
-  typedef ObjectRef<Configurable> Ref;
+  typedef ObjectPtr<Configurable> Ptr;
 
 public:
   Configurable( void );
   virtual ~Configurable( void );
 
   virtual bool configure( XML::Element const &config ) = 0;
-  virtual XML::Element::Ref configuration( void ) const = 0;
+  virtual XML::Element::Ptr configuration( void ) const = 0;
 };
 
 // INLINE IMPLEMENTATION ******************************************************

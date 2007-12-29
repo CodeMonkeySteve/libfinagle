@@ -73,7 +73,7 @@ AppLog::Logger::~Logger( void )
 **  * BASE defaults to the executable name
 **  * File has ".log" or ".xlog" appended
 */
-AppLog::Logger::Ref AppLog::Logger::fromSpec( String const &spec, bool debug )
+AppLog::Logger::Ptr AppLog::Logger::fromSpec( String const &spec, bool debug )
 {
   String::Array logArgs = spec.split(':');
   NoCase form = pop_front(logArgs);
@@ -130,7 +130,7 @@ void LogToStream::onMsg( Element const &msg )
     _stream << string( 11, ' ' );
 */
 
-  Text::ConstRef t( msg.last() );
+  Text::ConstPtr t( msg.last() );
   if ( t && !t->text().empty() ) {
     if ( level == "error" )
       _stream << "ERROR: ";

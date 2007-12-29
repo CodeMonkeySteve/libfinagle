@@ -50,7 +50,7 @@ public:
   void testRender( void );
 
 protected:
-  Element::Ref _el;
+  Element::Ptr _el;
 };
 
 
@@ -71,21 +71,21 @@ void ElementTest::testCreateDestroy( void )
 {
   CPPUNIT_ASSERT_EQUAL( String("foo"), _el->name() );
   CPPUNIT_ASSERT_EQUAL( 0U,            _el->attribs().size() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->next() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->first() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0),  _el->last() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0),  _el->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0),  _el->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0),  _el->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0),  _el->first() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0),  _el->last() );
 
-  Element::Ref el;
+  Element::Ptr el;
   CPPUNIT_ASSERT_NO_THROW( el = new Element( "foo", "splat" ) );
   CPPUNIT_ASSERT_EQUAL( String("foo"), el->name() );
   CPPUNIT_ASSERT( el->first() );
   CPPUNIT_ASSERT_EQUAL( el->first(), el->last() );
   CPPUNIT_ASSERT_EQUAL( String("splat"), el->text() );
-  CPPUNIT_ASSERT_EQUAL( el->text(), Text::Ref( el->first() )->text() );
+  CPPUNIT_ASSERT_EQUAL( el->text(), Text::Ptr( el->first() )->text() );
 
-  Element::Ref el2( el->dup() );
+  Element::Ptr el2( el->dup() );
   CPPUNIT_ASSERT_EQUAL( el->name(), el2->name() );
   CPPUNIT_ASSERT_EQUAL( el->text(), el2->text() );
 }
@@ -101,7 +101,7 @@ void ElementTest::testAppendStr( void )
     CPPUNIT_ASSERT_EQUAL( _el->first(), _el->last() );
     CPPUNIT_ASSERT( _el->hasChildren() );
 
-    Text::Ref t( _el->first() );
+    Text::Ptr t( _el->first() );
     CPPUNIT_ASSERT( t );
     CPPUNIT_ASSERT_EQUAL( str, t->text() );
     CPPUNIT_ASSERT_EQUAL( str, _el->text() );
@@ -112,7 +112,7 @@ void ElementTest::testAppendStr( void )
     CPPUNIT_ASSERT_EQUAL( _el->first(), _el->last() );
     CPPUNIT_ASSERT( _el->hasChildren() );
 
-    Text::Ref t( _el->first() );
+    Text::Ptr t( _el->first() );
     CPPUNIT_ASSERT( t );
     CPPUNIT_ASSERT_EQUAL( str + str, t->text() );
     CPPUNIT_ASSERT_EQUAL( str + str, _el->text() );
@@ -125,25 +125,25 @@ void ElementTest::testAppendElem( void )
   String str( "this is a test" );
 
   {
-    Text::Ref text( new Text(str) );
+    Text::Ptr text( new Text(str) );
     CPPUNIT_ASSERT( !_el->hasChildren() );
-    _el->append( Node::Ref(text) );
+    _el->append( Node::Ptr(text) );
     CPPUNIT_ASSERT_EQUAL( _el->first(), _el->last() );
     CPPUNIT_ASSERT( _el->hasChildren() );
 
-    Text::Ref t( _el->first() );
+    Text::Ptr t( _el->first() );
     CPPUNIT_ASSERT( t );
     CPPUNIT_ASSERT_EQUAL( str, t->text() );
     CPPUNIT_ASSERT_EQUAL( str, _el->text() );
   }
 
   {
-    Text::Ref text( new Text(str) );
-    _el->append( Node::Ref(text) );
+    Text::Ptr text( new Text(str) );
+    _el->append( Node::Ptr(text) );
     CPPUNIT_ASSERT_EQUAL( _el->first(), _el->last() );
     CPPUNIT_ASSERT( _el->hasChildren() );
 
-    Text::Ref t( _el->first() );
+    Text::Ptr t( _el->first() );
     CPPUNIT_ASSERT( t );
     CPPUNIT_ASSERT_EQUAL( str + str, t->text() );
     CPPUNIT_ASSERT_EQUAL( str + str, _el->text() );
@@ -153,7 +153,7 @@ void ElementTest::testAppendElem( void )
 
 void ElementTest::testInsert( void )
 {
-  Node::Ref a( new Text("foo") ), b( new Text("bar") ), c( new Text("baaz") );
+  Node::Ptr a( new Text("foo") ), b( new Text("bar") ), c( new Text("baaz") );
 
   CPPUNIT_ASSERT( !_el->hasChildren() );
 
@@ -161,35 +161,35 @@ void ElementTest::testInsert( void )
   CPPUNIT_ASSERT( _el->hasChildren() );
   CPPUNIT_ASSERT_EQUAL( a, _el->first() );
   CPPUNIT_ASSERT_EQUAL( a, _el->last() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(_el), a->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(_el), a->parent() );
 
   _el->last( b );
   CPPUNIT_ASSERT( _el->hasChildren() );
   CPPUNIT_ASSERT_EQUAL( a, _el->first() );
   CPPUNIT_ASSERT_EQUAL( b, _el->last() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(_el), b->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(_el), b->parent() );
 
   _el->first( c );
   CPPUNIT_ASSERT( _el->hasChildren() );
   CPPUNIT_ASSERT_EQUAL( c, _el->first() );
   CPPUNIT_ASSERT_EQUAL( b, _el->last() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(_el), c->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(_el), c->parent() );
 
 
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), c->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), c->prev() );
   CPPUNIT_ASSERT_EQUAL( a,            c->next() );
 
   CPPUNIT_ASSERT_EQUAL( c, a->prev() );
   CPPUNIT_ASSERT_EQUAL( b, a->next() );
 
   CPPUNIT_ASSERT_EQUAL( a, b->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), b->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), b->next() );
 }
 
 
 void ElementTest::testChildIndex( void )
 {
-  Element::Ref el, tmp;
+  Element::Ptr el, tmp;
   tmp = (Element *) _el->last( new Element("bar") );
   CPPUNIT_ASSERT_EQUAL( (Element const *) tmp, &(*_el)("bar") );
   el = tmp;

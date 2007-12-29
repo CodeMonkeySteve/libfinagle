@@ -51,7 +51,7 @@ public:
   operator LogEntry const &( void ) const {  return *_what;  }
 
 protected:
-  LogEntry::Ref _what;
+  LogEntry::Ptr _what;
 };
 
 /*! \class Finagle::SystemEx

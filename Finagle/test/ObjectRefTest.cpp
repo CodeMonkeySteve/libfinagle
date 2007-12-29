@@ -40,19 +40,19 @@ public:
 CPPUNIT_TEST_SUITE_REGISTRATION( ObjectRefTest );
 
 struct Base : public ReferenceCount {
-  typedef ObjectRef<Base> Ref;
+  typedef ObjectPtr<Base> Ptr;
   Base( void ) {}
   virtual ~Base( void ) {}
 };
 
 struct Foo : public Base {
-  typedef ObjectRef<Foo> Ref;
+  typedef ObjectPtr<Foo> Ptr;
   Foo( void ) {}
   virtual ~Foo( void ) {}
 };
 
 struct Bar : public Base {
-  typedef ObjectRef<Bar> Ref;
+  typedef ObjectPtr<Bar> Ptr;
   Bar( void ) {}
   virtual ~Bar( void ) {}
 };
@@ -67,26 +67,26 @@ void ObjectRefTest::testDynamicCast( void )
   for ( unsigned i = 0; i < 10000; ++i ) {
     {
       Base *b = new Base;
-      Base::Ref r(b);
-      CPPUNIT_ASSERT_EQUAL( r, Base::Ref(r) );
-      CPPUNIT_ASSERT( !Foo::Ref(r) );
-      CPPUNIT_ASSERT( !Bar::Ref(r) );
+      Base::Ptr r(b);
+      CPPUNIT_ASSERT_EQUAL( r, Base::Ptr(r) );
+      CPPUNIT_ASSERT( !Foo::Ptr(r) );
+      CPPUNIT_ASSERT( !Bar::Ptr(r) );
     }
     {
       Foo *f = new Foo;
-      Foo::Ref r(f);
-      CPPUNIT_ASSERT_EQUAL( r, Foo::Ref(r) );
-      CPPUNIT_ASSERT_EQUAL( Base::Ref((Base *) f), Base::Ref(r) );
-      CPPUNIT_ASSERT( !Bar::Ref(r) );
+      Foo::Ptr r(f);
+      CPPUNIT_ASSERT_EQUAL( r, Foo::Ptr(r) );
+      CPPUNIT_ASSERT_EQUAL( Base::Ptr((Base *) f), Base::Ptr(r) );
+      CPPUNIT_ASSERT( !Bar::Ptr(r) );
     }
     {
-      Foo::Ref f( new Foo );
+      Foo::Ptr f( new Foo );
       CPPUNIT_ASSERT( f );
-      Base::Ref b( f );
+      Base::Ptr b( f );
       CPPUNIT_ASSERT( b );
-      Foo::Ref f2( b );
+      Foo::Ptr f2( b );
       CPPUNIT_ASSERT( b );
-      Base::Ref b2( f2 );
+      Base::Ptr b2( f2 );
       CPPUNIT_ASSERT( b2 );
       CPPUNIT_ASSERT_NO_THROW( f = 0 );
       CPPUNIT_ASSERT_NO_THROW( b = 0 );

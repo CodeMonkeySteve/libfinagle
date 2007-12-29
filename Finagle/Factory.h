@@ -42,7 +42,7 @@ public:
   template <typename Name>  Factory( Name const &name, FactoryMap<Name, Base> &map );
   virtual ~Factory( void ) {}
 
-  virtual ObjectRef<Base> operator()( void ) const = 0;
+  virtual ObjectPtr<Base> operator()( void ) const = 0;
 };
 
 //! Defines a class which dynamically creates objects of type \a Class.
@@ -52,7 +52,7 @@ public:
   ClassFactory( void ) {}
   template <typename Name>  ClassFactory( Name const &name, class FactoryMap<Name, Base> &map );
 
-  ObjectRef<Base> operator()( void ) const;
+  ObjectPtr<Base> operator()( void ) const;
 };
 
 //! Maps class names to class factories
@@ -60,7 +60,7 @@ template <typename Name, typename Base>
 class FactoryMap {
 public:
   FactoryMap( void ) {}
-  ObjectRef<Base> operator()( Name const &name );
+  ObjectPtr<Base> operator()( Name const &name );
 
 protected:
   void insert( Name const &name, Factory<Base> &factory );
@@ -94,9 +94,9 @@ inline ClassFactory<Class, Base>::ClassFactory( Name const &name, class FactoryM
 
 //! Instantiates a new object.
 template <typename Class, typename Base>
-inline ObjectRef<Base> ClassFactory<Class, Base>::operator()( void ) const
+inline ObjectPtr<Base> ClassFactory<Class, Base>::operator()( void ) const
 {
-  return ObjectRef<Base>( (Base *) new Class );
+  return ObjectPtr<Base>( (Base *) new Class );
 }
 
 
@@ -108,10 +108,10 @@ void FactoryMap<Name, Base>::insert( Name const &name, Factory<Base> &factory )
 
 //! Instantiates a new object of class \a name.
 template <typename Name, typename Base>
-ObjectRef<Base> FactoryMap<Name, Base>::operator()( Name const &name )
+ObjectPtr<Base> FactoryMap<Name, Base>::operator()( Name const &name )
 {
   typename Map<Name, Factory<Base> *>::Iterator it( _map.find( name ) );
-  return (it != _map.end()) ? (**it)() : ObjectRef<Base>(0);
+  return (it != _map.end()) ? (**it)() : ObjectPtr<Base>(0);
 }
 
 }

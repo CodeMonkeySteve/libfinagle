@@ -47,8 +47,8 @@ public:
     return true;
   }
 
-  XML::Element::Ref configuration( void ) const {
-    XML::Element::Ref config( Object::configuration() );
+  XML::Element::Ptr configuration( void ) const {
+    XML::Element::Ptr config( Object::configuration() );
     (*config)["age"] = String(_age);
     return config;
   }
@@ -108,10 +108,10 @@ void CollectionTest::testConfigure( void )
       "</people>"
     ) );
     CPPUNIT_ASSERT( _people->empty() );
-    CPPUNIT_ASSERT( _people->configure( *((Element::Ref) config.root()) ) );
+    CPPUNIT_ASSERT( _people->configure( *((Element::Ptr) config.root()) ) );
     CPPUNIT_ASSERT_EQUAL( 1U, _people->size() );
 
-    ObjectRef<Person> p( (*_people)[name] );
+    ObjectPtr<Person> p( (*_people)[name] );
     CPPUNIT_ASSERT( p );
     CPPUNIT_ASSERT_EQUAL( name, p->name() );
     CPPUNIT_ASSERT_EQUAL( age, p->age() );
@@ -123,10 +123,10 @@ void CollectionTest::testConfigure( void )
       "<person name='" + name + "' age='" + String(age) + "' />"
     ) );
     CPPUNIT_ASSERT_EQUAL( 1U, _people->size() );
-    CPPUNIT_ASSERT( _people->configure( *((Element::Ref) config.root()) ) );
+    CPPUNIT_ASSERT( _people->configure( *((Element::Ptr) config.root()) ) );
     CPPUNIT_ASSERT_EQUAL( 1U, _people->size() );
 
-    ObjectRef<Person> p( (*_people)[name] );
+    ObjectPtr<Person> p( (*_people)[name] );
     CPPUNIT_ASSERT( p );
     CPPUNIT_ASSERT_EQUAL( age, p->age() );
   }

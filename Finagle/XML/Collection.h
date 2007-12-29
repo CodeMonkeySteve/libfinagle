@@ -26,7 +26,7 @@
 
 namespace Finagle {  namespace XML {
 
-template <typename Class, typename MapType = Map<String, ObjectRef<Class> > >
+template <typename Class, typename MapType = Map<String, ObjectPtr<Class> > >
 class Collection : public Configurable, public MapType {
 public:
   typedef MapType Map;
@@ -37,7 +37,7 @@ public:
   Collection( String const &tag );
 
   bool configure( XML::Element const &config );
-  XML::Element::Ref configuration( void ) const;
+  XML::Element::Ptr configuration( void ) const;
 
 protected:
   String _tag;
@@ -64,7 +64,7 @@ String n( ObjName ), o( ObjIDAttrib );
     Iterator obj( MapType::find( oid ) );
 
     if ( (obj == MapType::end()) || !obj->configure( config ) ) {
-      ObjectRef<Class> newObj( new Class( oid ) );
+      ObjectPtr<Class> newObj( new Class( oid ) );
       MapType::insert( oid, newObj );
       newObj->configure( config );
     }
@@ -83,9 +83,9 @@ String n( ObjName ), o( ObjIDAttrib );
 }
 
 template <typename Class, typename MapType>
-XML::Element::Ref Collection<Class, MapType>::configuration( void ) const
+XML::Element::Ptr Collection<Class, MapType>::configuration( void ) const
 {
-  XML::Element::Ref config( new XML::Element( _tag ) );
+  XML::Element::Ptr config( new XML::Element( _tag ) );
   for ( ConstIterator obj( MapType::begin() ); obj != MapType::end(); ++obj )
     *config << obj->configuration();
   return config;

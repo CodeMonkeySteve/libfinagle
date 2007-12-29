@@ -46,7 +46,7 @@ Element::Element( String const &name, String const &text )
     insert( new Text(text) );
 }
 
-Node::Ref Element::dup( void ) const
+Node::Ptr Element::dup( void ) const
 {
   return new Element( *this );
 }
@@ -81,13 +81,13 @@ void Element::render( std::ostream &out ) const
 }
 
 
-void Element::insert( Node::Ref node )
+void Element::insert( Node::Ptr node )
 {
   Node::insert( node );
   NodeList::insert( node );
 }
 
-void Element::remove( Node::Ref node )
+void Element::remove( Node::Ptr node )
 {
   NodeList::remove( node );
   Node::remove( node );

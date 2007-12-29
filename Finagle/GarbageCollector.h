@@ -35,15 +35,15 @@ class GarbageCollector : public has_slots<> {
 public:
   GarbageCollector( void );
  ~GarbageCollector( void );
-  GarbageCollector &operator +=( ObjectRef<Class> obj );
+  GarbageCollector &operator +=( ObjectPtr<Class> obj );
 
   void collect( void );
 
 public:
-  sigslot::signal1<ObjectRef<Class> > onCollect;
+  sigslot::signal1<ObjectPtr<Class> > onCollect;
 
 protected:
-  List<ObjectRef<Class> > _trash;
+  List<ObjectPtr<Class> > _trash;
 };
 
 // TEMPLATE IMPLEMENTATION ****************************************************
@@ -59,7 +59,7 @@ GarbageCollector<Class>::~GarbageCollector( void )
 }
 
 template <typename Class>
-GarbageCollector<Class> &GarbageCollector<Class>::operator +=( ObjectRef<Class> obj )
+GarbageCollector<Class> &GarbageCollector<Class>::operator +=( ObjectPtr<Class> obj )
 {
   _trash.push_back( obj );
 
@@ -72,7 +72,7 @@ GarbageCollector<Class> &GarbageCollector<Class>::operator +=( ObjectRef<Class> 
 template <typename Class>
 void GarbageCollector<Class>::collect( void )
 {
-  for ( typename List<ObjectRef<Class> >::Iterator obj = _trash.begin(); obj != _trash.end(); ) {
+  for ( typename List<ObjectPtr<Class> >::Iterator obj = _trash.begin(); obj != _trash.end(); ) {
     if ( (*obj)->refs() > 1 ) {  ++obj;  continue;  }
     *obj = 0;
     _trash.erase( obj++ );

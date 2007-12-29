@@ -54,7 +54,7 @@ protected:
 template <class SockType>
 class Socket : public SockType {
 public:
-  typedef Finagle::ObjectRef<Socket> Ref;
+  typedef Finagle::ObjectPtr<Socket> Ref;
 
 public:
   Socket( Context &ctx )

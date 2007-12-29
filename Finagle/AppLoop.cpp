@@ -106,7 +106,7 @@ void AppLoop::process( Time maxTime )
 
     Time Now = Time::now();
 
-    Timer::Ref NextTimer = 0;
+    Timer::Ptr NextTimer = 0;
 
     // Make sure any pending alarms get triggered immediately
     while ( !Timers().empty() && (NextTimer = Timers().front()) ) {
@@ -184,7 +184,7 @@ void AppLoop::process( Time maxTime )
     } else {
       // Examine select() results and notify appropriate FileDescWatchers.
       for ( List<FileDescWatcher *>::const_iterator i = FDWatchers().begin(); i != FDWatchers().end(); ) {
-        FileDescWatcher::Ref w = *(i++);
+        FileDescWatcher::Ptr w = *(i++);
         int fd = w->fd();
         if ( fd == -1 )
           continue;

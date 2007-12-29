@@ -57,7 +57,7 @@ protected:
 protected:
   class Dummy : public ReferenceCount {
   public:
-    typedef ObjectRef<Dummy> Ref;
+    typedef ObjectPtr<Dummy> Ptr;
 
     Dummy( unsigned val ) : _valid(0xdeadbeef), _val(val) {}
     virtual ~Dummy( void ) { _valid = 0xbdbdbdbd;  }
@@ -72,7 +72,7 @@ protected:
 
   class Dummyer : public Dummy {
   public:
-    typedef ObjectRef<Dummyer> Ref;
+    typedef ObjectPtr<Dummyer> Ptr;
     Dummyer( unsigned val ) : Dummy(val) {}
   };
 
@@ -80,7 +80,7 @@ protected:
   static const unsigned FillSize = 1000000;
   PriorityQueue<unsigned> *_queue;
   PriorityQueue<unsigned> *_squared;
-  PriorityQueue<Dummy::Ref> *_dummies;
+  PriorityQueue<Dummy::Ptr> *_dummies;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( PriorityQueueTest );
@@ -89,7 +89,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( PriorityQueueTest );
 void PriorityQueueTest::setUp( void )
 {
   CPPUNIT_ASSERT_NO_THROW( _queue = new PriorityQueue<unsigned> );
-  CPPUNIT_ASSERT_NO_THROW( _dummies = new PriorityQueue<Dummy::Ref> );
+  CPPUNIT_ASSERT_NO_THROW( _dummies = new PriorityQueue<Dummy::Ptr> );
   _squared = 0;
 }
 
@@ -193,11 +193,11 @@ void PriorityQueueTest::testThreadFill( void )
   CPPUNIT_ASSERT_NO_THROW( fillQueueThread.start() );
 
   for ( unsigned i = 0; i < FillSize; ++i ) {
-    Dummy::Ref d( _dummies->pop() );
+    Dummy::Ptr d( _dummies->pop() );
     CPPUNIT_ASSERT( d );
     CPPUNIT_ASSERT( d->isValid() );
 
-    Dummyer::Ref d2( d );
+    Dummyer::Ptr d2( d );
     CPPUNIT_ASSERT( d2 );
     CPPUNIT_ASSERT( d2->isValid() );
 
@@ -214,8 +214,8 @@ void PriorityQueueTest::testThreadFill( void )
 void PriorityQueueTest::fillQueue( void )
 {
   for ( unsigned i = 0; i < FillSize; ++i ) {
-    Dummyer::Ref d( new Dummyer(i) );
-    _dummies->push( Dummy::Ref(d) );
+    Dummyer::Ptr d( new Dummyer(i) );
+    _dummies->push( Dummy::Ptr(d) );
     d = 0;
   }
 }

@@ -33,7 +33,7 @@ using namespace sigslot;
 
 class FileDescWatcher : public ReferenceCount {
 public:
-  typedef ObjectRef<FileDescWatcher> Ref;
+  typedef ObjectPtr<FileDescWatcher> Ptr;
 
 public:
   FileDescWatcher( int fileDesc = -1 );

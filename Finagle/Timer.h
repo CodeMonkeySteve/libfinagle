@@ -34,11 +34,11 @@ namespace Finagle {
 
 class Timer : public ReferenceCount, public signal0<> {
 public:
-  typedef ObjectRef<Timer> Ref;
+  typedef ObjectPtr<Timer> Ptr;
 
 public:
-  static Timer::Ref SingleShot( Time const &delay );
-  static Timer::Ref Recurring( Time const &period );
+  static Timer::Ptr SingleShot( Time const &delay );
+  static Timer::Ptr Recurring( Time const &period );
   Timer( Time const &period, bool repeat );
 
   bool isRunning( void ) const;
@@ -65,12 +65,12 @@ protected:
 
 // INLINE IMPLEMENTATION ******************************************************
 
-inline Timer::Ref Timer::SingleShot( Time const &delay )
+inline Timer::Ptr Timer::SingleShot( Time const &delay )
 {
   return new Timer( delay, false );
 }
 
-inline Timer::Ref Timer::Recurring( Time const &period )
+inline Timer::Ptr Timer::Recurring( Time const &period )
 {
   return new Timer( period, true );
 }
@@ -109,7 +109,7 @@ inline bool Timer::operator <( Timer const &that ) const
 }
 
 namespace AppLoop {
-  static Singleton<List<Timer::Ref> > Timers;
+  static Singleton<List<Timer::Ptr> > Timers;
 }
 
 };

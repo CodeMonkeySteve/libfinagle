@@ -46,11 +46,11 @@ public:
   class Node : public XML::Node {
   public:
     Node( void ) {}
-    virtual XML::Node::Ref dup( void ) const {  return new Node;  }
+    virtual XML::Node::Ptr dup( void ) const {  return new Node;  }
   };
 
 protected:
-  Node::Ref _node;
+  Node::Ptr _node;
 };
 
 
@@ -69,53 +69,53 @@ void NodeTest::tearDown( void )
 
 void NodeTest::testCreateDestroy( void )
 {
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->next() );
 }
 
 
 void NodeTest::testInsertBefore( void )
 {
-  Node::Ref n;
+  Node::Ptr n;
   CPPUNIT_ASSERT_NO_THROW( n = new Node );
 
   n->insertBefore( _node );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->prev() );
   CPPUNIT_ASSERT_EQUAL( _node,        n->next() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->parent() );
   CPPUNIT_ASSERT_EQUAL( n,            _node->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->next() );
 
   CPPUNIT_ASSERT_NO_THROW( n->remove() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->next() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->next() );
 }
 
 
 void NodeTest::testInsertAfter( void )
 {
-  Node::Ref n;
+  Node::Ptr n;
   CPPUNIT_ASSERT_NO_THROW( n = new Node );
 
   n->insertAfter( _node );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->parent() );
   CPPUNIT_ASSERT_EQUAL( _node,        n->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->next() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->prev() );
   CPPUNIT_ASSERT_EQUAL( n,            _node->next() );
 
   CPPUNIT_ASSERT_NO_THROW( n->remove() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), n->next() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->parent() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->prev() );
-  CPPUNIT_ASSERT_EQUAL( Node::Ref(0), _node->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), n->next() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->parent() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->prev() );
+  CPPUNIT_ASSERT_EQUAL( Node::Ptr(0), _node->next() );
 }

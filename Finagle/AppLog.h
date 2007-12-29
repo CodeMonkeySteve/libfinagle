@@ -50,20 +50,20 @@ public:
 public:
   class Logger : public has_slots<>, public ReferenceCount {
   public:
-    typedef ObjectRef<Logger> Ref;
-    typedef ObjectRefIterator<List<Logger::Ref>::Iterator> Iterator;
-    typedef ObjectRefConstIterator<List<Logger::Ref>::Iterator> ConstIterator;
+    typedef ObjectPtr<Logger> Ptr;
+    typedef ObjectRefIterator<List<Logger::Ptr>::Iterator> Iterator;
+    typedef ObjectRefConstIterator<List<Logger::Ptr>::Iterator> ConstIterator;
 
     Logger( void );
     virtual ~Logger( void );
-    static Logger::Ref fromSpec( String const &spec, bool debug = false );
+    static Logger::Ptr fromSpec( String const &spec, bool debug = false );
     virtual void onMsg( XML::Element const &msg ) = 0;
   };
   friend class Logger;
 
 protected:
   Mutex _guard;
-  List<Logger::Ref> _loggers;
+  List<Logger::Ptr> _loggers;
 };
 
 //! The application log singleton
@@ -129,13 +129,13 @@ inline String const &LogToFile::base( void ) const
 }
 
 // Note: must use "Log+=" in these macros, as it has a lower precedence than "Log<<".
-#define LOG_DEBUG        Finagle::Log() += XML::Element::Ref( new Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__ ) )
-#define LOG_DEBUGM( m )  Finagle::Log() += XML::Element::Ref( new Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__, m ) )
-#define LOG_INFO         Finagle::Log() += XML::Element::Ref( new Finagle::LogInfo )
-#define LOG_WARN         Finagle::Log() += XML::Element::Ref( new Finagle::LogWarn( __FILE__, __LINE__, __FUNCTION__ ) )
-#define LOG_WARNL( l )   Finagle::Log() += XML::Element::Ref( new Finagle::LogWarn( l, __FILE__, __LINE__, __FUNCTION__ ) )
-#define LOG_ERROR        Finagle::Log() += XML::Element::Ref( new Finagle::LogErr( __FILE__, __LINE__, __FUNCTION__ ) )
-#define LOG_ERRORL( l )  Finagle::Log() += XML::Element::Ref( new Finagle::LogErr( l, __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_DEBUG        Finagle::Log() += XML::Element::Ptr( new Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_DEBUGM( m )  Finagle::Log() += XML::Element::Ptr( new Finagle::LogDebug(  __FILE__, __LINE__, __FUNCTION__, m ) )
+#define LOG_INFO         Finagle::Log() += XML::Element::Ptr( new Finagle::LogInfo )
+#define LOG_WARN         Finagle::Log() += XML::Element::Ptr( new Finagle::LogWarn( __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_WARNL( l )   Finagle::Log() += XML::Element::Ptr( new Finagle::LogWarn( l, __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_ERROR        Finagle::Log() += XML::Element::Ptr( new Finagle::LogErr( __FILE__, __LINE__, __FUNCTION__ ) )
+#define LOG_ERRORL( l )  Finagle::Log() += XML::Element::Ptr( new Finagle::LogErr( l, __FILE__, __LINE__, __FUNCTION__ ) )
 
 #define FINAGLE_ASSERT( e ) \
   if ( !(e) ) {  Finagle::Log() += Finagle::LogAssert( #e, __FILE__, __LINE__, __FUNCTION__ );  }

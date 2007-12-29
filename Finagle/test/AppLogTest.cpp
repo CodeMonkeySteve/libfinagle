@@ -49,7 +49,7 @@ public:
   void testLog( void );
 
 protected:
-  ObjectRef<LogToString> _logger;
+  ObjectPtr<LogToString> _logger;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( AppLogTest );

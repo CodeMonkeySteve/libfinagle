@@ -34,11 +34,11 @@ namespace Finagle {  namespace XML {
 template <typename Type = Node>
 class Iterator {
 public:
-  typedef ObjectRef<Type> TypeRef;
+  typedef ObjectPtr<Type> TypeRef;
 
 public:
   Iterator( void );
-  Iterator( Node::Ref node );
+  Iterator( Node::Ptr node );
 
   operator bool( void ) const;
   operator TypeRef( void );
@@ -58,7 +58,7 @@ public:
   Iterator<Type>  operator ++( int );
 
 protected:
-  Node::Ref _node;
+  Node::Ptr _node;
 };
 
 /*! \brief Utility class for iterating across nodes of a particular type.
@@ -69,9 +69,9 @@ template <typename Type = Node>
 class ConstIterator : public Iterator<Type const> {
 public:
   ConstIterator( void ) {}
-  ConstIterator( Node::Ref node )
+  ConstIterator( Node::Ptr node )
   : Iterator<Type const>( node ) {}
-  ConstIterator( Node::ConstRef node )
+  ConstIterator( Node::ConstPtr node )
   : Iterator<Type const>( const_cast<Node *>((Node const *) node) ) {}
 };
 
@@ -87,7 +87,7 @@ inline Iterator<Type>::Iterator( void )
 ** If \a node is not of type \a Type, finds the next sibling node which is (if any).
 */
 template <typename Type>
-inline Iterator<Type>::Iterator( Node::Ref node )
+inline Iterator<Type>::Iterator( Node::Ptr node )
 : _node(node)
 {
   while ( _node ) {
@@ -103,7 +103,7 @@ inline Iterator<Type>::operator bool( void ) const
   return _node;
 }
 
-//! Returns an ObjectRef to the iterated object (may be \c 0).
+//! Returns an ObjectPtr to the iterated object (may be \c 0).
 template <typename Type>
 inline Iterator<Type>::operator TypeRef( void )
 {

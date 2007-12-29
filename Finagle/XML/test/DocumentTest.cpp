@@ -74,7 +74,7 @@ void DocumentTest::tearDown( void )
 
 void DocumentTest::testCreateDestroy( void )
 {
-  Element::Ref root( _doc->root() );
+  Element::Ptr root( _doc->root() );
 
   CPPUNIT_ASSERT( root );
   CPPUNIT_ASSERT( root->hasChildren() );
@@ -84,7 +84,7 @@ void DocumentTest::testCreateDestroy( void )
 
 void DocumentTest::testChildIndex( void )
 {
-  Element::Ref root( _doc->root() );
+  Element::Ptr root( _doc->root() );
 
   CPPUNIT_ASSERT( root );
   CPPUNIT_ASSERT( !(*root)("nonesuch") );

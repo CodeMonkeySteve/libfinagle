@@ -30,7 +30,7 @@ namespace Finagle {
 template <typename SockType>
 class ServerSocket : public SockType, public has_slots<> {
 public:
-  typedef ObjectRef<ServerSocket<SockType> > Ref;
+  typedef ObjectPtr<ServerSocket<SockType> > Ptr;
   typedef typename SockType::Addr Addr;
 
 public:
@@ -39,7 +39,7 @@ public:
  ~ServerSocket( void ) {}
 
 public:
-  Finagle::signal1<Finagle::Socket::Ref> connected;
+  Finagle::signal1<Finagle::Socket::Ptr> connected;
 
 protected:
   void onReadable( void );
@@ -74,7 +74,7 @@ void ServerSocket<SockType>::onReadable( void )
     return;
   }
 
-  Socket::Ref sock;
+  Socket::Ptr sock;
   if ( len > sizeof(((sockaddr *) 0)->sa_family) ) {
     sock = new SockType( Addr( newSockAddr, len ), sockDesc );
   } else {

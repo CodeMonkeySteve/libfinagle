@@ -28,7 +28,7 @@ namespace Finagle {  namespace XML {
 
 class Object : public virtual Configurable {
 public:
-  typedef ObjectRef<Object> Ref;
+  typedef ObjectPtr<Object> Ptr;
 
 public:
   Object( void ) {}
@@ -36,7 +36,7 @@ public:
   Object( XML::Element const &config );
   virtual ~Object( void ) {}
 
-  virtual XML::Element::Ref configuration( void ) const;
+  virtual XML::Element::Ptr configuration( void ) const;
   virtual bool configure( XML::Element const &config );
 
   //! Returns the object's unique ID as a string.
