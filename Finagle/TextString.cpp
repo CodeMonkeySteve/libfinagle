@@ -79,6 +79,9 @@ String::Array String::split( String const &sep ) const
   const size_type len = length();
   String::Array words;
 
+  if ( !len )
+    return words;
+
   // Tokenize the input string
   // Note: there may be an easier way of doing this using istringstream and
   // getline().

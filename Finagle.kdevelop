@@ -27,19 +27,19 @@
       <mainprogram/>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle>GarbageCollectorTest</testFinagle>
+        <testFinagle/>
         <xmltest/>
         <testxpath/>
         <testXML/>
       </runarguments>
       <debugarguments>
-        <testFinagle>GarbageCollectorTest</testFinagle>
+        <testFinagle/>
         <xmltest/>
         <testxpath/>
         <testXML/>
       </debugarguments>
       <cwd>
-        <testFinagle>/home/steve/src/vigilos/branches/llama/libFinagle/debug/./Finagle/test</testFinagle>
+        <testFinagle/>
         <testXML/>
       </cwd>
       <programargs/>

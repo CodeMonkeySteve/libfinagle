@@ -129,8 +129,7 @@ void StringTest::testSplit( void )
   {
     String s( "" );
     String::Array a( s.split(':') );
-    CPPUNIT_ASSERT_EQUAL( size_t(1), a.size() );
-    CPPUNIT_ASSERT_EQUAL( String(),  a[0] );
+    CPPUNIT_ASSERT_EQUAL( size_t(0), a.size() );
   }
 
   {
