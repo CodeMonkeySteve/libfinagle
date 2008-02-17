@@ -1,8 +1,8 @@
 /*!
-** \file UUID.cpp
+** \file InitializerTest.cpp
+** \date Sat Feb 16 2008
 ** \author Steve Sloan <steve@finagle.org>
-** \date Mon Sep 24 2007
-** Copyright (C) 2007 by Steve Sloan
+** Copyright (C) 2008 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU Lesser General Public License as published
@@ -19,34 +19,37 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include "UUID.h"
+#include <iostream>
+#include <cppunit/extensions/HelperMacros.h>
+#include <Finagle/Initializer.h>
 
+using namespace std;
 using namespace Finagle;
 
-/*!
-** \class Finagle::UUID
-** \brief Universallyl Unique IDentifier
-*/
-
-/*!
-** \class Finagle::UUID::Exception
-** \brief Exception thrown on error from \c uuid_ function.
-*/
-
-const UUID UUID::nil;
-
-/*! \brief Returns a string representation of the id
-**
-** Will be of the form: \code XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX \endcode
-** unless the id is \c nil (i.e. #isNil), in which case an empty string is returned.
-*/
-UUID::operator String( void ) const
+class InitializerTest : public CppUnit::TestFixture
 {
-  if ( isNil() )
-    return String();
+  CPPUNIT_TEST_SUITE( InitializerTest );
+  CPPUNIT_TEST( testStartup );
+  CPPUNIT_TEST_SUITE_END();
 
-  char tmp[36 + 1];
-  uuid_unparse( _uuid, tmp );
-  return String( tmp, 36 );
+public:
+  void testStartup( void );
+};
+
+class TestInitializer {
+public:
+  TestInitializer( void ) { ++runCount; }
+ ~TestInitializer( void ) { --runCount; }
+  static unsigned runCount;
+};
+unsigned TestInitializer::runCount = 0;
+
+static Initializer<TestInitializer> Test;
+
+CPPUNIT_TEST_SUITE_REGISTRATION( InitializerTest );
+
+void InitializerTest::testStartup( void )
+{
+  CPPUNIT_ASSERT_EQUAL( 1U, TestInitializer::runCount );
 }
 

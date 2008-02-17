@@ -23,7 +23,7 @@
 #define FINAGLE_UUID_H
 
 #include <ostream>
-#include <uuid.h>
+#include <uuid/uuid.h>
 #include <Finagle/Exception.h>
 #include <Finagle/TextString.h>
 
@@ -31,10 +31,6 @@ namespace Finagle {
 
 class UUID {
 public:
-  class Exception : public Finagle::Exception {
-  public:
-    Exception( uuid_rc_t res );
-  };
   static const UUID nil;
 
 public:
@@ -42,7 +38,6 @@ public:
   UUID( String const &str );
   UUID( UUID const &id );
   UUID &operator =( UUID const &id );
- ~UUID( void );
 
   bool operator ==( UUID const &id ) const;
   bool operator !=( UUID const &id ) const;
@@ -54,61 +49,44 @@ public:
   UUID &generate( void );
 
 protected:
-  uuid_t *_uuid;
+  uuid_t _uuid;
 };
 
 std::ostream &operator <<( std::ostream &out, UUID const &ID );
 
 // INLINE IMPLEMENTATION ******************************************************
 
-#define UUID_ASSERT( e ) {                   \
-  uuid_rc_t __uuid_result = (e);                   \
-  if ( __uuid_result != 0 ) {                \
-    throw UUID::Exception( __uuid_result );  \
-  }                                          \
-}
-
 //! Creates a \c nil id.  if \a generate is \c true, creates a new UUID.
 inline UUID::UUID( bool generate )
-: _uuid(0)
 {
-  UUID_ASSERT( uuid_create( &_uuid ) );
   if ( generate )
     UUID::generate();
+  else
+    uuid_clear( _uuid );
 }
 
 //! Creates an id by parsing string \a str.
 inline UUID::UUID( String const &str )
-: _uuid(0)
 {
-  UUID_ASSERT( uuid_create( &_uuid ) );
-  UUID_ASSERT( uuid_import( _uuid, UUID_FMT_STR, str, str.length() ) );
+  if ( uuid_parse( str, _uuid ) != 0 )
+    throw Exception( "Invalid UUID: \"" + str + "\"" );
 }
 
 inline UUID::UUID( UUID const &id )
-: _uuid(0)
 {
-  UUID_ASSERT( uuid_clone( id._uuid, &_uuid ) );
+  uuid_copy( _uuid, id._uuid );
 }
 
 inline UUID &UUID::operator =( UUID const &id )
 {
-  UUID_ASSERT( uuid_destroy( _uuid ) );
-  UUID_ASSERT( uuid_clone( id._uuid, &_uuid ) );
+  uuid_copy( _uuid, id._uuid );
   return *this;
-}
-
-inline UUID::~UUID( void )
-{
-  UUID_ASSERT( uuid_destroy( _uuid ) );
 }
 
 
 inline bool UUID::operator ==( UUID const &id ) const
 {
-  int res = 0;
-  UUID_ASSERT( uuid_compare( _uuid, id._uuid, &res ) );
-  return res == 0;
+  return uuid_compare( _uuid, id._uuid ) == 0;
 }
 
 inline bool UUID::operator !=( UUID const &id ) const
@@ -118,17 +96,13 @@ inline bool UUID::operator !=( UUID const &id ) const
 
 inline bool UUID::operator <( UUID const &id ) const
 {
-  int res = 0;
-  UUID_ASSERT( uuid_compare( _uuid, id._uuid, &res ) );
-  return res < 0;
+  return uuid_compare( _uuid, id._uuid ) < 0;
 }
 
 //! Returns \c true if the id is invalid.
 inline bool UUID::isNil( void ) const
 {
-  int res = 0;
-  UUID_ASSERT( uuid_isnil( _uuid, &res ) );
-  return res;
+  return uuid_is_null( _uuid );
 }
 
 /*! \brief Generates a new universally unique identifier.
@@ -139,7 +113,7 @@ inline bool UUID::isNil( void ) const
 */
 inline UUID &UUID::generate( void )
 {
-  UUID_ASSERT( uuid_make( _uuid, UUID_MAKE_V1 ) );
+  uuid_generate_time( _uuid );
   return *this;
 }
 
@@ -148,12 +122,6 @@ inline std::ostream &operator <<( std::ostream &out, UUID const &id )
 {
   return out << (String) id;
 }
-
-
-inline UUID::Exception::Exception( uuid_rc_t res )
-: Finagle::Exception( "UUID: " + String(uuid_error(res)) )
-{}
-
 
 };
 
