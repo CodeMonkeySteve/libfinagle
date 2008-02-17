@@ -11,7 +11,7 @@ Source: %{name}-@FINAGLE_VERSION@-@FINAGLE_RELEASE@.tar.bz2
 Requires: expat
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: expat-devel uuid-devel
+BuildRequires: expat-devel e2fsprogs-devel
 
 %description
 Finagle is a C++ library providing wrapper classes and convenience
