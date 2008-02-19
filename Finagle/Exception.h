@@ -60,10 +60,14 @@ protected:
 class SystemEx : public Exception {
 public:
   static int    sysErrCode( void );
-  static String sysErrStr( int ErrNum = sysErrCode() );
+  static String sysErrStr( int errNum = sysErrCode() );
 
 public:
-  SystemEx( String const &str = String(), int ErrCode = sysErrCode() );
+  SystemEx( String const &str = String(), int errCode = sysErrCode() );
+  int const &errCode( void ) const;
+
+protected:
+  int _errCode;
 };
 
 // INLINE IMPLEMENTATION ******************************************************
@@ -109,11 +113,18 @@ inline Exception &Exception::operator <<( String const &str )
 
 
 inline SystemEx::SystemEx( String const &str, int errCode )
-: Exception( str + " (" + sysErrStr( errCode ) + ")" )
+: Exception( str + " (" + sysErrStr( errCode ) + ")" ),
+  _errCode(errCode)
 {
   _what->attrib("code") = String( errCode );
   _what->attrib("msg") = sysErrStr( errCode );
 }
+
+inline int const &SystemEx::errCode( void ) const
+{
+  return _errCode;
+}
+
 
 //! \brief Returns the platform-specific error code for the last operation.
 //! \sa errno
