@@ -27,19 +27,19 @@
       <mainprogram/>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle/>
+        <testFinagle>VelocimeterTest</testFinagle>
         <xmltest/>
         <testxpath/>
         <testXML/>
       </runarguments>
       <debugarguments>
-        <testFinagle/>
+        <testFinagle>VelocimeterTest</testFinagle>
         <xmltest/>
         <testxpath/>
         <testXML/>
       </debugarguments>
       <cwd>
-        <testFinagle/>
+        <testFinagle>/home/ssloan/src/vigilos/trunk/libFinagle/debug/./Finagle/test</testFinagle>
         <testXML/>
       </cwd>
       <programargs/>
