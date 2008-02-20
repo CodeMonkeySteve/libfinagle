@@ -1,7 +1,7 @@
 /*!
-** \file Velocimeter.h
-** \author Steve Sloan <steve@finagle.org>
+** \file Velocimeter.cpp
 ** \date Wed Feb 20 2008
+** \author Steve Sloan <steve@finagle.org>
 ** Copyright (C) 2008 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
@@ -19,38 +19,31 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_VELOCIMETER_H
-#define FINAGLE_VELOCIMETER_H
+#include "Velocimeter.h"
 
-#include <Finagle/DateTime.h>
+using namespace Finagle;
 
-namespace Finagle {
+/*!
+** \class Finagle::Velocimenter
+** \brief
+**
+**
+*/
 
-class Velocimeter {
-public:
-  Velocimeter( double smooth = 1.0 );
-
-  double rate( void ) const;
-  Velocimeter &operator +=( double incr );
-
-  double limit( double rate ) const;
-
-protected:
-  double _rate, _smooth;
-  Time _lastIncr;
-};
-
-// INLINE IMPLEMENTATION ******************************************************
-
-inline Velocimeter::Velocimeter( double smooth )
-: _rate( 0.0 ), _smooth( 1.0 / smooth ), _lastIncr( Time::now() )
-{}
-
-inline double Velocimeter::rate( void ) const
+Velocimeter &Velocimeter::operator +=( double incr )
 {
-  return _rate;
+  Time now = Time::now();
+  double dt = now - _lastIncr;
+  _lastIncr = now;
+
+  double e = exp( -dt * _smooth );
+  _rate = (e * _rate) + ((1 - e) * (incr / dt));
+  return *this;
 }
 
-};
 
-#endif
+double Velocimeter::limit( double rate ) const
+{
+  double delay = -log( rate / _rate ) / _smooth;
+  return (delay < 0) ? 0 : delay;
+}

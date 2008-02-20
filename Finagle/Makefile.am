@@ -9,7 +9,7 @@ libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp Compress.cpp DateTime.cpp \
 	DateTimeMask.cpp Dir.cpp File.cpp FileDescWatcher.cpp FilePath.cpp IPAddress.cpp MD5.cpp \
 	MemTrace.cpp Mutex.cpp OptionParser.cpp PriorityMutex.cpp Rectangle.cpp RegEx.cpp \
 	SSL.cpp Socket.cpp StreamIO.cpp TextString.cpp Thread.cpp Timer.cpp UUID.cpp \
-	Util.cpp WaitCondition.cpp
+	Util.cpp Velocimeter.cpp WaitCondition.cpp
 
 libFinagle_la_LDFLAGS = -no-undefined -version-info @LIB_CURRENT@:@LIB_REVISION@:@LIB_AGE@ -release @FINAGLE_VERSION@
 libFinagle_la_LIBADD = $(top_builddir)/Finagle/XML/libXML.la $(PTHREAD_LIBS) \

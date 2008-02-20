@@ -30,12 +30,13 @@ using namespace Finagle;
 class VelocimeterTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( VelocimeterTest );
-  CPPUNIT_TEST( testRate );
+//  CPPUNIT_TEST( testRate );
+  CPPUNIT_TEST( testLimit );
   CPPUNIT_TEST_SUITE_END();
 
 public:
   void testRate( void );
-  void testSmooth( void );
+  void testLimit( void );
 };
 
 
@@ -52,3 +53,16 @@ void VelocimeterTest::testRate( void )
   CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.0, v.rate(), 0.1 );
 }
 
+
+void VelocimeterTest::testLimit( void )
+{
+  const double limit = 10.0;
+
+  Velocimeter v( 1 );
+  CPPUNIT_ASSERT_EQUAL( 0.0, v.limit( limit ) );
+  v += limit * 2;
+  sleep( v.limit( 10.0 ) );
+  v += 0;
+
+  CPPUNIT_ASSERT_DOUBLES_EQUAL( limit, v.rate(), 0.1 );
+}
