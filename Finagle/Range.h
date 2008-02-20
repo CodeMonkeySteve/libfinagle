@@ -22,6 +22,8 @@
 #ifndef FINAGLE_RANGE_H
 #define FINAGLE_RANGE_H
 
+#include <cmath>
+
 namespace Finagle {
 
 template <typename RType>
@@ -44,6 +46,8 @@ public:
 
   bool clamp( Type &val ) const;
   Type height( void ) const;
+
+  Type rand( void ) const;
 
 protected:
   Type _lower, _upper;
@@ -134,6 +138,14 @@ inline Type Range<Type>::height( void ) const
   return std::numeric_limits<Type>::is_integer ? (_upper - _lower + 1) : (_upper - _lower);
 }
 
+template <typename Type>
+inline Type Range<Type>::rand( void ) const
+{
+  if ( std::numeric_limits<Type>::is_integer )
+    return _lower + (::rand() % (_upper - _lower + 1));
+  else
+    return _lower + fmod( ::rand(), (_upper - _lower) );
+}
 
 }
 

@@ -27,13 +27,13 @@
       <mainprogram/>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle>VelocimeterTest</testFinagle>
+        <testFinagle>RangeTest</testFinagle>
         <xmltest/>
         <testxpath/>
         <testXML/>
       </runarguments>
       <debugarguments>
-        <testFinagle>VelocimeterTest</testFinagle>
+        <testFinagle>RangeTest</testFinagle>
         <xmltest/>
         <testxpath/>
         <testXML/>

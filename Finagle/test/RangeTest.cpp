@@ -1,5 +1,5 @@
 /*!
-** \file UtilTest.cpp
+** \file RangeTest.cpp
 ** \author Steve Sloan <steve@finagle.org>
 ** \date Mon May 8 2007
 ** Copyright (C) 2007 by Steve Sloan
@@ -19,21 +19,47 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
-#include <sstream>
 #include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/Util.h>
+#include <Finagle/Range.h>
 
+#include <iostream>
 using namespace std;
 using namespace Finagle;
 
-class UtilTest : public CppUnit::TestFixture
+class RangeTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( UtilTest );
+  CPPUNIT_TEST_SUITE( RangeTest );
+  CPPUNIT_TEST( testLowerUpper );
+  CPPUNIT_TEST( testRand );
   CPPUNIT_TEST_SUITE_END();
 
 public:
+  void testLowerUpper( void );
+  void testRand( void );
 };
 
 
-CPPUNIT_TEST_SUITE_REGISTRATION( UtilTest );
+CPPUNIT_TEST_SUITE_REGISTRATION( RangeTest );
+
+void RangeTest::testLowerUpper( void )
+{
+  Range<int> r( 0, 0 );
+  for ( unsigned i = 0; i < 100; ++i ) {
+    int n = rand() % 100000;
+    if ( n < r.lower() )  r.lower(n);
+    if ( n > r.upper() )  r.upper(n);
+  }
+
+  CPPUNIT_ASSERT( r.height() > 10000 );
+}
+
+
+void RangeTest::testRand( void )
+{
+  Range<unsigned > r( 10, 100 );
+  for ( unsigned i = 0; i < 100; ++i ) {
+    unsigned v = r.rand();
+    CPPUNIT_ASSERT( v >= r.lower() );
+    CPPUNIT_ASSERT( v <= r.upper() );
+  }
+}
