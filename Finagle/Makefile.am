@@ -23,7 +23,7 @@ library_include_HEADERS = AppLog.h AppLogEntry.h AppLoop.h Array.h ByteArray.h \
 	MemTrace.h MultiMap.h Mutex.h ObjectPtr.h OptionParser.h OrderedMap.h PThreadEx.h \
 	PriorityMutex.h PriorityQueue.h Property.h Queue.h Range.h Rectangle.h ReferenceCount.h \
 	RegEx.h SSL.h ServerSocket.h Set.h Singleton.h SizedQueue.h Socket.h StreamIO.h \
-	TextString.h Thread.h ThreadFunc.h Timer.h UUID.h UnixSocket.h Util.h \
+	TextString.h Thread.h ThreadFunc.h Timer.h UUID.h UnixSocket.h Util.h Velocimeter.h \
 	WaitCondition.h
 
 doc: Doxyfile $(DIST_SOURCES)
