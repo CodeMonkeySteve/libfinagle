@@ -107,8 +107,8 @@ inline Type &Singleton<Type, TypePtr>::operator ()( Type *that )
 template <typename Type, typename TypePtr>
 Type &Singleton<Type, TypePtr>::alloc( void )
 {
-  static Mutex Guard;
-  Lock _( Guard );
+  static Finagle::Mutex guard;
+  Finagle::Lock lock( guard );
 
   if ( !_inst )
     _inst = new Type;
