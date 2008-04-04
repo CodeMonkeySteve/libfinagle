@@ -47,38 +47,41 @@ static void elEnd( void *ctxPtr, const char *name );
 static void elData( void *ctxPtr, const XML_Char *str, int len );
 
 
-//! \brief Loads the %XML document from #src.
-void Document::load( void )
+//! \brief Loads the %XML document from #path.
+Document &Document::load( void )
 {
   ifstream in;
 
-  in.open( _src.path() );
+  in.open( _path.path() );
   if ( !in )
-    throw File::OpenEx( _src, ios::in );
+    throw File::OpenEx( _path, ios::in );
 
-  parse( in, _src.path() );
+  return parse( in, _path.path() );
 }
 
 
 //! \brief Saves the %XML document to #src.
 void Document::save( void ) const
 {
+  if ( !_root )
+    return;
+
   ofstream out;
 
-  out.open( _src.path() );
+  out.open( _path.path() );
   if ( !out )
-    throw File::OpenEx( _src, ios::out );
+    throw File::OpenEx( _path, ios::out );
 
   _root->render( out );
 }
 
 
 //! \brief Parses the %XML document from an input stream.
-void Document::parse( std::istream &in, String const &srcName )
+Document &Document::parse( std::istream &in, String const &srcName )
 {
   _root = 0;
   if ( !in )
-    return;
+    return *this;
 
   Context ctx;
   XML_Parser parser = XML_ParserCreate(0);
@@ -100,6 +103,7 @@ void Document::parse( std::istream &in, String const &srcName )
   XML_ParserFree( parser );
 
   _root = ctx.nodes.first();
+  return *this;
 }
 
 /*! \internal

@@ -35,22 +35,22 @@ public:
 
 public:
   Document( void );
-  Document( FilePath const &src );
+  Document( FilePath const &path );
   explicit Document( String const &xml );
 
-  FilePath const &src( void ) const;
+  FilePath const &path( void ) const;
 
   Node::ConstPtr root( void ) const;
   Node::Ptr root( void );
 
-  void load( void );
+  Document &load( void );
   void save( void ) const;
 
-  void parse( String const &in, String const &srcName = String() );
-  void parse( std::istream &in, String const &srcName = String() );
+  Document &parse( String const &in, String const &src = String() );
+  Document &parse( std::istream &in, String const &src = String() );
 
 protected:
-  FilePath _src;
+  FilePath _path;
   Node::Ptr _root;
 };
 
@@ -67,23 +67,22 @@ extern std::ostream &operator <<( std::ostream &out, Document const &doc );
 inline Document::Document( void )
 {}
 
-//! Constructs a document and attempts to load it from the file \a src.
-inline Document::Document( FilePath const &src )
-: _src(src)
-{
-  load();
-}
+//! Constructs a document attached to the file \a path.
+inline Document::Document( FilePath const &path )
+: _path( path )
+{}
 
 //! Constructs a document and attempts to load it from the string \a xml.
 inline Document::Document( String const &xml )
+: _path( "<inline>" )
 {
   parse( xml );
 }
 
-//! Returns the document's source file path.
-inline FilePath const &Document::src( void ) const
+//! Returns the document's file path.
+inline FilePath const &Document::path( void ) const
 {
-  return _src;
+  return _path;
 }
 
 //! Returns the document's root node (may be \c 0).
@@ -100,10 +99,10 @@ inline Node::Ptr Document::root( void )
 
 
 //! \brief Parses the %XML document from a string.
-inline void Document::parse( String const &in, String const &srcName )
+inline Document &Document::parse( String const &in, String const &src )
 {
   std::istringstream strm( in );
-  parse( strm, srcName );
+  return parse( strm, src );
 }
 
 
