@@ -1,5 +1,5 @@
 Project.configure do |project|
-  project.email_notifier.emails = [steve@finagle.org]
+  project.email_notifier.emails = %w/steve@finagle.org/
 
 #  project.rake_task = ''
 #  project.build_command = ''
