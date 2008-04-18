@@ -1,0 +1,20 @@
+# autotools
+/autom4te.cache
+/aclocal.m4
+/config.h.in
+/config.h
+/config.status
+/configure
+/stamp-h1
+/*.pc
+/*.spec
+/*.tar.bz2
+.deps
+Makefile.in
+Makefile
+
+# KDevelop
+/debug
+/*.kdevelop.pcs
+/*.kdevses
+Doxyfile
