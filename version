@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+ver = IO.popen( 'git describe --tags' ).readlines.first.chomp.split('-')
+puts ver[0].sub(/^v/, ''), ver[1..-1].join('.')

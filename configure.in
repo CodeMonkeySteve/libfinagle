@@ -1,8 +1,8 @@
 AC_PREREQ(2.59)
 AC_INIT(configure.in)
 
-FINAGLE_VERSION=1.1
-FINAGLE_RELEASE=esyscmd([svnversion . | sed -e "s/:/./ ; s/M/.$USER.$(date +%s)/"])
+FINAGLE_VERSION=esyscmd(./version | head -n 1)
+FINAGLE_RELEASE=esyscmd(./version | tail -n 1)
 AC_SUBST(FINAGLE_VERSION)
 AC_SUBST(FINAGLE_RELEASE)
 
