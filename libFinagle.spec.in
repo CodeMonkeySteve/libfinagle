@@ -6,7 +6,7 @@ Summary: Finagle C++ convenience/wrapper library.
 License: LGPL
 Group: Development/Libraries
 #Url:
-Source: %{name}-@FINAGLE_VERSION@-@FINAGLE_RELEASE@.tar.bz2
+Source: %{name}-%{version}-%{release}.tar.bz2
 
 Requires: expat
 
