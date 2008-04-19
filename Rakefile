@@ -8,14 +8,15 @@ task :default => :pkgs
 task :cruise => [:clean, :pkgs]
 
 desc 'Build libFinagle packages'
-Rake::AutoToolsRPMTask.new 'libFinagle:pkg' => File.join( File.dirname(__FILE__), 'libFinagle.spec' )
-task :pkgs => 'libFinagle:pkg'
+PkgTask = Rake::AutoToolsRPMTask.new( :pkg => File.join( File.dirname(__FILE__), 'libFinagle.spec' ) )
+task :pkgs => :pkg #'libFinagle:pkg'
 
 
-#desc 'Install libFinagle packages'
-#task :install => :pkgs  do |t|
-#  system( "rpm -Uvh ..." ) and $?.exitstatus.zero?  or raise "Make failed"
-#end
+desc 'Install libFinagle packages'
+task :install => :pkg  do |t|
+  rpm_paths = PkgTask.spec.packages.map { |p|  p.path }
+  system( "sudo rpm -Uvh #{rpm_paths.join ' '}" ) and $?.exitstatus.zero?  or raise "Make failed"
+end
 
 
 
