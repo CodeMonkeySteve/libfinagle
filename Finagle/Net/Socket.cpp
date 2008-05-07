@@ -19,17 +19,17 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include "Socket.h"
-#include "AppLog.h"
-
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#include <UnixSocket.h>
-#include <InetSocket.h>
+#include "Finagle/AppLog.h"
+#include "Finagle/MemTrace.h"
 
-#include "MemTrace.h"
+#include "UnixSocket.h"
+#include "InetSocket.h"
+#include "Socket.h"
+
 
 using namespace std;
 using namespace Finagle;

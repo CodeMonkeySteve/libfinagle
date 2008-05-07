@@ -71,6 +71,7 @@ AC_CHECK_FUNCS([getcwd gethostbyaddr gethostbyname gettimeofday inet_ntoa memmov
 AC_CONFIG_FILES([Makefile
                  Finagle/Makefile Finagle/test/Makefile Finagle/Doxyfile
                  Finagle/XML/Makefile Finagle/XML/test/Makefile
+                 Finagle/Net/Makefile 
                  sigslot/Makefile
                  libFinagle.spec libFinagle.pc])
 AC_OUTPUT

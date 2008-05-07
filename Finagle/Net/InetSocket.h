@@ -19,11 +19,11 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_INETSOCKET_H
-#define FINAGLE_INETSOCKET_H
+#ifndef FINAGLE_NET_INETSOCKET_H
+#define FINAGLE_NET_INETSOCKET_H
 
 #include <arpa/inet.h>
-#include <Finagle/Socket.h>
+#include <Finagle/Net/Socket.h>
 
 namespace Finagle {
 

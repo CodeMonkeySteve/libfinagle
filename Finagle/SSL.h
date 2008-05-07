@@ -22,9 +22,9 @@
 #ifndef FINAGLE_SSL_H
 #define FINAGLE_SSL_H
 
-#include <Finagle/Socket.h>
+#include <Finagle/Net/Socket.h>
 #include <Finagle/FilePath.h>
-#include <AppLog.h>
+#include <Finagle/AppLog.h>
 
 namespace Finagle {
 

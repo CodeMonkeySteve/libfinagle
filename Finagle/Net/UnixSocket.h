@@ -19,11 +19,11 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_UNIXSOXKET_H
-#define FINAGLE_UNIXSOXKET_H
+#ifndef FINAGLE_NET_UNIXSOXKET_H
+#define FINAGLE_NET_UNIXSOXKET_H
 
 #include <sys/un.h>
-#include <Finagle/Socket.h>
+#include <Finagle/Net/Socket.h>
 
 namespace Finagle {
 
@@ -154,7 +154,7 @@ inline void UnixSocket::addr( Addr const &addr )
 // SERVERSOCKET IMPLEMENTATION ****************************************************************************************************
 
 #include <Finagle/File.h>
-#include <Finagle/ServerSocket.h>
+#include <Finagle/Net/ServerSocket.h>
 
 namespace Finagle {
 

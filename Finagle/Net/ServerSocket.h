@@ -19,10 +19,10 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_SERVERSOCKET_H
-#define FINAGLE_SERVERSOCKET_H
+#ifndef FINAGLE_NET_SERVERSOCKET_H
+#define FINAGLE_NET_SERVERSOCKET_H
 
-#include <Finagle/Socket.h>
+#include <Finagle/Net/Socket.h>
 
 namespace Finagle {
 

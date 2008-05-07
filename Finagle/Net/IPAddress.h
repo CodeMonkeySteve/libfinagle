@@ -19,8 +19,8 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_IPADDRESS_H
-#define FINAGLE_IPADDRESS_H
+#ifndef FINAGLE_NET_IPADDRESS_H
+#define FINAGLE_NET_IPADDRESS_H
 
 #include <ostream>
 #include <Finagle/TextString.h>

@@ -24,8 +24,8 @@
 #include <netdb.h>
 
 #include <sstream>
+#include "Finagle/MemTrace.h"
 #include "IPAddress.h"
-#include "MemTrace.h"
 
 using namespace std;
 using namespace Finagle;

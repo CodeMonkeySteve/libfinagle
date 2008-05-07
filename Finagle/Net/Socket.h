@@ -19,15 +19,15 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_SOCKET_H
-#define FINAGLE_SOCKET_H
+#ifndef FINAGLE_NET_SOCKET_H
+#define FINAGLE_NET_SOCKET_H
 
 #include <iostream>
 #include <sys/socket.h>
 
 #include <Finagle/Exception.h>
 #include <Finagle/FileDescWatcher.h>
-#include <Finagle/IPAddress.h>
+#include <Finagle/Net/IPAddress.h>
 
 namespace Finagle {
 
