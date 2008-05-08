@@ -15,6 +15,7 @@ Makefile
 
 # KDevelop
 /debug
+/*.kdevelop
 /*.kdevelop.pcs
 /*.kdevses
 Doxyfile

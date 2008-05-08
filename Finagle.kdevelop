@@ -16,31 +16,34 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
     <defaultencoding/>
-    <versioncontrol>kdevsubversion</versioncontrol>
+    <versioncontrol/>
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>Finagle/test/testFinagle</activetarget>
+      <activetarget/>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
       <mainprogram/>
       <terminal>false</terminal>
       <runarguments>
-        <testFinagle>RangeTest</testFinagle>
+        <testFinagle></testFinagle>
         <xmltest/>
         <testxpath/>
         <testXML/>
+        <testNet/>
       </runarguments>
       <debugarguments>
-        <testFinagle>RangeTest</testFinagle>
+        <testFinagle/>
         <xmltest/>
         <testxpath/>
         <testXML/>
+        <testNet/>
       </debugarguments>
       <cwd>
-        <testFinagle>/home/ssloan/src/vigilos/trunk/libFinagle/debug/./Finagle/test</testFinagle>
+        <testFinagle/>
         <testXML/>
+        <testNet/>
       </cwd>
       <programargs/>
       <globaldebugarguments/>
