@@ -1,8 +1,8 @@
 /*!
-** \file TransferTest.cpp
+** \file MultipartResponse.h
 ** \author Steve Sloan <steve@finagle.org>
-** \date Wed May 7 2008
-** Copyright (C) 2007 by Steve Sloan
+** \date Fri May 9 2008
+** Copyright (C) 2008 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU Lesser General Public License as published
@@ -19,32 +19,36 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
-#include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/Net/Transfer.h>
+#ifndef FINAGLE_NET_MULTIPARTRESPONSE_H
+#define FINAGLE_NET_MULTIPARTRESPONSE_H
 
-using namespace std;
-using namespace Finagle;
-using namespace Transfer;
+#include <Finagle/Net/Response.h>
 
-class TransferTest : public CppUnit::TestFixture
-{
-  CPPUNIT_TEST_SUITE( TransferTest );
-  CPPUNIT_TEST( testRequest );
-  CPPUNIT_TEST_SUITE_END();
+namespace Finagle {
+namespace Transfer {
+
+class MultipartResponse : public sigslot::has_slots<> {
+public:
+  MultipartResponse( Request::Ptr req );
+  MultipartResponse( URI const &uri );
+ ~MultipartResponse( void );
+
+  String const &type( void ) const;
 
 public:
-  void testRequest( void );
+  sigslot::signal1<Response const &> recvPart;
+
+protected:
+  void onBodyFrag( const char *data, size_t size );
+
+protected:
+  Request::Ptr _req;
+  String _head;
+  Response *_resp;
 };
 
+// INLINE IMPLEMENTATION **********************************************************************************************************
 
-CPPUNIT_TEST_SUITE_REGISTRATION( TransferTest );
+} }
 
-void TransferTest::testRequest( void )
-{
-  Response resp( URI("http://www.finagle.org/") );
-  resp.perform();
-  CPPUNIT_ASSERT( resp.succeeded() );
-  CPPUNIT_ASSERT_EQUAL( String("text/html"), resp.type().split(";")[0] );
-  CPPUNIT_ASSERT( resp.size() > 1000 );
-}
+#endif

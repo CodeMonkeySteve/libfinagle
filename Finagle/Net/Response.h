@@ -36,79 +36,40 @@ public:
 public:
   Response( Request::Ptr req, bool saveBody = true );
   Response( URI const &uri );
-  virtual ~Response( void ) {}
 
-  unsigned statCode( void ) const;
-  String const &statMsg( void ) const;
-  bool succeeded( void ) const;
-  bool failed( void ) const;
-
-  HeaderMap &headers( void );
-  HeaderMap const &headers( void ) const;
+  Request::Ptr req( void );
 
   String const &type( void ) const;
   size_t size( void ) const;
 
-  void perform( void );
-
 public:
-  sigslot::signal1<Response::HeaderMap const &> recvHeaders;
-  sigslot::signal1<String const &> recvBody;
+  sigslot::signal1<Response const &> recvBody;
 
 protected:
   void init( void );
 
-  virtual void onHeader( const char *data, size_t size );
-  virtual void onBodyFrag( const char *data, size_t size );
+  void onBodyStart( String const &type, size_t size );
+  void onBodyFrag( const char *data, size_t size );
+
+  friend class MultipartResponse;
+
+protected:
 
 protected:
   Request::Ptr _req;
   bool         _saveBody;
 
-  unsigned _code;
-  String   _msg;
-
-  HeaderMap _headers;
-  String    _type;
-  size_t    _size;
-  String    _body;
+  String _type;
+  size_t _size;
+  String _body;
 };
 
-// INLINE IMPLEMENTATION ******************************************************
+// INLINE IMPLEMENTATION **********************************************************************************************************
 
-inline Response::Response( Request::Ptr req, bool saveBody )
-: _req( req ), _saveBody( saveBody )
+inline Request::Ptr Response::req( void )
 {
-  init();
+  return _req;
 }
-
-inline Response::Response( URI const &uri )
-: _req( new Request( uri ) ), _saveBody( true )
-{
-  init();
-}
-
-
-inline unsigned Response::statCode( void ) const
-{
-  return _code;
-}
-
-inline String const &Response::statMsg( void ) const
-{
-  return _msg;
-}
-
-inline bool Response::succeeded( void ) const
-{
-  return (_code >= 200) && (_code < 300);
-}
-
-inline bool Response::failed( void ) const
-{
-  return (_code >= 400) && (_code < 600);
-}
-
 
 inline String const &Response::type( void ) const
 {
@@ -118,23 +79,6 @@ inline String const &Response::type( void ) const
 inline size_t Response::size( void ) const
 {
   return _size;
-}
-
-
-inline Response::HeaderMap &Response::headers( void )
-{
-  return _headers;
-}
-
-inline Response::HeaderMap const &Response::headers( void ) const
-{
-  return _headers;
-}
-
-
-inline void Response::perform( void )
-{
-  _req->perform();
 }
 
 } }

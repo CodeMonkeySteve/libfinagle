@@ -29,6 +29,7 @@ using namespace std;
 using namespace Finagle;
 using namespace Transfer;
 
+
 /*!
 ** \class Finagle::Transfer::Response
 ** \brief A single response from a cURL request.
@@ -36,106 +37,47 @@ using namespace Transfer;
 **
 */
 
+Response::Response( Request::Ptr req, bool saveBody )
+: _req( req ), _saveBody( saveBody ), _size( 0 )
+{
+  init();
+}
+
+Response::Response( URI const &uri )
+: _req( new Request( uri ) ), _saveBody( true ), _size( 0 )
+{
+  init();
+}
+
 void Response::init( void )
 {
-  _code = 0;
-  _req->recvHeader.connect( this, &Response::onHeader );
+  if ( !_req )
+    return;
 
+  _req->recvBodyStart.connect( this, &Response::onBodyStart );
   if ( _saveBody )
     _req->recvBodyFrag.connect( this, &Response::onBodyFrag );
 }
 
 
-void Response::onHeader( const char *data, size_t size )
+void Response::onBodyStart( String const &type, size_t size )
 {
-  String header( data, size );
-  header.trim();
-  if ( header.empty() ) {
-    _req->recvHeader.disconnect( this );
-    recvHeaders( _headers );
-    return;
-  }
+  _type = type;
+  _size = size;
 
-  String::size_type i = header.find_first_of( ':' );
-  if ( i == String::npos ) {
-    String::size_type i = header.find_first_of( ' ' );
-    if ( (i == String::npos) || _code )
-      throw Transfer::Exception( "Malformed HTTP header: \"" + header + "\"" );
-
-    String proto( header.substr( 0, i ) );
-    _code = header.substr( i + 1, 3 ).as<unsigned>();
-    _msg = header.substr( i + 5 ).trim();
-    return;
-  }
-
-  NoCase name( header.substr( 0, i ).trim() );
-  String val( header.substr( i + 1 ).trim() );
-
-  _headers[name] = val;
-
-  if ( name == "content-type" )
-    _type = val;
-  else
-  if ( name == "content-length" ) {
-    _size = val.as<size_t>();
-
-    if ( _saveBody )
-      _body.reserve( _size );
-  }
+  if ( _saveBody )
+    _body.reserve( size );
 }
+
 
 void Response::onBodyFrag( const char *data, size_t size )
 {
   _body.append( data, size );
 
   if ( _body.size() >= _size ) {
-    recvBody( _body );
-    _req->recvBodyFrag.disconnect( this );
+    recvBody( *this );
+
+    if ( _req )
+      _req->recvBodyFrag.disconnect( this );
   }
 }
-
-
-/*!
-** \class Finagle::Transfer::MultipartResponse
-** \brief A MIME multi-part response from a cURL request.
-**
-**
-*/
-
-#if 0
-MultipartResponse::MultipartResponse( Request::Ptr req, bool saveBody )
-: _req( req ), _saveBody( saveBody )
-{
-  _req->recvHeader.connect( this, &Response::onHeader );
-  _req->recvBodyFrag.connect( this, &Response::onBodyFrag );
-}
-
-void Response::onHeader( String const &name, String const &val )
-{
-  NoCase n( name );
-  _headers[n] = val;
-
-  if ( n == "content-type" )
-    _type = val;
-  else
-  if ( n == "content-length" ) {
-    _size = val.as<size_t>();
-
-    if ( _saveBody )
-      _body.reserve( _size );
-  }
-}
-
-void Response::onBodyFrag( String const &frag )
-{
-  if ( !_saveBody ) {
-    recvHeaders( _headers );
-    _req->disconnect( this );
-    return;
-  }
-
-  _body.append( frag );
-}
-
-
-#endif

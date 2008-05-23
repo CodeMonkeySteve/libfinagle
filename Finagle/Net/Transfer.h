@@ -44,7 +44,7 @@ protected:
 
 static Finagle::Initializer<Processor> Proc;
 
-// INLINE IMPLEMENTATION ******************************************************
+// INLINE IMPLEMENTATION **********************************************************************************************************
 
 } }
 

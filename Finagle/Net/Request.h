@@ -29,6 +29,8 @@
 namespace Finagle {
 namespace Transfer {
 
+class Response;
+
 typedef Finagle::Exception Exception;
 
 class Request : public ReferenceCount {
@@ -39,23 +41,39 @@ public:
   Request( URI const &uri );
  ~Request( void );
 
+  unsigned result( void ) const;
+  bool succeeded( void ) const;
+  bool failed( void ) const;
+
   void perform( void );
 
 public:
-  sigslot::signal2<const char *, size_t> recvHeader;
-  sigslot::signal2<const char *, size_t> recvBodyFrag;
+  sigslot::signal2<const char *, size_t>   recvHeader;    //!< data, size
+  sigslot::signal2<String const &, size_t> recvBodyStart; //<! content type, size
+  sigslot::signal2<const char *, size_t>   recvBodyFrag;  //!< data, size
 
 protected:
   static size_t onHeader( const char *data, size_t membSize, size_t membNum, Request *req );
   static size_t onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req );
 
 protected:
-  URI _uri;
   void *_req;
-//  friend class Finagle::Transfer::Response;
+  mutable unsigned _res;
 };
 
-// INLINE IMPLEMENTATION ******************************************************
+// INLINE IMPLEMENTATION **********************************************************************************************************
+
+inline bool Request::succeeded( void ) const
+{
+  unsigned res = result();
+  return (res >= 200) && (res < 300);
+}
+
+inline bool Request::failed( void ) const
+{
+  unsigned res = result();
+  return (res >= 400) && (res < 600);
+}
 
 } }
 

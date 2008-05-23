@@ -22,17 +22,18 @@
 #include <string>
 #include <curl/curl.h>
 
+#include "Transfer.h"
 #include "Request.h"
+
+#include <iostream>
 
 using namespace std;
 using namespace Finagle;
 using namespace Transfer;
 
-#define CURL_ASSERT( e ) {                 \
-  CURLcode __curl_result = (e);                 \
-  if ( __curl_result != 0 ) {              \
-    throw Transfer::Exception( curl_easy_strerror( __curl_result ) );  \
-  }                                         \
+inline void CURL_ASSERT( CURLcode res )
+{
+  if ( res != 0 )  throw Finagle::Transfer::Exception( curl_easy_strerror( res ) );
 }
 
 
@@ -44,26 +45,35 @@ using namespace Transfer;
 */
 
 Request::Request( URI const &uri )
-: _uri( uri ), _req( curl_easy_init() )
+: _req( curl_easy_init() )
 {
   if ( !_req )
     throw Transfer::Exception( "Unable to create cURL easy instance" );
 
-  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_URL, _uri.c_str() ) );
+  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_URL, uri.c_str() ) );
 
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_HEADERFUNCTION, onHeader ) );
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_HEADERDATA, (void *) this ) );
 
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_WRITEFUNCTION,  onBodyFrag ) );
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_WRITEDATA, (void *) this ) );
-
-//  curl_easy_setopt( curl, CURLOPT_USERAGENT, "vigilos-IPCamD/1.0" );
 }
 
 Request::~Request( void )
 {
   if ( _req )
     curl_easy_cleanup( _req );
+}
+
+
+unsigned Request::result( void ) const
+{
+  if ( !_res ) {
+    long code;
+    CURL_ASSERT( curl_easy_getinfo( _req, CURLINFO_RESPONSE_CODE, &code ) );
+    _res = (unsigned) code;
+  }
+  return _res;
 }
 
 
@@ -78,12 +88,24 @@ size_t Request::onHeader( const char *data, size_t membSize, size_t membNum, Req
 {
   size_t size = membSize * membNum;
   req->recvHeader( data, size );
-  return req->recvHeader.connected() ? size : 0;
+
+  if ( (size <= 2) && req->recvBodyStart.connected() ) {
+    char *type;
+    double size;
+
+    CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_TYPE, &type ) );
+    CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &size ) );
+    req->recvBodyStart( (String) type, (size_t) size );
+  }
+
+  return size;
 }
 
 size_t Request::onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req )
 {
   size_t size = membSize * membNum;
+  if ( !size )  return 0;
+
   req->recvBodyFrag( data, size );
   return req->recvBodyFrag.connected() ? size : 0;
 }

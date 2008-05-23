@@ -5,7 +5,7 @@ TESTS = $(check_PROGRAMS)
 
 check_PROGRAMS = testNet
 
-testNet_SOURCES = TestNet.cpp TransferTest.cpp
+testNet_SOURCES = TestNet.cpp ResponseTest.cpp MultipartResponseTest.cpp
 testNet_LDADD = $(top_builddir)/Finagle/libFinagle.la
 
 testNet_CXXFLAGS = $(CPPUNIT_CFLAGS) 
