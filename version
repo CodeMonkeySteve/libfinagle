@@ -1,3 +1,6 @@
-#!/usr/bin/env ruby
-ver = IO.popen( 'git describe --tags' ).readlines.first.chomp.split('-')
-puts ver[0].sub(/^v/, ''), ver[1..-1].join('.')
+#!/bin/sh
+COMMIT=$(git-rev-list -n 1 HEAD -- $(dirname $0))
+VER=$(git-describe --tags $COMMIT 2>/dev/null)
+
+echo $VER | sed -e 's/^v\?\([^-]\+\)-\(.*\)$/\1/' 
+echo $VER | sed -e 's/^v\?\([^-]\+\)-\(.*\)$/\2/ ; s/-/\./g'
