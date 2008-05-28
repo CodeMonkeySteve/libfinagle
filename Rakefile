@@ -13,7 +13,7 @@ PkgTask = Rake::AutoToolsRPMTask.new( :pkg => File.join( File.dirname(__FILE__),
 desc 'Install libFinagle packages'
 task :install => :pkg  do |t|
   rpm_paths = PkgTask.spec.packages.map { |p|  p.path }
-  system( "sudo rpm -Uvh #{rpm_paths.join ' '}" ) and $?.exitstatus.zero?  or raise "Make failed"
+  system( "sudo rpm -Uvh --oldpackage #{rpm_paths.join ' '}" ) and $?.exitstatus.zero?  or raise "Make failed"
 end
 
 #RPMDIR='/var/www/html/rpms'
