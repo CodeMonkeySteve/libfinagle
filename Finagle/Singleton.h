@@ -43,7 +43,6 @@ template <typename Type, typename TypePtr = Type *>
 class Singleton {
 public:
   Singleton( void );
-  Singleton( Type const &init );
  ~Singleton( void );
 
   Type &operator ()( void );
@@ -51,9 +50,10 @@ public:
 
 private:
   Type &alloc( void );
-  Type &alloc( Type const &init );
+  void  free( void );
 
 private:
+  static Finagle::Mutex _guard;
   static unsigned _useCount;
   static TypePtr _inst;
 };
@@ -62,6 +62,9 @@ private:
 
 template <typename Type, typename TypePtr>
 unsigned Singleton<Type, TypePtr>::_useCount = 0;
+
+template <typename Type, typename TypePtr>
+Finagle::Mutex Singleton<Type, TypePtr>::_guard;
 
 template <typename Type, typename TypePtr>
 TypePtr Singleton<Type, TypePtr>::_inst = 0;
@@ -74,32 +77,27 @@ inline Singleton<Type, TypePtr>::Singleton( void )
 }
 
 template <typename Type, typename TypePtr>
-inline Singleton<Type, TypePtr>::Singleton( Type const &that )
-{
-  _useCount++;
-  _inst = new Type(that);
-}
-
-template <typename Type, typename TypePtr>
 inline Singleton<Type, TypePtr>::~Singleton( void )
 {
-  if ( _inst && !--_useCount ) {
-    delete _inst;
-    _inst = 0;
-  }
+  if ( _inst && !--_useCount )
+    free();
 }
 
 template <typename Type, typename TypePtr>
 inline Type &Singleton<Type, TypePtr>::operator ()( void )
 {
+  Finagle::Lock lock( _guard );
   return _inst ? *_inst : alloc();
 }
 
 template <typename Type, typename TypePtr>
 inline Type &Singleton<Type, TypePtr>::operator ()( Type *that )
 {
-  delete _inst;
-  _inst = that;
+  if ( that != _inst ) {
+    Finagle::Lock lock( _guard );
+    free();
+    _inst = that;
+  }
   return *_inst;
 }
 
@@ -107,13 +105,16 @@ inline Type &Singleton<Type, TypePtr>::operator ()( Type *that )
 template <typename Type, typename TypePtr>
 Type &Singleton<Type, TypePtr>::alloc( void )
 {
-  static Finagle::Mutex guard;
-  Finagle::Lock lock( guard );
-
   if ( !_inst )
     _inst = new Type;
-
   return *_inst;
+}
+
+template <typename Type, typename TypePtr>
+void Singleton<Type, TypePtr>::free( void )
+{
+  delete _inst;
+  _inst = 0;
 }
 
 };
