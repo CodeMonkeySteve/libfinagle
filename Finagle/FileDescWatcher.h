@@ -23,29 +23,55 @@
 #define FINAGLE_FILEDESCWATCHER_H
 
 #include <Finagle/ObjectPtr.h>
-#include <Finagle/List.h>
+#include <Finagle/Set.h>
 #include <Finagle/Singleton.h>
 #include <sigslot/sigslot.h>
 
 namespace Finagle {
 
 using namespace sigslot;
+namespace AppLoop {
+  extern void process( Time );
+}
 
-class FileDescWatcher : public ReferenceCount {
+class FileDescWatchable : public ReferenceCount {
+public:
+  typedef ObjectPtr<FileDescWatchable const> ConstPtr;
+
+public:
+  virtual ~FileDescWatchable( void );
+
+  void enable( void ) const;
+  void disable( void ) const;
+
+protected:
+  FileDescWatchable( void ) {}
+  virtual int  fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const = 0;
+  virtual void onSelect( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const = 0;
+
+  friend void AppLoop::process( Time );
+
+protected:
+  static Set<FileDescWatchable const *> Active;
+};
+
+class FileDescWatcher : public FileDescWatchable {
 public:
   typedef ObjectPtr<FileDescWatcher> Ptr;
 
 public:
   FileDescWatcher( int fileDesc = -1 );
-  virtual ~FileDescWatcher( void );
+ ~FileDescWatcher( void );
 
   int fd( void ) const;
   void fd( int fileDesc );
 
 public:
-  signal0<> readable;
-  signal0<> writable;
-  signal0<> exception;
+  mutable signal0<> readable, writable, exception;
+
+protected:
+  int  fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const;
+  void onSelect( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const;
 
 protected:
   int _fd;
@@ -53,24 +79,32 @@ protected:
 
 // INLINE IMPLEMENTATION ******************************************************
 
+inline void FileDescWatchable::enable( void ) const
+{
+  Active.insert( this );
+}
+
+inline void FileDescWatchable::disable( void ) const
+{
+  Active.erase( this );
+}
+
+
 inline FileDescWatcher::FileDescWatcher( int fileDesc )
-: _fd(-1)
+: _fd( -1 )
 {
   fd( fileDesc );
 }
 
 inline FileDescWatcher::~FileDescWatcher( void )
 {
-  fd(-1);
+  disable();
+  _fd = -1;
 }
 
 inline int FileDescWatcher::fd( void ) const
 {
   return _fd;
-}
-
-namespace AppLoop {
-  static Singleton<List<FileDescWatcher *> > FDWatchers;
 }
 
 };

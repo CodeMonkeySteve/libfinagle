@@ -131,18 +131,15 @@ void AppLoop::process( Time maxTime )
     FD_ZERO( &WriteFDs );
     FD_ZERO( &ExceptFDs );
 
+    Set<FileDescWatchable const *> active;
     int maxFD = -1;
-    for ( List<FileDescWatcher *>::const_iterator i = FDWatchers().begin(); i != FDWatchers().end(); ++i ) {
-      FileDescWatcher &w = **i;
-      if ( !w.readable.connected() && !w.writable.connected() && !w.exception.connected() )
+    for ( Set<FileDescWatchable const *>::ConstIterator i = FileDescWatchable::Active.begin(); i != FileDescWatchable::Active.end(); ++i ) {
+      int fd = (*i)->fds( ReadFDs, WriteFDs, ExceptFDs );
+      if ( fd == -1 )
         continue;
 
-      int fd = (*i)->fd();
       maxFD = max( maxFD, fd );
-
-      if ( w.readable.connected() )   FD_SET( fd, &ReadFDs );
-      if ( w.writable.connected() )   FD_SET( fd, &WriteFDs );
-      if ( w.exception.connected() )  FD_SET( fd, &ExceptFDs );
+      active.insert( *i );
     }
 
     // First, poll sockets to see if there's anything waiting (no timeout).
@@ -185,23 +182,13 @@ void AppLoop::process( Time maxTime )
           return;
       }
     } else {
-      // Examine select() results and notify appropriate FileDescWatchers.
-      for ( List<FileDescWatcher *>::const_iterator i = FDWatchers().begin(); i != FDWatchers().end(); ) {
-        FileDescWatcher::Ptr w = *(i++);
-        int fd = w->fd();
-        if ( fd == -1 )
-          continue;
-
-        bool isSet = false;
-        if ( FD_ISSET( fd, &ExceptFDs ) ) {  w->exception(); isSet = true;  }
-        if ( FD_ISSET( fd, &ReadFDs   ) ) {  w->readable();  isSet = true;  }
-        if ( FD_ISSET( fd, &WriteFDs  ) ) {  w->writable();  isSet = true;  }
+      // Examine select() results and notify appropriate FileDescWatchables.
+      for ( Set<FileDescWatchable const *>::Iterator i = active.begin(); i != active.end(); ++i ) {
+        FileDescWatchable::ConstPtr w = *i;
+        w->onSelect( ReadFDs, WriteFDs, ExceptFDs );
 
         if ( Exit )
           return;
-
-        if ( isSet && (--res == 0) )
-          break;
       }
     }
 
@@ -211,5 +198,3 @@ void AppLoop::process( Time maxTime )
       break;
   }
 }
-
-

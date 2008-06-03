@@ -23,6 +23,15 @@
 
 using namespace Finagle;
 
+Set<FileDescWatchable const *> FileDescWatchable::Active;
+
+
+FileDescWatchable::~FileDescWatchable( void )
+{
+  disable();
+}
+
+
 /*! \class Finagle::FileDescWatcher
 ** \brief Watches a file descriptor for a change in status (via \c select(2)).
 **
@@ -37,10 +46,33 @@ using namespace Finagle;
 void FileDescWatcher::fd( int fileDesc )
 {
   if ( (fileDesc != -1) && (_fd == -1) )
-    AppLoop::FDWatchers().push_back( this );
+    enable();
   else
   if ( (fileDesc == -1) && (_fd != -1) )
-    AppLoop::FDWatchers().remove( this );
+    disable();
 
   _fd = fileDesc;
+}
+
+
+int FileDescWatcher::fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const
+{
+  if ( _fd == -1 )  return -1;
+
+  bool r = readable.connected(), w = writable.connected(), e = exception.connected();
+  if ( !(r || w || e) )  return -1;
+
+  if ( r )  FD_SET( _fd, &readFDs );
+  if ( w )  FD_SET( _fd, &writeFDs );
+  if ( e )  FD_SET( _fd, &exceptFDs );
+
+  return _fd;
+}
+
+
+void FileDescWatcher::onSelect( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const
+{
+  if ( FD_ISSET( _fd, &exceptFDs ) )  exception();
+  if ( FD_ISSET( _fd, &readFDs   ) )  readable();
+  if ( FD_ISSET( _fd, &writeFDs  ) )  writable();
 }
