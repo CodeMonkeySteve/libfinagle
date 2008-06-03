@@ -54,7 +54,7 @@ namespace AppLoop {
 
   Thread::ID MainThreadId = Thread::self_id();
 
-}};
+} };
 
 
 /*! \fn int Finagle::AppLoop::exec( void )
@@ -65,6 +65,9 @@ namespace AppLoop {
 */
 int AppLoop::exec( void )
 {
+  Exit = false;
+  ExitCode = 0;
+
   while ( !Exit )
     process( ProcessTime );
 
