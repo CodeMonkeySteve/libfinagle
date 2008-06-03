@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
+#include <Finagle/AppLoop.h>
 #include <Finagle/Net/MultipartResponse.h>
 
 using namespace std;
@@ -68,9 +69,9 @@ void MultipartResponseTest::testRequest( void )
 
   _resp = new MultipartResponse ( req );
   _resp->recvPart.connect( this, &MultipartResponseTest::onRecvPart );
-
   req->perform();
-  CPPUNIT_ASSERT( req->succeeded() );
+  AppLoop::exec();
+
   CPPUNIT_ASSERT( _havePart );
 }
 
@@ -81,4 +82,5 @@ void MultipartResponseTest::onRecvPart( Response const &resp )
   _havePart = true;
 
   _resp->recvPart.disconnect( this );
+  AppLoop::exit( 0 );
 }

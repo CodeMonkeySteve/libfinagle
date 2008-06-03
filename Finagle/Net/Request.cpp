@@ -33,7 +33,8 @@ using namespace Transfer;
 
 inline void CURL_ASSERT( CURLcode res )
 {
-  if ( res != 0 )  throw Finagle::Transfer::Exception( curl_easy_strerror( res ) );
+  if ( res != 0 )
+    throw Transfer::Exception( curl_easy_strerror( res ) );
 }
 
 
@@ -61,6 +62,8 @@ Request::Request( URI const &uri )
 
 Request::~Request( void )
 {
+  Proc().remove( *this );
+
   if ( _req )
     curl_easy_cleanup( _req );
 }
@@ -80,7 +83,7 @@ unsigned Request::result( void ) const
 void Request::perform( void )
 {
   if ( _req )
-    curl_easy_perform( _req );
+    Proc().add( *this );
 }
 
 

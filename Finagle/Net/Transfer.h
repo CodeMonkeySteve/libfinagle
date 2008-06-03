@@ -24,25 +24,34 @@
 
 #include <Finagle/Initializer.h>
 #include <Finagle/Exception.h>
-
-#include <Finagle/Net/Request.h>
-#include <Finagle/Net/Response.h>
+#include <Finagle/FileDescWatcher.h>
 
 namespace Finagle {
 namespace Transfer {
 
+class Request;
+
 typedef Finagle::Exception Exception;
 
-class Processor {
+class Processor : public FileDescWatchable, public has_slots<> {
 public:
   Processor( void );
  ~Processor( void );
+
+  Request const &add( Request const &req );
+  Request const &remove( Request const &req );
+
+protected:
+  void process( void );
+
+  int  fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const;
+  void onSelect( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const;
 
 protected:
   void *_reqs;
 };
 
-static Finagle::Initializer<Processor> Proc;
+static Finagle::Singleton<Processor> Proc;
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 

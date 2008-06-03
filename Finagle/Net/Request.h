@@ -24,6 +24,7 @@
 
 #include <Finagle/Exception.h>
 #include <Finagle/Net/URI.h>
+#include <Finagle/Net/Transfer.h>
 #include <sigslot/sigslot.h>
 
 namespace Finagle {
@@ -59,6 +60,8 @@ protected:
 protected:
   void *_req;
   mutable unsigned _res;
+
+  friend class Processor;
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************

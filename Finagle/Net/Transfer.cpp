@@ -20,18 +20,84 @@
 */
 
 #include <curl/curl.h>
+#include <curl/multi.h>
 
 #include "Transfer.h"
+#include "Request.h"
 
 using namespace Finagle;
 using namespace Transfer;
 
-Transfer::Processor::Processor( void )
+inline void CURLM_ASSERT( CURLMcode res )
 {
-  curl_global_init( CURL_GLOBAL_ALL );
+  if ( res != 0 )
+    throw Transfer::Exception( curl_multi_strerror( res ) );
 }
 
-Transfer::Processor::~Processor( void )
+/*!
+** \class Finagle::Transfer::Processor
+** \brief Handles cURL startup/shutdown and Request processing.
+**
+**
+*/
+
+Processor::Processor( void )
 {
+  _refs++;  // kludge to avoid premature deletion
+
+  if ( curl_global_init( CURL_GLOBAL_ALL ) != 0 )
+    throw Transfer::Exception( "Unable to initialize cURL" );
+
+  _reqs = curl_multi_init();
+  if ( !_reqs )
+    throw Transfer::Exception( "Unable to create cURL multi instance" );
+
+  enable();
+}
+
+Processor::~Processor( void )
+{
+  if ( _reqs ) {
+    curl_multi_cleanup( _reqs );
+    _reqs = 0;
+  }
+
   curl_global_cleanup();
+}
+
+
+Request const &Processor::add( Request const &req )
+{
+  CURLM_ASSERT( curl_multi_add_handle( _reqs, req._req ) );
+
+  CURLMcode res;
+  int n = 0;
+  while ( (res = curl_multi_perform( _reqs, &n )) == CURLM_CALL_MULTI_PERFORM )
+    ;
+
+  CURLM_ASSERT( res );
+  return req;
+}
+
+Request const &Processor::remove( Request const &req )
+{
+  CURLM_ASSERT( curl_multi_remove_handle( _reqs, req._req ) );
+  return req;
+}
+
+
+int Processor::fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const
+{
+  int fd = -1;
+  CURLM_ASSERT( curl_multi_fdset( _reqs, &readFDs, &writeFDs, &exceptFDs, &fd ) );
+  return fd;
+}
+
+void Processor::onSelect( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const
+{
+  CURLMcode res;
+  int n = 0;
+  while ( (res = curl_multi_perform( _reqs, &n )) == CURLM_CALL_MULTI_PERFORM )
+    ;
+  CURLM_ASSERT( res );
 }

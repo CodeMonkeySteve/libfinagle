@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
+#include <Finagle/AppLoop.h>
 #include <Finagle/Net/Response.h>
 
 using namespace std;
@@ -68,6 +69,7 @@ void ResponseTest::testRequest( void )
   _resp = new Response( req, false );
   req->recvBodyStart.connect( this, &ResponseTest::onBodyStart );
   req->perform();
+  AppLoop::exec();
 
   CPPUNIT_ASSERT( _haveBody );
   CPPUNIT_ASSERT( req->succeeded() );
@@ -83,4 +85,5 @@ void ResponseTest::onBodyStart( String const &type, size_t size )
   CPPUNIT_ASSERT_EQUAL( String("text/html"), _resp->type().split(";")[0] );
   CPPUNIT_ASSERT( _resp->size() > 1024 );
   _haveBody = true;
+  AppLoop::exit( 0 );
 }
