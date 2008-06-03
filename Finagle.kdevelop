@@ -10,7 +10,9 @@
       <keyword>C++</keyword>
       <keyword>Code</keyword>
     </keywords>
-    <ignoreparts/>
+    <ignoreparts>
+      <part>kdevastyle</part>
+    </ignoreparts>
     <projectname>libFinagle</projectname>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
