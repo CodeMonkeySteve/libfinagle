@@ -34,6 +34,7 @@ public:
  ~MultipartResponse( void );
 
   String const &type( void ) const;
+  Request::Ptr req( void );
 
 public:
   sigslot::signal1<Response const &> recvPart;
@@ -48,6 +49,11 @@ protected:
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
+
+inline Request::Ptr MultipartResponse::req( void )
+{
+  return _req;
+}
 
 } }
 
