@@ -9,6 +9,7 @@ task :pkgs => :pkg
 
 desc 'Build libFinagle packages'
 PkgTask = Rake::AutoToolsRPMTask.new( :pkg => File.join( File.dirname(__FILE__), 'libFinagle.spec' ) )
+CLEAN.include File.join( File.dirname(__FILE__), 'configure' )
 
 desc 'Install libFinagle packages'
 task :install => :pkg  do |t|
