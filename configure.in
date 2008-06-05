@@ -36,7 +36,7 @@ AC_CHECK_LIB( expat, XML_ExpatVersionInfo, , exit -1 )
 PKG_CHECK_MODULES( pcre,    [libpcre >= 6.6],   , exit -1 )
 PKG_CHECK_MODULES( openssl, [openssl >= 0.9.8], , exit -1 )
 PKG_CHECK_MODULES( uuid,    [uuid >= 0.21],     , exit -1 )
-PKG_CHECK_MODULES( curl,    [libcurl >= 7.17],  , exit -1 )
+PKG_CHECK_MODULES( curl,    [libcurl >= 7.15],  , exit -1 )
 
 AM_PATH_CPPUNIT(1.11.0)
 
