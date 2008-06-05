@@ -8,21 +8,24 @@ Group: Development/Libraries
 #Url:
 Source: %{name}-%{version}-%{release}.tar.bz2
 
-Requires: expat
+Requires: pcre >= 7
+Requires: expat >= 2
+Requires: curl >= 7
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: expat-devel e2fsprogs-devel
+BuildRequires: pcre-devel expat-devel curl-devel 
+BuildRequires: e2fsprogs-devel
 
 %description
 Finagle is a C++ library providing wrapper classes and convenience
 functions for many common system functions, including:
+* Reference-counting smart-pointers
+* Signal/slot messaing (sigslot)
 * Multi-threading (pthreads)
+* TCP/UNIX networking (sockets)
 * Regular expressions (pcre)
 * XML parsing (expat)
-* TCP/UNIX network (sockets)
-* Signal/slot messaing (sigslot)
-* Reference-counting smart-pointers
-
+* cURL networking (curl)
 
 %prep
 %setup -q -n %{name}-%{version}-%{release}
