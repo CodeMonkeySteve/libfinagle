@@ -217,4 +217,3 @@ File::IOEx::IOEx( FilePath const &path, std::ios::openmode mode )
 
   *this << err.str();
 }
-

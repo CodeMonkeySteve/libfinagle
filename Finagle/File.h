@@ -90,11 +90,12 @@ public:
   DateTime modifyTime( void ) const;
 
   Size size( void ) const;
-  Mode mode( void ) const;
 
+  Mode mode( void ) const;
   bool readable( void ) const;
   bool writeable( void ) const;
 
+  bool mode( Mode m );
   bool readable( bool state );
   bool writeable( bool state );
 
@@ -250,13 +251,19 @@ inline File::Mode File::mode( void ) const
 //! Returns \c true if the file has read permission.
 inline bool File::readable( void ) const
 {
-  return access( path(), AccessReadBit ) == 0;
+  return ::access( path(), AccessReadBit ) == 0;
 }
 
 //! Returns \c true if the file has write permission.
 inline bool File::writeable( void ) const
 {
-  return access( path(), AccessWriteBit ) == 0;
+  return ::access( path(), AccessWriteBit ) == 0;
+}
+
+//! Sets the file permissions on the file to \a m.
+inline bool File::mode( Mode m )
+{
+  return ::chmod( path(), m ) == 0;
 }
 
 /*! \brief Sets the read permission on the file to \a state
@@ -264,7 +271,7 @@ inline bool File::writeable( void ) const
 */
 inline bool File::readable( bool state )
 {
-  return chmod( path(), (writeable() ? ChmodWriteBit : 0) | (state ? ChmodReadBit  : 0) ) == 0;
+  return ::chmod( path(), (writeable() ? ChmodWriteBit : 0) | (state ? ChmodReadBit  : 0) ) == 0;
 }
 
 /*! \brief Sets the write permission on the file to \a state
@@ -272,7 +279,7 @@ inline bool File::readable( bool state )
 */
 inline bool File::writeable( bool state )
 {
-  return chmod( path(), (readable() ? ChmodReadBit  : 0) | (state ? ChmodWriteBit : 0) ) == 0;
+  return ::chmod( path(), (readable() ? ChmodReadBit  : 0) | (state ? ChmodWriteBit : 0) ) == 0;
 }
 
 /*! \brief Compares the contents of the file with another file (\a that).
