@@ -60,7 +60,7 @@ protected:
   virtual void clear( void );
   friend class NodeList;
 
-  Node( Node const & ) {}
+  Node( Node const & );
 
 protected:
   Node::Ptr _parent, _prev, _next;
@@ -72,6 +72,10 @@ extern std::ostream &operator <<( std::ostream &out, Node const &node );
 
 //! Initializes the node with no parent or siblings.
 inline Node::Node( void )
+{}
+
+inline Node::Node( Node const & ) 
+: ReferenceCount()
 {}
 
 inline Node::~Node( void )

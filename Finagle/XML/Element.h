@@ -92,7 +92,7 @@ extern String escape( String const &str );
 
 //! Copy constructor
 inline Element::Element( Element const &that )
-: NodeList(that),
+: Node(), NodeList(that),
   _name( that._name ), _attribs( that._attribs )
 {}
 
