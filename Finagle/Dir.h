@@ -103,12 +103,6 @@ inline Dir::Dir( const char *dirPath, const char *dirName )
 : File( dirPath, dirName )
 {}
 
-//! Creates the directory, if it doesn't exist, and returns \c true if successful.
-inline bool Dir::create( unsigned mode ) const
-{
-  return exists() || ((::mkdir( path(), mode ) == 0) && refresh( true ));
-}
-
 template <typename CType>
 void Dir::list( CType &files, const char *ext ) const
 {

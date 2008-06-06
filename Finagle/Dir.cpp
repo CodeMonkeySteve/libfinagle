@@ -109,6 +109,24 @@ unsigned Dir::count( const char *ext ) const
   return count;
 }
 
+/*! \brief Creates the directory, if it doesn't exist, and returns \c true if successful.
+** Will create any intermidiate directories, as need.
+*/
+bool Dir::create( unsigned mode ) const
+{
+  if ( exists() )
+    return true;
+
+  if ( !isAbsolute() )
+    return Dir( absolute() ).create( mode );
+
+  Dir const parent( dir() );
+  if ( !(parent.exists() || parent.create( mode )) )
+    return false;
+
+  return (::mkdir( path(), mode ) == 0) && refresh( true );
+}
+
 //! \brief Removes the directory.
 //! If \a recursive is \c true, will first remove all files and subdirectories.  Returns \c true if successful.
 bool Dir::erase( bool recursive ) const
@@ -224,13 +242,14 @@ TempDir::TempDir( unsigned mode )
 
   for ( unsigned n = 1; ; ++n ) {
     Dir d( base, execFile().name() + "-" + String(getpid()) + "-" + String(n) );
-    if ( ::mkdir( d, mode ) == 0 ) {
-      assign( d );
-      break;
-    }
+    if ( d.exists() )
+      continue;
 
-    if ( SystemEx::sysErrCode() != EEXIST )
+    if ( !d.create( mode ) )
       throw SystemEx( "Unable to create directory \"" + d + "\"" );
+
+    assign( d );
+    break;
   }
 }
 
