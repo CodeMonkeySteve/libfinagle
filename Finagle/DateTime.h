@@ -118,18 +118,6 @@ public:
   double &operator()( void );
   operator double &( void );
 
-/*
-  bool operator <( const Time &that ) const;
-  bool operator <=( const Time &that ) const;
-
-  bool operator >( const Time &that ) const;
-  bool operator >=( const Time &that ) const;
-
-  double operator -( const Time &that ) const;
-*/
-//protected:
-//  static const unsigned long _start;
-
 protected:
   double _secs;
 };
@@ -312,8 +300,7 @@ inline std::ostream &operator <<( std::ostream &out, DateTime const &Date )
 }
 
 
-//! Initializes the time to a \a time second interval.  A zero-length interval is
-//! invalid.
+//! Initializes the time to a \a time second interval.  A zero-length interval is invalid.
 //! \sa #isValid().
 inline Time::Time( double time )
 : _secs( time )
@@ -393,32 +380,6 @@ inline Time::operator double &( void )
   return _secs;
 }
 
-/*
-inline bool Time::operator <( const Time &that ) const
-{
-  return Secs < that.Secs;
-}
-
-inline bool Time::operator <=( const Time &that ) const
-{
-  return Secs <= that.Secs;
-}
-
-inline bool Time::operator >( const Time &that ) const
-{
-  return Secs > that.Secs;
-}
-
-inline bool Time::operator >=( const Time &that ) const
-{
-  return Secs >= that.Secs;
-}
-
-inline double Time::operator -( const Time &that ) const
-{
-  return Secs - that.Secs;
-}
-*/
 }
 
 #endif

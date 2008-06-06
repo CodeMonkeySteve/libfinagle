@@ -129,9 +129,6 @@ String DateTime::format( const char *Format ) const
 ** \brief Represents a time with fractional seconds.
 */
 
-// Keep the numbers small, count from app startup
-//const unsigned long Time::_start = time(0);
-
 //! Returns the current time.
 Time const Time::now( void )
 {
