@@ -41,6 +41,7 @@ public:
 
   String const &type( void ) const;
   size_t size( void ) const;
+  String const &body( void ) const;
 
 public:
   sigslot::signal1<Response const &> recvBody;
@@ -52,8 +53,6 @@ protected:
   void onBodyFrag( const char *data, size_t size );
 
   friend class MultipartResponse;
-
-protected:
 
 protected:
   Request::Ptr _req;
@@ -79,6 +78,11 @@ inline String const &Response::type( void ) const
 inline size_t Response::size( void ) const
 {
   return _size;
+}
+
+inline String const &Response::body( void ) const
+{
+  return _body;
 }
 
 } }
