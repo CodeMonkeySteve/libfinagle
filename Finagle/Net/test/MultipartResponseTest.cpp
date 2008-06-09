@@ -43,8 +43,12 @@ protected:
   void onRecvPart( Response const &resp );
 
   MultipartResponse *_resp;
-  bool _havePart;
+  unsigned _numParts;
+
+  static const unsigned totParts;
 };
+
+const unsigned MultipartResponseTest::totParts = 10;
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION( MultipartResponseTest );
@@ -52,7 +56,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( MultipartResponseTest );
 void MultipartResponseTest::setUp( void )
 {
   _resp = 0;
-  _havePart = false;
+  _numParts = 0;
 }
 
 void MultipartResponseTest::tearDown( void )
@@ -65,22 +69,27 @@ void MultipartResponseTest::tearDown( void )
 void MultipartResponseTest::testRequest( void )
 {
 //  Request::Ptr req( new Request( URI("http://192.168.10.200/mjpg/1/video.mjpg") ) );
-  Request::Ptr req( new Request( URI("http://home.finagle.org/test/server-push.cgi") ) );
+  Request::Ptr req( new Request( URI("http://home.finagle.org/test/server-push-fast.cgi") ) );
 
   _resp = new MultipartResponse ( req );
   _resp->recvPart.connect( this, &MultipartResponseTest::onRecvPart );
   req->perform();
   AppLoop::exec();
 
-  CPPUNIT_ASSERT( _havePart );
+  CPPUNIT_ASSERT_EQUAL( totParts, _numParts );
 }
 
 void MultipartResponseTest::onRecvPart( Response const &resp )
 {
-  CPPUNIT_ASSERT_EQUAL( String("text/plain"), resp.type() );
-  CPPUNIT_ASSERT_EQUAL( 28U, resp.size() );
-  _havePart = true;
+// CPPUNIT_ASSERT_EQUAL( String("image/jpeg"), resp.type() );
+// CPPUNIT_ASSERT( resp.size() > 10240 );
+ CPPUNIT_ASSERT_EQUAL( String("text/plain"), resp.type() );
+ CPPUNIT_ASSERT_EQUAL( 35U, resp.size() );
 
-  _resp->recvPart.disconnect( this );
-  AppLoop::exit( 0 );
+ CPPUNIT_ASSERT_EQUAL( resp.size(), resp.body().size() );
+
+  if ( ++_numParts == totParts ) {
+    _resp->recvPart.disconnect( this );
+    AppLoop::exit( 0 );
+  }
 }

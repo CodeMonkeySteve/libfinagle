@@ -135,7 +135,8 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
 
   // handle first fragment
   if ( _head.size() ) {
-    onBodyFrag( (const char *) _head, _head.size() );
+    String frag( _head );
     _head.clear();
+    onBodyFrag( (const char *) frag, frag.size() );
   }
 }
