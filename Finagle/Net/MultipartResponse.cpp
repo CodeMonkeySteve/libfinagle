@@ -21,11 +21,10 @@
 
 #include <algorithm>
 #include <curl/curl.h>
+#include <Finagle/AppLog.h>
 #include <Finagle/Util.h>
 
 #include "MultipartResponse.h"
-
-#include <iostream>
 
 using namespace std;
 using namespace Finagle;
@@ -82,13 +81,6 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
     data += remain;
     size -= remain;
 
-    // skip trailing CRLF
-    unsigned dl = sizeof(delim) - 1;
-    if ( (size >= dl) && (String( data, dl ) == "\r\n") ) {
-      data += dl;
-      size -= dl;
-    }
-
     if ( !size )
       return;
   }
@@ -99,21 +91,27 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
 
   // only continue if we have the whole header
   _head.append( data, size );
-
   size_t headEnd = _head.find( "\r\n\r\n" );
   if ( headEnd == String::npos )
     return;
   String headers = _head.substr( 0, headEnd + 2 );
   _head.erase( 0, headEnd + 4 );
 
+  // drop terminating CRLF from last part
+  if ( headers.find( delim ) == 0 )
+    headers.erase( 0, 2 );
+
+  // ignore boundary delimeter
+  if ( (headers[0] == '-') && (headers[1] == '-') ) {
+    size_t end = headers.find( delim );
+    if ( end > 2 )
+      headers.erase( 0, end + 2 );
+  }
+
   while ( !headers.empty() ) {
     size_t end = headers.find( delim );
     String header = headers.substr( 0, end );
     headers.erase( 0, end + 2 );
-
-    // ignore boundary delimeter
-    if ( (header[0] == '-') && (header[1] == '-') && (header.size() > 2) )
-      continue;
 
     String::size_type i = header.find_first_of( ':' );
     if ( i == String::npos )
