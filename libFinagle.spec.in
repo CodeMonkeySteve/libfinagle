@@ -8,9 +8,9 @@ Group: Development/Libraries
 #Url:
 Source: %{name}-%{version}-%{release}.tar.bz2
 
-Requires: pcre >= 7
-Requires: expat >= 2
-Requires: curl >= 7
+Requires: pcre >= 6.6
+Requires: expat >= 1.95
+Requires: curl >= 7.15
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: pcre-devel expat-devel curl-devel 
