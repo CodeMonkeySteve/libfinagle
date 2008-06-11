@@ -39,7 +39,7 @@ public:
   typedef ObjectPtr<Request> Ptr;
 
 public:
-  Request( URI const &uri );
+  Request( URI const &url );
  ~Request( void );
 
   unsigned result( void ) const;
@@ -49,17 +49,17 @@ public:
   void perform( void );
 
 public:
-  sigslot::signal2<const char *, size_t>   recvHeader;    //!< data, size
-  sigslot::signal2<String const &, size_t> recvBodyStart; //<! content type, size
+  sigslot::signal2<String const &, size_t> recvBodyStart; //!< content type, size
   sigslot::signal2<const char *, size_t>   recvBodyFrag;  //!< data, size
 
 protected:
-  static size_t onHeader( const char *data, size_t membSize, size_t membNum, Request *req );
   static size_t onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req );
 
 protected:
+  URI _url;
   void *_req;
   mutable unsigned _res;
+  bool _firstFrag;
 
   friend class Processor;
 };

@@ -41,6 +41,7 @@ public:
 
 protected:
   void onBodyStart( String const &type, size_t size );
+  void onRecvBody( Response const &resp );
 
 protected:
   Response *_resp;
@@ -66,7 +67,8 @@ void ResponseTest::testRequest( void )
 {
   Request::Ptr req = new Request( URI("http://www.finagle.org/") );
 
-  _resp = new Response( req, false );
+  _resp = new Response( req );
+  _resp->recvBody.connect( this, &ResponseTest::onRecvBody );
   req->recvBodyStart.connect( this, &ResponseTest::onBodyStart );
   req->perform();
   AppLoop::exec();
@@ -79,11 +81,18 @@ void ResponseTest::testRequest( void )
 
 void ResponseTest::onBodyStart( String const &type, size_t size )
 {
-  CPPUNIT_ASSERT_EQUAL( type, _resp->type() );
-  CPPUNIT_ASSERT_EQUAL( size, _resp->size() );
+  CPPUNIT_ASSERT_EQUAL( String("text/html"), type.split(";")[0] );
+  CPPUNIT_ASSERT( size > 1024 );
+}
 
+
+void ResponseTest::onRecvBody( Response const &resp )
+{
   CPPUNIT_ASSERT_EQUAL( String("text/html"), _resp->type().split(";")[0] );
   CPPUNIT_ASSERT( _resp->size() > 1024 );
+
+  CPPUNIT_ASSERT_EQUAL( _resp->size(), _resp->body().size() );
+
   _haveBody = true;
   AppLoop::exit( 0 );
 }

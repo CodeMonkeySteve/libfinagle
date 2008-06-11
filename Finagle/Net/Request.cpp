@@ -45,16 +45,15 @@ inline void CURL_ASSERT( CURLcode res )
 **
 */
 
-Request::Request( URI const &uri )
-: _req( curl_easy_init() )
+Request::Request( URI const &url )
+: _url( url ),
+  _req( curl_easy_init() ),
+  _firstFrag( true )
 {
   if ( !_req )
     throw Transfer::Exception( "Unable to create cURL easy instance" );
 
-  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_URL, uri.c_str() ) );
-
-  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_HEADERFUNCTION, onHeader ) );
-  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_HEADERDATA, (void *) this ) );
+  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_URL, _url.c_str() ) );
 
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_WRITEFUNCTION,  onBodyFrag ) );
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_WRITEDATA, (void *) this ) );
@@ -87,27 +86,23 @@ void Request::perform( void )
 }
 
 
-size_t Request::onHeader( const char *data, size_t membSize, size_t membNum, Request *req )
-{
-  size_t size = membSize * membNum;
-  req->recvHeader( data, size );
-
-  if ( (size <= 2) && req->recvBodyStart.connected() ) {
-    char *type;
-    double size;
-
-    CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_TYPE, &type ) );
-    CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &size ) );
-    req->recvBodyStart( (String) type, (size_t) size );
-  }
-
-  return size;
-}
-
 size_t Request::onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req )
 {
   size_t size = membSize * membNum;
   if ( !size )  return 0;
+
+  if ( req->_firstFrag ) {
+    req->_firstFrag = false;
+
+    if ( req->recvBodyStart.connected() ) {
+      char *type;
+      double size;
+
+      CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_TYPE, &type ) );
+      CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &size ) );
+      req->recvBodyStart( (String) type, (size_t) size );
+    }
+  }
 
   req->recvBodyFrag( data, size );
   return req->recvBodyFrag.connected() ? size : 0;
