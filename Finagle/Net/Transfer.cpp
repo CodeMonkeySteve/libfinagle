@@ -81,7 +81,10 @@ Request const &Processor::add( Request const &req )
 
 Request const &Processor::remove( Request const &req )
 {
-  CURLM_ASSERT( curl_multi_remove_handle( _reqs, req._req ) );
+  CURLMcode res = curl_multi_remove_handle( _reqs, req._req );
+  if ( res != CURLM_BAD_EASY_HANDLE )
+    CURLM_ASSERT( res );
+
   return req;
 }
 

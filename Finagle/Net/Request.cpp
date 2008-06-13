@@ -48,6 +48,7 @@ inline void CURL_ASSERT( CURLcode res )
 Request::Request( URI const &url )
 : _url( url ),
   _req( curl_easy_init() ),
+  _res( 0 ),
   _firstFrag( true )
 {
   if ( !_req )
@@ -61,10 +62,10 @@ Request::Request( URI const &url )
 
 Request::~Request( void )
 {
-  Proc().remove( *this );
-
-  if ( _req )
+  if ( _req ) {
+    Proc().remove( *this );
     curl_easy_cleanup( _req );
+  }
 }
 
 
