@@ -30,6 +30,7 @@ using namespace Transfer;
 
 class ResponseTest : public CppUnit::TestFixture, public sigslot::has_slots<> {
   CPPUNIT_TEST_SUITE( ResponseTest );
+  CPPUNIT_TEST( testRequestCreateDestroy );
   CPPUNIT_TEST( testRequest );
   CPPUNIT_TEST_SUITE_END();
 
@@ -37,6 +38,7 @@ public:
   void setUp( void );
   void tearDown( void );
 
+  void testRequestCreateDestroy( void );
   void testRequest( void );
 
 protected:
@@ -60,6 +62,13 @@ void ResponseTest::tearDown( void )
 {
   if ( _resp )
     delete _resp;
+}
+
+
+void ResponseTest::testRequestCreateDestroy( void )
+{
+  Request::Ptr req = new Request( URI("http://www.finagle.org/") );
+  CPPUNIT_ASSERT_NO_THROW( req = 0 );
 }
 
 
