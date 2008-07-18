@@ -27,13 +27,13 @@
 
 namespace Finagle {
 
-//! Provides an Internet domain socket
 class InetSocket : public Socket {
 public:
-  //! Internet domain address (host and port)
+
   class Addr : public Socket::Addr {
   public:
     Addr( void );
+    Addr( int sock );
     Addr( String const &spec );
     Addr( IPAddress const &host, unsigned short port );
     Addr( sockaddr const *addr, socklen_t len );
@@ -74,37 +74,12 @@ inline InetSocket::Addr::Addr( void )
   _domainAddr.sin_family = domainFamily();
 }
 
-inline InetSocket::Addr::Addr( String const &spec )
-{
-  memset( &_domainAddr, 0, sizeof(_domainAddr) );
-  _domainAddr.sin_family = domainFamily();
-
-  String::Array parts = spec.split(':');
-  if ( parts.size() > 2 )
-    throw Exception( String("Bad inet address: ") + spec );
-
-  InetSocket::Addr::host( IPAddress( parts.front() ) );
-  if ( parts.size() > 1 )
-    InetSocket::Addr::port( parts[1].as<unsigned short>() );
-}
-
 inline InetSocket::Addr::Addr( IPAddress const &host, unsigned short port )
 {
   memset( &_domainAddr, 0, sizeof(_domainAddr) );
   _domainAddr.sin_family = domainFamily();
   InetSocket::Addr::host( host );
   InetSocket::Addr::port( port );
-}
-
-inline InetSocket::Addr::Addr( sockaddr const *addr, socklen_t len )
-{
-  if ( len > sizeof(_domainAddr) )
-    throw std::length_error( "Socket address is too large" );
-
-  memset( &_domainAddr, 0, sizeof(_domainAddr) );
-  memcpy( &_domainAddr, addr, len );
-  _host = ntohl( ((sockaddr_in *) addr)->sin_addr.s_addr );
-  _port = ntohs( ((sockaddr_in *) addr)->sin_port );
 }
 
 
