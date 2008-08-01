@@ -67,14 +67,14 @@ void ResponseTest::tearDown( void )
 
 void ResponseTest::testRequestCreateDestroy( void )
 {
-  Request::Ptr req = new Request( URI("http://www.finagle.org/") );
+  Request::Ptr req = new Request( URL("http://www.finagle.org/") );
   CPPUNIT_ASSERT_NO_THROW( req = 0 );
 }
 
 
 void ResponseTest::testRequest( void )
 {
-  Request::Ptr req = new Request( URI("http://www.finagle.org/") );
+  Request::Ptr req = new Request( URL("http://www.finagle.org/") );
 
   _resp = new Response( req );
   _resp->recvBody.connect( this, &ResponseTest::onRecvBody );

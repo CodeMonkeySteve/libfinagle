@@ -23,7 +23,7 @@
 #define FINAGLE_NET_REQUEST_H
 
 #include <Finagle/Exception.h>
-#include <Finagle/Net/URI.h>
+#include <Finagle/Net/URL.h>
 #include <Finagle/Net/Transfer.h>
 #include <sigslot/sigslot.h>
 
@@ -39,7 +39,7 @@ public:
   typedef ObjectPtr<Request> Ptr;
 
 public:
-  Request( URI const &url );
+  Request( URL const &url );
  ~Request( void );
 
   unsigned result( void ) const;
@@ -56,7 +56,7 @@ protected:
   static size_t onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req );
 
 protected:
-  URI _url;
+  URL _url;
   void *_req;
   mutable unsigned _res;
   bool _firstFrag;

@@ -45,7 +45,7 @@ inline void CURL_ASSERT( CURLcode res )
 **
 */
 
-Request::Request( URI const &url )
+Request::Request( URL const &url )
 : _url( url ),
   _req( curl_easy_init() ),
   _res( 0 ),

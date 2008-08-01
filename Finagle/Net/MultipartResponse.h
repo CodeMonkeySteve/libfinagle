@@ -30,7 +30,7 @@ namespace Transfer {
 class MultipartResponse : public sigslot::has_slots<> {
 public:
   MultipartResponse( Request::Ptr req = 0 );
-//  MultipartResponse( URI const &uri );
+//  MultipartResponse( URL const &uri );
  ~MultipartResponse( void );
 
   Request::Ptr request( void ) const;

@@ -1,7 +1,7 @@
 /*!
-** \file URI.cpp
-** \date Wed May 7 2008
+** \file URL.h
 ** \author Steve Sloan <steve@finagle.org>
+** \date Wed May 7 2008
 ** Copyright (C) 2008 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
@@ -19,34 +19,33 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include "URI.h"
+#ifndef FINAGLE_NET_URL_H
+#define FINAGLE_NET_URL_H
 
-using namespace Finagle;
+#include <Finagle/TextString.h>
+#include <Finagle/Net/IPAddress.h>
+#include <Finagle/Map.h>
 
-/*!
-** \class Finagle::URI
-** \brief Uniform Resource Identifier
-**
-**
-*/
+namespace Finagle {
 
-URI::URI( String const &scheme, String const &userInfo, String const &host, unsigned port, String const &path )
-: String( scheme + "://" )
-{
-  if ( userInfo ) {
-    append( userInfo );
-    append( 1, '@' );
-  }
+class URL : public String {
+public:
+  URL( String const &url );
+  URL( String const &scheme, String const &location );
 
-  append( host );
+  static URL HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, Map<String, String> const &query, String const &fragment );
+};
 
-  if ( port ) {
-    append( 1, ':' );
-    append( String(port) );
-  }
+// INLINE IMPLEMENTATION ******************************************************
 
-  if ( path[0] != '/' )
-    append( 1, '/' );
+inline URL::URL( String const &url )
+: String( url )
+{}
 
-  append( path );
+inline URL::URL( String const &scheme, String const &location )
+: String( scheme + ':' + location )
+{}
+
 }
+
+#endif

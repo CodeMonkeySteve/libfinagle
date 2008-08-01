@@ -69,7 +69,7 @@ unsigned IPAddress::ip( void ) const
 }
 
 
-//! Returns the IP address, as a string, in dotted-decimal form/
+//! Returns the IP address, as a string, in dotted-decimal form.
 String IPAddress::ipStr( void ) const
 {
   in_addr Addr;

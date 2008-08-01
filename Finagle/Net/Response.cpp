@@ -43,7 +43,7 @@ Response::Response( Request::Ptr req, bool saveBody )
   init();
 }
 
-Response::Response( URI const &uri )
+Response::Response( URL const &uri )
 : _req( new Request( uri ) ), _saveBody( true ), _size( 0 )
 {
   init();

@@ -68,8 +68,8 @@ void MultipartResponseTest::tearDown( void )
 
 void MultipartResponseTest::testRequest( void )
 {
-//  Request::Ptr req( new Request( URI("http://192.168.10.200/mjpg/1/video.mjpg") ) );
-  Request::Ptr req( new Request( URI("http://home.finagle.org/test/server-push-fast.cgi") ) );
+//  Request::Ptr req( new Request( URL("http://192.168.10.200/mjpg/1/video.mjpg") ) );
+  Request::Ptr req( new Request( URL("http://home.finagle.org/test/server-push-fast.cgi") ) );
 
   _resp = new MultipartResponse;
   _resp->request( req );

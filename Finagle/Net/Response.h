@@ -35,7 +35,7 @@ public:
 
 public:
   Response( Request::Ptr req, bool saveBody = true );
-  Response( URI const &uri );
+  Response( URL const &uri );
 
   Request::Ptr req( void );
 
