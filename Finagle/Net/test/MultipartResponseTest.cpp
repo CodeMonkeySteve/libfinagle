@@ -71,8 +71,10 @@ void MultipartResponseTest::testRequest( void )
 //  Request::Ptr req( new Request( URI("http://192.168.10.200/mjpg/1/video.mjpg") ) );
   Request::Ptr req( new Request( URI("http://home.finagle.org/test/server-push-fast.cgi") ) );
 
-  _resp = new MultipartResponse ( req );
+  _resp = new MultipartResponse;
+  _resp->request( req );
   _resp->recvPart.connect( this, &MultipartResponseTest::onRecvPart );
+
   req->perform();
   AppLoop::exec();
 

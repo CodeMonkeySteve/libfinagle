@@ -37,18 +37,17 @@ using namespace Transfer;
 **
 */
 
-MultipartResponse::MultipartResponse( Request::Ptr req )
-: _req( req ), _resp( 0 )
+Request::Ptr MultipartResponse::request( Request::Ptr req )
 {
-  _req->recvBodyFrag.connect( this, &MultipartResponse::onBodyFrag );
-}
+  if ( _req == req )
+    return _req;
 
-MultipartResponse::~MultipartResponse( void )
-{
-  if ( _resp )
-    delete _resp;
-}
+  if ( _req )  _req->recvBodyFrag.disconnect( this );
+  _req = req;
+  if ( _req )  _req->recvBodyFrag.connect( this, &MultipartResponse::onBodyFrag );
 
+  return _req;
+}
 
 
 void MultipartResponse::onBodyFrag( const char *data, size_t size )
