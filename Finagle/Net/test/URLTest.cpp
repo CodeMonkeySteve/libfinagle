@@ -1,7 +1,7 @@
 /*!
-** \file URL.h
+** \file URLTest.cpp
 ** \author Steve Sloan <steve@finagle.org>
-** \date Wed May 7 2008
+** \date Fri Aug 1 2008
 ** Copyright (C) 2008 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
@@ -19,35 +19,28 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#ifndef FINAGLE_NET_URL_H
-#define FINAGLE_NET_URL_H
+#include <cppunit/extensions/HelperMacros.h>
+#include <Finagle/Net/URL.h>
 
-#include <Finagle/TextString.h>
-#include <Finagle/Net/IPAddress.h>
-#include <Finagle/Map.h>
+using namespace Finagle;
 
-namespace Finagle {
+class URLTest : public CppUnit::TestFixture {
+  CPPUNIT_TEST_SUITE( URLTest );
+  CPPUNIT_TEST( testHTTP );
+  CPPUNIT_TEST_SUITE_END();
 
-class URL : public String {
 public:
-  URL( String const &url );
-  URL( String const &scheme, String const &location );
-
-  static String escape( const String &str );
-
-  static URL HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, Map<String, String> const &query, String const &fragment );
+  void testHTTP( void );
 };
 
-// INLINE IMPLEMENTATION ******************************************************
+CPPUNIT_TEST_SUITE_REGISTRATION( URLTest );
 
-inline URL::URL( String const &url )
-: String( url )
-{}
 
-inline URL::URL( String const &scheme, String const &location )
-: String( scheme + ':' + location )
-{}
-
+void URLTest::testHTTP( void )
+{
+  Map<String, String> query;
+  query["one"] = "1!";
+  query["tw()"] = "2";
+  CPPUNIT_ASSERT_EQUAL( URL("http://user:password@localhost.localdomain:42/foo/bar?one=1%21;tw%28%29=2#fr%40gment"),
+                        URL::HTTP( "user:password", IPAddress::local, 42, "foo/bar", query, "fr@gment" ) );
 }
-
-#endif

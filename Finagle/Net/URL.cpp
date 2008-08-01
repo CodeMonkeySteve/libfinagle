@@ -19,14 +19,32 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
+#include <cctype>
 #include "URL.h"
 
+using namespace std;
 using namespace Finagle;
 
 /*!
 ** \namespace Finagle::URL
 ** \brief Uniform Resource Locator
 */
+
+String URL::escape( String const &str )
+{
+  String out;
+  for ( String::ConstIterator ch = str.begin(); ch != str.end(); ++ch ) {
+    if ( isalnum( *ch ) || (*ch == '_') || (*ch == '.') || (*ch == '-') )
+      out.append( 1, *ch );
+    else
+    if ( *ch == ' ' )
+      out.append( 1, '+' );
+    else
+      out.append( String::format( "%%%02X", (char) *ch ) );
+  }
+
+  return out;
+}
 
 URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, Map<String, String> const &query, String const &fragment )
 {
@@ -51,14 +69,20 @@ URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, Str
 
   if ( !query.empty() ) {
     Map<String, String>::ConstIterator q = query.begin();
-    url.append( '?' + q.key() + '=' + q.val() );
+    url.append( 1, '?' );
+    url.append( URL::escape(q.key()) + "=" + URL::escape(q.val()) );
+    ++q;
 
-    for ( ++q; q != query.end(); ++q )
-      url.append( ';' + q.key() + '=' + q.val() );
+    for ( ; q != query.end(); ++q ) {
+      url.append( 1, ';' );
+      url.append( URL::escape(q.key()) + "=" + URL::escape(q.val()) );
+    }
   }
 
   if ( fragment ) {
-    url.append( '#' );
-    url.append( fragment );
+    url.append( 1, '#' );
+    url.append( URL::escape(fragment) );
   }
+
+  return url;
 }
