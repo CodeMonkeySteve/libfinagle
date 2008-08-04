@@ -78,6 +78,18 @@ void StringTest::testInitializers( void )
 
 void StringTest::testConversions( void )
 {
+  {
+    CPPUNIT_ASSERT_EQUAL( true, String("true").as<bool>() );
+    CPPUNIT_ASSERT_EQUAL( true, String("yes").as<bool>() );
+    CPPUNIT_ASSERT_EQUAL( true, String("on").as<bool>() );
+    CPPUNIT_ASSERT_EQUAL( true, String("1").as<bool>() );
+
+    CPPUNIT_ASSERT_EQUAL( false, String("false").as<bool>() );
+    CPPUNIT_ASSERT_EQUAL( false, String("no").as<bool>() );
+    CPPUNIT_ASSERT_EQUAL( false, String("off").as<bool>() );
+    CPPUNIT_ASSERT_EQUAL( false, String("0").as<bool>() );
+  }
+
   for ( unsigned i = 0; i <= 100; ++i ) {
     {
       int n = rand();
