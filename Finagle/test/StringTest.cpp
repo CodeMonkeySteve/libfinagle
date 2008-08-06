@@ -123,16 +123,6 @@ void StringTest::testConversions( void )
 
     CPPUNIT_ASSERT_EQUAL( s, s.as<String>() );
   }
-
-  {
-    String s( "foo/bar/baaz" );
-
-    FilePath p;
-    CPPUNIT_ASSERT( s.to<>( p ) );
-    CPPUNIT_ASSERT_EQUAL( s, p.path() );
-
-    CPPUNIT_ASSERT_EQUAL( s, s.as<FilePath>().path() );
-  }
 }
 
 

@@ -366,7 +366,7 @@ bool String::to( Type &val ) const
 {
   if ( !std::numeric_limits<Type>::is_specialized ) {
     // Not a numeric type -- attempt assignment.
-    val = *this;
+    val = (Type) *this;
     return true;
   }
 
@@ -389,25 +389,6 @@ bool String::to( Type &val ) const
   val = temp;
   return true;
 }
-
-//! \brief Template partial-instantiation for conversion of strings (i.e. no conversion).
-//! \note always returns \c true.
-template <>
-inline bool String::to<String>( String &val ) const
-{
-  val = *this;
-  return true;
-}
-
-//! \brief Template partial-instantiation for conversion of strings (i.e. no conversion).
-//! \note always returns \c true.
-template <>
-inline bool String::to<std::string>( std::string &val ) const
-{
-  val = *this;
-  return true;
-}
-
 
 //! \brief Template partial-instantiation for conversion of strings (i.e. no conversion).
 //! \note always returns \c true.

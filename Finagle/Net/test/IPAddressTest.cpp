@@ -1,8 +1,8 @@
 /*!
-** \file FilePathTest.cpp
+** \file IPAddressTest.cpp
 ** \author Steve Sloan <steve@finagle.org>
-** \date Sat July 21 2007
-** Copyright (C) 2007 by Steve Sloan
+** \date Tue Aug 5 2008
+** Copyright (C) 2008 by Steve Sloan
 **
 ** This library is free software; you can redistribute it and/or modify it
 ** under the terms of the GNU Lesser General Public License as published
@@ -19,43 +19,31 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
-#include <Finagle/FilePath.h>
+#include <Finagle/Net/IPAddress.h>
 
-using namespace std;
 using namespace Finagle;
 
-class FilePathTest : public CppUnit::TestFixture
+class IPAddressTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( FilePathTest );
+  CPPUNIT_TEST_SUITE( IPAddressTest );
   CPPUNIT_TEST( testConversion );
-  CPPUNIT_TEST( testIsAbsolute );
   CPPUNIT_TEST_SUITE_END();
 
 public:
   void testConversion( void );
-  void testIsAbsolute( void );
 };
 
+CPPUNIT_TEST_SUITE_REGISTRATION( IPAddressTest );
 
-CPPUNIT_TEST_SUITE_REGISTRATION( FilePathTest );
 
-
-void FilePathTest::testConversion( void )
+void IPAddressTest::testConversion( void )
 {
-  String s( "foo/bar/baaz" );
+  String s( IPAddress::local.ipStr() );
 
-  FilePath p;
+  IPAddress p;
   CPPUNIT_ASSERT( s.to<>( p ) );
-  CPPUNIT_ASSERT_EQUAL( s, p.path() );
+  CPPUNIT_ASSERT_EQUAL( s, p.ipStr() );
 
-  CPPUNIT_ASSERT_EQUAL( s, s.as<FilePath>().path() );
+  CPPUNIT_ASSERT_EQUAL( s, s.as<IPAddress>().ipStr() );
 }
-
-void FilePathTest::testIsAbsolute( void )
-{
-  CPPUNIT_ASSERT( FilePath("/foo/bar/baaz").isAbsolute() );
-  CPPUNIT_ASSERT( !FilePath("foo/bar/baaz").isAbsolute() );
-}
-

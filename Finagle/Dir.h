@@ -154,14 +154,6 @@ inline bool Dir::Iterator::operator !=( Iterator const &that ) const
 }
 
 
-//! Template partial-instantiation for conversion of strings (i.e. no conversion).
-//! \note always returns \c true.
-template <> inline bool String::to<Dir>( Dir &val ) const
-{
-  val = *this;
-  return true;
-}
-
 }
 
 #endif

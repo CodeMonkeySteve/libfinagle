@@ -19,26 +19,26 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
 #include <Finagle/Dir.h>
 
-using namespace std;
 using namespace Finagle;
 
 class DirTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( DirTest );
-  CPPUNIT_TEST( testCreateTemp );
+  CPPUNIT_TEST( testConversion );
   CPPUNIT_TEST( testCreate );
+//  CPPUNIT_TEST( testCreateTemp );
   CPPUNIT_TEST_SUITE_END();
 
 public:
   void setUp( void );
   void tearDown( void );
 
-  void testCreateTemp( void );
+  void testConversion( void );
   void testCreate( void );
+//  void testCreateTemp( void );
 
 protected:
   TempDir *_sandbox;
@@ -60,8 +60,16 @@ void DirTest::tearDown( void )
 
 CPPUNIT_TEST_SUITE_REGISTRATION( DirTest );
 
-void DirTest::testCreateTemp( void )
-{}
+void DirTest::testConversion( void )
+{
+  String s( "foo/bar/baaz" );
+
+  Dir d;
+  CPPUNIT_ASSERT( s.to<>( d ) );
+  CPPUNIT_ASSERT_EQUAL( s, d.path() );
+
+  CPPUNIT_ASSERT_EQUAL( s, d.as<Dir>().path() );
+}
 
 void DirTest::testCreate( void )
 {
