@@ -34,7 +34,6 @@
 namespace Finagle {
 
 using namespace sigslot;
-using std::endl;
 
 class AppLog {
 public:

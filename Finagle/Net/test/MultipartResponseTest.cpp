@@ -19,12 +19,10 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <iostream>
 #include <cppunit/extensions/HelperMacros.h>
 #include <Finagle/AppLoop.h>
 #include <Finagle/Net/MultipartResponse.h>
 
-using namespace std;
 using namespace Finagle;
 using namespace Transfer;
 

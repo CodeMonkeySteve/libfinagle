@@ -130,20 +130,20 @@ typename List<Type, Alloc>::Iterator List<Type, Alloc>::insert( Type const &el )
 template <typename Type, typename Alloc>
 typename List<Type, Alloc>::Iterator List<Type, Alloc>::insert( Iterator pos, Type const &el )
 {
-  return List::insert( pos, el );
+  return std::list<Type, Alloc>::insert( pos, el );
 }
 
 template <typename Type, typename Alloc>
 template <class InputIterator>
 void List<Type, Alloc>::insert( Iterator pos, InputIterator first, InputIterator last )
 {
-  List::insert( pos, first, last );
+  std::list<Type, Alloc>::insert( pos, first, last );
 }
 
 template <typename Type, typename Alloc>
 void List<Type, Alloc>::insert( Iterator pos, size_type n, Type const &el )
 {
-  List::insert( pos, n, el );
+  std::list<Type, Alloc>::insert( pos, n, el );
 }
 
 }
