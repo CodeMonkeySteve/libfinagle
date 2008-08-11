@@ -24,8 +24,10 @@
 
 #include <string>
 #include <cstdarg>
+#include <cstring>
 #include <sstream>
 #include <limits>
+#include <typeinfo>
 
 #include <Finagle/Array.h>
 #include <Finagle/List.h>
@@ -38,9 +40,9 @@ public:
   typedef std::string::iterator Iterator;
   typedef std::string::const_iterator ConstIterator;
 
-  typedef List<String> List;
-  typedef Array<String> Array;
-  typedef Set<String> Set;
+  typedef Finagle::List<String> List;
+  typedef Finagle::Array<String> Array;
+  typedef Finagle::Set<String> Set;
 
   class ConversionEx;
 

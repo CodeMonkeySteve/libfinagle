@@ -23,6 +23,8 @@
 #define FINAGLE_RANGE_H
 
 #include <cmath>
+#include <cstdlib>
+#include <limits>
 
 namespace Finagle {
 
