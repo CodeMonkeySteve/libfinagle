@@ -44,15 +44,34 @@ Request::Ptr MultipartResponse::request( Request::Ptr req )
 
   if ( _req )  _req->recvBodyFrag.disconnect( this );
   _req = req;
-  if ( _req )  _req->recvBodyFrag.connect( this, &MultipartResponse::onBodyFrag );
+  if ( _req )  {
+    _req->recvBodyStart.connect( this, &MultipartResponse::onBodyStart );
+    _req->recvBodyFrag.connect( this, &MultipartResponse::onBodyFrag );
+  }
 
   return _req;
 }
 
 
+void MultipartResponse::onBodyStart( String const &type, size_t size )
+{
+  // parse multipart boundary
+  String::Array parts( type.split(";") );
+  for ( String::Array::ConstIterator field = parts.begin(); field != parts.end(); ++field ) {
+    String::Array fieldParts( field->split("=") );
+    if ( fieldParts[0].trim() == "boundary" ) {
+      _boundary = fieldParts[1].trim();
+      break;
+    }
+  }
+
+  if ( _boundary.empty() )
+    throw Transfer::Exception( "Malformed multipart type (missing boundary): \"" + type + "\"" );
+}
+
 void MultipartResponse::onBodyFrag( const char *data, size_t size )
 {
-  static const char delim[] = "\r\n";
+  #define NEWLINE "\r\n"
 
   // anybody listening?
   if ( !recvPart.connected() ) {
@@ -63,22 +82,37 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
 
   // response in progress -- append to part
   if ( _resp ) {
-    size_t remain = _resp->_size - _resp->_body.size();
+    size_t want = 0;
 
-    if ( size < remain ) {
+    if ( _resp->_size )
+      want = _resp->_size - _resp->_body.size();
+    else {
+      // non-standard hack for unsized text parts
+      String body( _resp->_body );
+      body.append( data, size );
+
+      size_t end = body.find( NEWLINE + _boundary + NEWLINE );
+      if ( end != String::npos ) {
+        want = end - _resp->_body.size();
+        _resp->_size = end;
+      } else
+        want = size + 1;
+    }
+
+    if ( want > size ) {
       _resp->onBodyFrag( data, size );
       return;
     }
 
     // last fragment for this part
-    _resp->onBodyFrag( data, remain );
+    _resp->onBodyFrag( data, want );
     recvPart( *_resp );
 
     delete _resp;
     _resp = 0;
 
-    data += remain;
-    size -= remain;
+    data += want;
+    size -= want;
 
     if ( !size )
       return;
@@ -90,27 +124,24 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
 
   // only continue if we have the whole header
   _head.append( data, size );
-  size_t headEnd = _head.find( "\r\n\r\n" );
+  size_t headEnd = _head.find( NEWLINE NEWLINE );
   if ( headEnd == String::npos )
     return;
-  String headers = _head.substr( 0, headEnd + 2 );
-  _head.erase( 0, headEnd + 4 );
+  String headers = _head.substr( 0, headEnd + sizeof(NEWLINE)-1 );
+  _head.erase( 0, headEnd + sizeof(NEWLINE)-1 + sizeof(NEWLINE)-1 );
 
   // drop terminating CRLF from last part
-  if ( headers.find( delim ) == 0 )
-    headers.erase( 0, 2 );
+  if ( headers.find( NEWLINE ) == 0 )
+    headers.erase( 0, sizeof(NEWLINE)-1 );
 
-  // ignore boundary delimeter
-  if ( (headers[0] == '-') && (headers[1] == '-') ) {
-    size_t end = headers.find( delim );
-    if ( end > 2 )
-      headers.erase( 0, end + 2 );
-  }
+  // drop boundary
+  if ( headers.find( _boundary + NEWLINE ) == 0 )
+    headers.erase( 0, _boundary.size() + sizeof(NEWLINE)-1 );
 
   while ( !headers.empty() ) {
-    size_t end = headers.find( delim );
+    size_t end = headers.find( NEWLINE );
     String header = headers.substr( 0, end );
-    headers.erase( 0, end + 2 );
+    headers.erase( 0, end + sizeof(NEWLINE)-1 );
 
     String::size_type i = header.find_first_of( ':' );
     if ( i == String::npos )
@@ -126,8 +157,12 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
       partSize = val.as<size_t>();
   }
 
-  if ( partType.empty() || !partSize )
-    throw Transfer::Exception( "Malformed response: missing content-type or -size" );
+  if ( partType.empty() )
+    throw Transfer::Exception( "Malformed response: missing content-type" );
+
+  // non-standard hack for unsized text parts
+  if ( !partSize && (partType != "text/plain") )
+    throw Transfer::Exception( "Malformed response: missing content-length" );
 
   _resp = new Response( 0, true );
   _resp->onBodyStart( partType, partSize );

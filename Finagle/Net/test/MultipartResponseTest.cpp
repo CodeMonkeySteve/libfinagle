@@ -67,6 +67,7 @@ void MultipartResponseTest::tearDown( void )
 void MultipartResponseTest::testRequest( void )
 {
 //  Request::Ptr req( new Request( URL("http://192.168.10.200/mjpg/1/video.mjpg") ) );
+//  Request::Ptr req( new Request( URL("http://192.168.10.200/axis-cgi/motion/motiondata.cgi") ) );
   Request::Ptr req( new Request( URL("http://home.finagle.org/test/server-push-fast.cgi") ) );
 
   _resp = new MultipartResponse;
@@ -81,12 +82,16 @@ void MultipartResponseTest::testRequest( void )
 
 void MultipartResponseTest::onRecvPart( Response const &resp )
 {
+  CPPUNIT_ASSERT_EQUAL( resp.size(), resp.body().size() );
+
 // CPPUNIT_ASSERT_EQUAL( String("image/jpeg"), resp.type() );
 // CPPUNIT_ASSERT( resp.size() > 10240 );
- CPPUNIT_ASSERT_EQUAL( String("text/plain"), resp.type() );
- CPPUNIT_ASSERT_EQUAL( 35U, resp.size() );
 
- CPPUNIT_ASSERT_EQUAL( resp.size(), resp.body().size() );
+// CPPUNIT_ASSERT_EQUAL( String("text/plain"), resp.type() );
+// CPPUNIT_ASSERT( (resp.size() > 90) && (resp.size() < 100) );
+
+  CPPUNIT_ASSERT_EQUAL( String("text/plain"), resp.type() );
+  CPPUNIT_ASSERT_EQUAL( 35U, resp.size() );
 
   if ( ++_numParts == totParts ) {
     _resp->recvPart.disconnect( this );

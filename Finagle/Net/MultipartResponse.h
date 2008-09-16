@@ -40,10 +40,12 @@ public:
   sigslot::signal1<Response const &> recvPart;
 
 protected:
+  void onBodyStart( String const &type, size_t size );
   void onBodyFrag( const char *data, size_t size );
 
 protected:
   Request::Ptr _req;
+  String _boundary;
   String _head;
   Response *_resp;
 };
