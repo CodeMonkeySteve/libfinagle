@@ -75,7 +75,7 @@ void Response::onBodyFrag( const char *data, size_t size )
   if ( data )
     _body.append( data, size );
 
-  if ( _size && (_body.size() >= _size) ) {
+  if ( _body.size() >= _size ) {
     recvBody( *this );
 
     if ( _req )

@@ -92,11 +92,16 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
       body.append( data, size );
 
       size_t end = body.find( NEWLINE + _boundary + NEWLINE );
-      if ( end != String::npos ) {
-        want = end - _resp->_body.size();
-        _resp->_size = end;
-      } else
-        want = size + 1;
+      if ( end == String::npos ) {
+        // hack to prevent response from completing prematurely
+        _resp->_size = _resp->_body.size() + size + 1;
+        _resp->onBodyFrag( data, size );
+        _resp->_size = 0;
+        return;
+      }
+
+      want = end - _resp->_body.size();
+      _resp->_size = end;
     }
 
     if ( want > size ) {
