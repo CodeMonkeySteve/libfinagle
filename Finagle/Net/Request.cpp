@@ -87,10 +87,12 @@ void Request::perform( void )
 }
 
 
-size_t Request::onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req )
+size_t Request::onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *reqPtr )
 {
   size_t size = membSize * membNum;
   if ( !size )  return 0;
+
+  Request::Ptr req( reqPtr );
 
   if ( req->_firstFrag ) {
     req->_firstFrag = false;
