@@ -112,8 +112,6 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
     // last fragment for this part
     _resp->onBodyFrag( data, want );
     recvPart( *_resp );
-
-    delete _resp;
     _resp = 0;
 
     data += want;

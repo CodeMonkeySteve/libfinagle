@@ -30,8 +30,6 @@ namespace Transfer {
 class MultipartResponse : public sigslot::has_slots<> {
 public:
   MultipartResponse( Request::Ptr req = 0 );
-//  MultipartResponse( URL const &uri );
- ~MultipartResponse( void );
 
   Request::Ptr request( void ) const;
   Request::Ptr request( Request::Ptr req );
@@ -47,7 +45,7 @@ protected:
   Request::Ptr _req;
   String _boundary;
   String _head;
-  Response *_resp;
+  Response::Ptr _resp;
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
@@ -56,12 +54,6 @@ inline MultipartResponse::MultipartResponse( Request::Ptr req )
 : _req( 0 ), _resp( 0 )
 {
   request( req );
-}
-
-inline MultipartResponse::~MultipartResponse( void )
-{
-  if ( _resp )
-    delete _resp;
 }
 
 

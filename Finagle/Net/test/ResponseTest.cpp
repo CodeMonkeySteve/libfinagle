@@ -36,7 +36,6 @@ class ResponseTest : public CppUnit::TestFixture, public sigslot::has_slots<> {
 
 public:
   void setUp( void );
-  void tearDown( void );
 
   void testRequestCreateDestroy( void );
   void testRequest( void );
@@ -46,7 +45,7 @@ protected:
   void onRecvBody( Response const &resp );
 
 protected:
-  Response *_resp;
+  Response::Ptr _resp;
   bool _haveBody;
 };
 
@@ -56,12 +55,6 @@ void ResponseTest::setUp( void )
 {
   _resp = 0;
   _haveBody = false;
-}
-
-void ResponseTest::tearDown( void )
-{
-  if ( _resp )
-    delete _resp;
 }
 
 
@@ -74,17 +67,17 @@ void ResponseTest::testRequestCreateDestroy( void )
 
 void ResponseTest::testRequest( void )
 {
-  Request::Ptr req = new Request( URL("http://www.finagle.org/") );
+  URL url( "http://www.finagle.org/" );
 
-  _resp = new Response( req );
+  _resp = new Response( url );
   _resp->recvBody.connect( this, &ResponseTest::onRecvBody );
-  req->recvBodyStart.connect( this, &ResponseTest::onBodyStart );
-  req->perform();
+  _resp->req()->recvBodyStart.connect( this, &ResponseTest::onBodyStart );
+  _resp->req()->perform();
   AppLoop::exec();
 
   CPPUNIT_ASSERT( _haveBody );
-  CPPUNIT_ASSERT( req->succeeded() );
-  CPPUNIT_ASSERT_EQUAL( 200U, req->result() );
+  CPPUNIT_ASSERT( _resp->req()->succeeded() );
+  CPPUNIT_ASSERT_EQUAL( 200U, _resp->req()->result() );
 }
 
 

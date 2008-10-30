@@ -29,8 +29,9 @@
 namespace Finagle {
 namespace Transfer {
 
-class Response : public sigslot::has_slots<> {
+class Response :  public ReferenceCount, public sigslot::has_slots<> {
 public:
+  typedef ObjectPtr<Response> Ptr;
   typedef Map<NoCase, String> HeaderMap;
 
 public:
