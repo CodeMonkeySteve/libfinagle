@@ -1,5 +1,6 @@
 AC_PREREQ(2.59)
 AC_INIT(configure.in)
+AC_CONFIG_AUX_DIR([build-aux])
 
 FINAGLE_VERSION=esyscmd(./version | head -n 1)
 FINAGLE_RELEASE=esyscmd(./version | tail -n 1)
@@ -8,7 +9,7 @@ AC_SUBST(FINAGLE_RELEASE)
 
 AC_CONFIG_SRCDIR(configure.in)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(libFinagle, $FINAGLE_VERSION-$FINAGLE_RELEASE)
+AM_INIT_AUTOMAKE([libFinagle], $FINAGLE_VERSION-$FINAGLE_RELEASE, [steve@finagle.org])
 
 # Library versioning
 LIB_CURRENT=0

@@ -1,7 +1,8 @@
 #!/bin/sh
 rm -rf configure *.spec autom4te.cache libFinagle-*.tar.bz2
-aclocal
+libtoolize --copy --automake
+aclocal -Ibuild-aux
 autoheader
-automake
+automake --add-missing --copy
 autoconf
 
