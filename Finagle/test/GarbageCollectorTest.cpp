@@ -35,8 +35,7 @@ public:
 
 unsigned Dummy::Instances = 0;
 
-class GarbageCollectorTest : public CppUnit::TestFixture, public has_slots<>
-{
+class GarbageCollectorTest : public CppUnit::TestFixture, public boost::signals::trackable {
   CPPUNIT_TEST_SUITE( GarbageCollectorTest );
   CPPUNIT_TEST( testDummy );
   CPPUNIT_TEST( testAdd );

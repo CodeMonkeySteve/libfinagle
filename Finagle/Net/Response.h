@@ -22,14 +22,13 @@
 #ifndef FINAGLE_NET_RESPONSE_H
 #define FINAGLE_NET_RESPONSE_H
 
-#include <sigslot/sigslot.h>
 #include <Finagle/Map.h>
 #include <Finagle/Net/Request.h>
 
 namespace Finagle {
 namespace Transfer {
 
-class Response :  public ReferenceCount, public sigslot::has_slots<> {
+class Response :  public ReferenceCount, public boost::signals::trackable {
 public:
   typedef ObjectPtr<Response> Ptr;
   typedef Map<NoCase, String> HeaderMap;
@@ -45,7 +44,7 @@ public:
   String const &body( void ) const;
 
 public:
-  sigslot::signal1<Response const &> recvBody;
+  boost::signal< void( Response const & ) > recvBody;
 
 protected:
   void init( void );

@@ -22,16 +22,13 @@
 #ifndef FINAGLE_APPLOOP_H
 #define FINAGLE_APPLOOP_H
 
+#include <boost/signals.hpp>
 #include <Finagle/DateTime.h>
-#include <sigslot/sigslot.h>
 
 namespace Finagle {
-
-using namespace sigslot;
-
 namespace AppLoop {
 
-  extern signal0<> idle;
+  extern boost::signal< void() > idle;
 
   int  exec( void );
   void process( Time MaxTime = 0.0 );

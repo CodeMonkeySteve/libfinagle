@@ -27,7 +27,7 @@ using namespace std;
 using namespace Finagle;
 using namespace Transfer;
 
-class RequestTest : public CppUnit::TestFixture, public sigslot::has_slots<> {
+class RequestTest : public CppUnit::TestFixture, public boost::signals::trackable {
   CPPUNIT_TEST_SUITE( RequestTest );
   CPPUNIT_TEST( testCreateDestroy );
   CPPUNIT_TEST( testFetch );
@@ -73,8 +73,8 @@ void RequestTest::testFetch( void )
   URL url( "http://www.finagle.org/" );
 
   _req = new Request( url );
-  _req->recvBodyStart.connect( this, &RequestTest::onBodyStart );
-  _req->recvBodyFrag.connect( this, &RequestTest::onBodyFrag );
+  _req->recvBodyStart.connect( boost::bind( &RequestTest::onBodyStart, this, _1, _2 ) );
+   _req->recvBodyFrag.connect( boost::bind( &RequestTest::onBodyFrag,  this, _1, _2 ) );
   _req->perform();
   AppLoop::exec();
 

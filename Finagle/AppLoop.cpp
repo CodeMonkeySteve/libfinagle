@@ -47,7 +47,7 @@ namespace AppLoop {
   Time ProcessTime = 0.03; // Suitable for 30fps video app
 
   //! Emitted when there are no pending alarms are file descriptors.
-  signal0<> idle;
+  boost::signal< void() > idle;
 
   bool Exit = false;
   int  ExitCode = 0;

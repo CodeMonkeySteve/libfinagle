@@ -28,7 +28,7 @@ namespace Finagle {
 
 //! Template class to provide a server-side network socket
 template <typename SockType>
-class ServerSocket : public SockType, public has_slots<> {
+class ServerSocket : public SockType, public boost::signals::trackable {
 public:
   typedef ObjectPtr<ServerSocket<SockType> > Ptr;
   typedef typename SockType::Addr Addr;
@@ -39,7 +39,7 @@ public:
  ~ServerSocket( void ) {}
 
 public:
-  Finagle::signal1<Finagle::Socket::Ptr> connected;
+  boost::signal< void( Finagle::Socket::Ptr ) > connected;
 
 protected:
   void onReadable( void );

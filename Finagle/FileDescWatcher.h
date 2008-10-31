@@ -22,14 +22,13 @@
 #ifndef FINAGLE_FILEDESCWATCHER_H
 #define FINAGLE_FILEDESCWATCHER_H
 
+#include <boost/signals.hpp>
 #include <Finagle/ObjectPtr.h>
 #include <Finagle/Set.h>
 #include <Finagle/Singleton.h>
-#include <sigslot/sigslot.h>
 
 namespace Finagle {
 
-using namespace sigslot;
 namespace AppLoop {
   extern void process( Time );
 }
@@ -67,7 +66,7 @@ public:
   void fd( int fileDesc );
 
 public:
-  mutable signal0<> readable, writable, exception;
+  mutable boost::signal<void ()> readable, writable, exception;
 
 protected:
   int  fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const;

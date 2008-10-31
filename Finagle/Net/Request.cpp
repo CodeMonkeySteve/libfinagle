@@ -97,7 +97,7 @@ size_t Request::onBodyFrag( const char *data, size_t membSize, size_t membNum, R
   if ( req->_firstFrag ) {
     req->_firstFrag = false;
 
-    if ( req->recvBodyStart.connected() ) {
+    if ( !req->recvBodyStart.empty() ) {
       char *type;
       double size;
 
@@ -108,5 +108,5 @@ size_t Request::onBodyFrag( const char *data, size_t membSize, size_t membNum, R
   }
 
   req->recvBodyFrag( data, size );
-  return req->recvBodyFrag.connected() ? size : 0;
+  return req->recvBodyFrag.empty() ? 0 : size;
 }

@@ -22,6 +22,8 @@
 #ifndef FINAGLE_NET_TRANSFER_H
 #define FINAGLE_NET_TRANSFER_H
 
+#include <boost/bind.hpp>
+#include <boost/signals.hpp>
 #include <Finagle/Initializer.h>
 #include <Finagle/Exception.h>
 #include <Finagle/FileDescWatcher.h>
@@ -33,7 +35,7 @@ class Request;
 
 typedef Finagle::Exception Exception;
 
-class Processor : public FileDescWatchable, public has_slots<> {
+class Processor : public FileDescWatchable {
 public:
   Processor( void );
  ~Processor( void );

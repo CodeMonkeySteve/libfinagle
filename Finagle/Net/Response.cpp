@@ -54,9 +54,9 @@ void Response::init( void )
   if ( !_req )
     return;
 
-  _req->recvBodyStart.connect( this, &Response::onBodyStart );
+  _req->recvBodyStart.connect( boost::bind( &Response::onBodyStart, this, _1, _2 ) );
   if ( _saveBody )
-    _req->recvBodyFrag.connect( this, &Response::onBodyFrag );
+    _req->recvBodyFrag.connect( boost::bind( &Response::onBodyFrag, this, _1, _2 ) );
 }
 
 

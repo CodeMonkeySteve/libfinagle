@@ -45,8 +45,8 @@ Request::Ptr MultipartResponse::request( Request::Ptr req )
   if ( _req )  _req->recvBodyFrag.disconnect( this );
   _req = req;
   if ( _req )  {
-    _req->recvBodyStart.connect( this, &MultipartResponse::onBodyStart );
-    _req->recvBodyFrag.connect( this, &MultipartResponse::onBodyFrag );
+    _req->recvBodyStart.connect( boost::bind( &MultipartResponse::onBodyStart, this, _1, _2 ) );
+     _req->recvBodyFrag.connect( boost::bind( &MultipartResponse::onBodyFrag, this, _1, _2 ) );
   }
 
   return _req;
@@ -74,7 +74,7 @@ void MultipartResponse::onBodyFrag( const char *data, size_t size )
   #define NEWLINE "\r\n"
 
   // anybody listening?
-  if ( !recvPart.connected() ) {
+  if ( recvPart.empty() ) {
     // nope -- abort
     _req->recvBodyFrag.disconnect( this );
     return;

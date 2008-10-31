@@ -25,7 +25,6 @@
 #include <Finagle/Exception.h>
 #include <Finagle/Net/URL.h>
 #include <Finagle/Net/Transfer.h>
-#include <sigslot/sigslot.h>
 
 namespace Finagle {
 namespace Transfer {
@@ -49,8 +48,8 @@ public:
   void perform( void );
 
 public:
-  sigslot::signal2<String const &, size_t> recvBodyStart; //!< content type, size
-  sigslot::signal2<const char *, size_t>   recvBodyFrag;  //!< data, size
+  boost::signal< void( String const &, size_t ) > recvBodyStart; //!< content type, size
+  boost::signal< void( const char *, size_t ) >   recvBodyFrag;  //!< data, size
 
 protected:
   static size_t onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req );

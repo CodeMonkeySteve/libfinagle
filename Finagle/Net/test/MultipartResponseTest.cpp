@@ -26,7 +26,7 @@
 using namespace Finagle;
 using namespace Transfer;
 
-class MultipartResponseTest : public CppUnit::TestFixture, public sigslot::has_slots<> {
+class MultipartResponseTest : public CppUnit::TestFixture, public boost::signals::trackable {
   CPPUNIT_TEST_SUITE( MultipartResponseTest );
   CPPUNIT_TEST( testRequest );
   CPPUNIT_TEST_SUITE_END();
@@ -72,7 +72,7 @@ void MultipartResponseTest::testRequest( void )
 
   _resp = new MultipartResponse;
   _resp->request( req );
-  _resp->recvPart.connect( this, &MultipartResponseTest::onRecvPart );
+  _resp->recvPart.connect( boost::bind( &MultipartResponseTest::onRecvPart, this, _1 ) );
 
   req->perform();
   AppLoop::exec();
@@ -94,7 +94,7 @@ void MultipartResponseTest::onRecvPart( Response const &resp )
   CPPUNIT_ASSERT_EQUAL( 35U, resp.size() );
 
   if ( ++_numParts == totParts ) {
-    _resp->recvPart.disconnect( this );
+    _resp->recvPart.disconnect_all_slots();
     AppLoop::exit( 0 );
   }
 }

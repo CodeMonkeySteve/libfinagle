@@ -22,12 +22,10 @@
 #ifndef FINAGLE_RECTANGLE_H
 #define FINAGLE_RECTANGLE_H
 
-#include <sigslot/sigslot.h>
+#include <boost/signals.hpp>
 #include <Util.h>
 
 namespace Finagle {
-
-using namespace sigslot;
 
 class Rectangle {
 public:
@@ -35,6 +33,7 @@ public:
 
 public:
   Rectangle( double left = 0.0, double top = 0.0, double right = 1.0, double bottom = 1.0 );
+  Rectangle( Rectangle const &that );
 
   Rectangle &operator=( Rectangle const &that );
 
@@ -71,7 +70,7 @@ public:  // Mutators
 
 public:
   //! Emitted when the rectangles coordinates have changed
-  signal0<> Changed;
+  boost::signal< void() > Changed;
 
 protected:
   double _left, _top, _right, _bottom;
@@ -81,6 +80,10 @@ protected:
 
 inline Rectangle::Rectangle( double left, double top, double right, double bottom )
 : _left( left ), _top( top ), _right( right ), _bottom( bottom )
+{}
+
+inline Rectangle::Rectangle( Rectangle const &that )
+: _left( that._left ), _top( that._top ), _right( that._right ), _bottom( that._bottom )
 {}
 
 inline Rectangle &Rectangle::operator=( Rectangle const &that )

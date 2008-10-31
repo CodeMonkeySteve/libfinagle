@@ -1,9 +1,11 @@
 METASOURCES = AUTO
+INCLUDES = -I$(top_srcdir) 
 SUBDIRS = XML Net test
-INCLUDES = -I$(top_srcdir) $(PTHREAD_CFLAGS) $(expat_CFLAGS) $(pcre_CFLAGS) $(openssl_CFLAGS) $(uuid_CFLAGS) $(z_CFLAGS)
-AM_CXXFLAGS = -Wall
 
 lib_LTLIBRARIES = libFinagle.la
+
+libFinagle_CPPFLAGS = $(BOOST_BIND) $(PTHREAD_CFLAGS) $(expat_CFLAGS) $(pcre_CFLAGS) $(openssl_CFLAGS) $(uuid_CFLAGS) $(z_CFLAGS)
+libFinagle_CXXFLAGS = -Wall
 
 libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp Compress.cpp DateTime.cpp \
 	DateTimeMask.cpp Dir.cpp File.cpp FileDescWatcher.cpp FilePath.cpp MD5.cpp \
@@ -13,7 +15,7 @@ libFinagle_la_SOURCES = AppLog.cpp AppLoop.cpp Compress.cpp DateTime.cpp \
 
 libFinagle_la_LDFLAGS = -no-undefined -version-info @LIB_CURRENT@:@LIB_REVISION@:@LIB_AGE@ -release @FINAGLE_VERSION@
 libFinagle_la_LIBADD = $(top_builddir)/Finagle/XML/libXML.la \
-	$(top_builddir)/Finagle/Net/libNet.la $(PTHREAD_LIBS) $(expat_LIBS) $(curl_LIBS) $(pcre_LIBS) $(openssl_LIBS) \
+	$(top_builddir)/Finagle/Net/libNet.la $(BOOST_SIGNALS_LIBS) $(PTHREAD_LIBS) $(expat_LIBS) $(curl_LIBS) $(pcre_LIBS) $(openssl_LIBS) \
 	$(uuid_LIBS) $(z_LIBS)
 
 library_includedir=$(includedir)/$(PACKAGE)-$(VERSION)/Finagle

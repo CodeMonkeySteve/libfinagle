@@ -27,7 +27,7 @@ using namespace std;
 using namespace Finagle;
 using namespace Transfer;
 
-class ResponseTest : public CppUnit::TestFixture, public sigslot::has_slots<> {
+class ResponseTest : public CppUnit::TestFixture, public boost::signals::trackable {
   CPPUNIT_TEST_SUITE( ResponseTest );
   CPPUNIT_TEST( testCreateDestroy );
   CPPUNIT_TEST_SUITE_END();

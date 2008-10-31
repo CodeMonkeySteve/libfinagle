@@ -22,12 +22,10 @@
 #ifndef FINAGLE_PRIORITYLOCK_H
 #define FINAGLE_PRIORITYLOCK_H
 
+#include <boost/signals.hpp>
 #include <Finagle/List.h>
-#include <sigslot/sigslot.h>
 
 namespace Finagle {
-
-using namespace sigslot;
 
 class PriorityLock;
 
@@ -66,10 +64,10 @@ public:
 
 public:
   //! emitted when this lock has (re-)acquired the mutex
-  signal0<> GainLock;
+  boost::signal< void() > GainLock;
 
   //! emitted when this lock has lost the mutex to a higher-priority lock
-  signal0<> LoseLock;
+  boost::signal< void() > LoseLock;
 
 protected:
   PriorityMutex *_mutex;

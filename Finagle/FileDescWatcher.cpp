@@ -59,7 +59,7 @@ int FileDescWatcher::fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs )
 {
   if ( _fd == -1 )  return -1;
 
-  bool r = readable.connected(), w = writable.connected(), e = exception.connected();
+  bool r = !readable.empty(), w = !writable.empty(), e = !exception.empty();
   if ( !(r || w || e) )  return -1;
 
   if ( r )  FD_SET( _fd, &readFDs );

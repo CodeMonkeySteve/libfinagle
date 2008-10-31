@@ -22,16 +22,17 @@
 #ifndef FINAGLE_GARBAGECOLLECTOR_H
 #define FINAGLE_GARBAGECOLLECTOR_H
 
+#include <boost/bind.hpp>
+#include <boost/signals.hpp>
 #include <Finagle/AppLoop.h>
 #include <Finagle/List.h>
 #include <Finagle/ObjectPtr.h>
-#include <sigslot/sigslot.h>
 
 namespace Finagle {
 
 //!\brief Provides garbage collection for ObjectPtrs.
 template <typename Class>
-class GarbageCollector : public has_slots<> {
+class GarbageCollector : public boost::signals::trackable {
 public:
   GarbageCollector( void );
  ~GarbageCollector( void );
@@ -40,7 +41,7 @@ public:
   void collect( void );
 
 public:
-  sigslot::signal1<ObjectPtr<Class> > onCollect;
+  boost::signal< void( ObjectPtr<Class> ) > onCollect;
 
 protected:
   List<ObjectPtr<Class> > _trash;
@@ -64,7 +65,7 @@ GarbageCollector<Class> &GarbageCollector<Class>::operator +=( ObjectPtr<Class> 
   _trash.push_back( obj );
 
   if ( _trash.size() == 1 )
-    AppLoop::idle.connect( this, &GarbageCollector<Class>::collect );
+    AppLoop::idle.connect( boost::bind( &GarbageCollector<Class>::collect, this ) );
 
   return *this;
 }

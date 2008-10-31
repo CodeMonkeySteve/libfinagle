@@ -32,7 +32,7 @@
 
 namespace Finagle {
 
-class Timer : public ReferenceCount, public signal0<> {
+class Timer : public ReferenceCount, public boost::signal< void() > {
 public:
   typedef ObjectPtr<Timer> Ptr;
 

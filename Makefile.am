@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign 1.4
 
-SUBDIRS = sigslot Finagle
+SUBDIRS = Finagle
 
 # Add pkg-config file
 pkgconfigdir = $(libdir)/pkgconfig

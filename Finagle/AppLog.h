@@ -24,16 +24,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <boost/signals.hpp>
 #include <Finagle/AppLogEntry.h>
 #include <Finagle/FilePath.h>
 #include <Finagle/Map.h>
 #include <Finagle/Mutex.h>
 #include <Finagle/Singleton.h>
-#include <sigslot/sigslot.h>
 
 namespace Finagle {
-
-using namespace sigslot;
 
 class AppLog {
 public:
@@ -44,10 +42,10 @@ public:
   static String msgToText( XML::Element const &msg );
 
 public:
-  signal1<XML::Element const &> Msg;
+  boost::signal< void( XML::Element const & ) > Msg;
 
 public:
-  class Logger : public has_slots<>, public ReferenceCount {
+  class Logger : public boost::signals::trackable, public ReferenceCount {
   public:
     typedef ObjectPtr<Logger> Ptr;
     typedef ObjectPtrIterator<List<Logger::Ptr>::Iterator> Iterator;

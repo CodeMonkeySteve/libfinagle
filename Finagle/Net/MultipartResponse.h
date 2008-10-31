@@ -27,7 +27,7 @@
 namespace Finagle {
 namespace Transfer {
 
-class MultipartResponse : public sigslot::has_slots<> {
+class MultipartResponse : public boost::signals::trackable {
 public:
   MultipartResponse( Request::Ptr req = 0 );
 
@@ -35,7 +35,7 @@ public:
   Request::Ptr request( Request::Ptr req );
 
 public:
-  sigslot::signal1<Response const &> recvPart;
+  boost::signal< void( Response const & )> recvPart;
 
 protected:
   void onBodyStart( String const &type, size_t size );
