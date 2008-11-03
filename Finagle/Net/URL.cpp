@@ -78,7 +78,6 @@ URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, Str
       url.append( URL::escape(q.key()) + "=" + URL::escape(q.val()) );
     }
   }
-
   if ( fragment ) {
     url.append( 1, '#' );
     url.append( URL::escape(fragment) );

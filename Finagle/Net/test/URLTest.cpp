@@ -26,17 +26,25 @@ using namespace Finagle;
 
 class URLTest : public CppUnit::TestFixture {
   CPPUNIT_TEST_SUITE( URLTest );
-  CPPUNIT_TEST( testHTTP );
+  CPPUNIT_TEST( testHTTPSimple );
+  CPPUNIT_TEST( testHTTPFull );
   CPPUNIT_TEST_SUITE_END();
 
 public:
-  void testHTTP( void );
+  void testHTTPSimple( void );
+  void testHTTPFull( void );
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( URLTest );
 
 
-void URLTest::testHTTP( void )
+void URLTest::testHTTPSimple( void )
+{
+  CPPUNIT_ASSERT_EQUAL( URL("http://hostname:80/foo"),
+                        URL::HTTP( String(), IPAddress("hostname"), 80, "foo" ) );
+}
+
+void URLTest::testHTTPFull( void )
 {
   Map<String, String> query;
   query["one"] = "1!";
