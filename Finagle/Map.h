@@ -24,6 +24,7 @@
 
 #include <map>
 #include <Finagle/MapIterator.h>
+#include <Finagle/ObjectPtr.h>
 
 namespace Finagle {
 
@@ -49,6 +50,20 @@ public:
   DataType &operator[]( KeyType const &Key );
   DataType &insert( KeyType const &Key, DataType const &Data );
   DataType &insert( KeyType const &Key );
+};
+
+//! \brief Wrapper for the STL \c map class, using ObjectPtr values
+
+template <typename KeyType, typename DataType, typename CompareType = std::less<KeyType>, typename AllocType = std::allocator<std::pair<const KeyType, DataType> > >
+class ObjectMap : public Map<KeyType, ObjectPtr<DataType>, CompareType, AllocType> {
+public:
+  typedef ObjectPtrConstIterator<typename Map<KeyType, ObjectPtr<DataType>, CompareType, AllocType>::ConstIterator> ConstIterator;
+  typedef ObjectPtrIterator<typename Map<KeyType, ObjectPtr<DataType>, CompareType, AllocType>::Iterator> Iterator;
+
+  ObjectMap( void );
+
+  ObjectPtr<DataType> insert( KeyType const &Key, DataType const &Data );
+  ObjectPtr<DataType> insert( KeyType const &Key );
 };
 
 // INLINE/TEMPLATE IMPLEMENTATION *********************************************
@@ -111,6 +126,24 @@ template <typename KeyType, typename DataType, typename CompareType, typename Al
 inline DataType &Map<KeyType, DataType, CompareType, AllocType>::insert( KeyType const &Key )
 {
   return insert( Key, DataType() );
+}
+
+
+template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
+inline ObjectMap<KeyType, DataType, CompareType, AllocType>::ObjectMap( void )
+{}
+
+
+template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
+inline ObjectPtr<DataType> ObjectMap<KeyType, DataType, CompareType, AllocType>::insert( KeyType const &Key, DataType const &Data )
+{
+  return Map<KeyType, DataType, CompareType, AllocType>::insert( std::pair<KeyType, DataType>( Key, Data ) ).first->second;
+}
+
+template <typename KeyType, typename DataType, typename CompareType, typename AllocType>
+inline ObjectPtr<DataType> ObjectMap<KeyType, DataType, CompareType, AllocType>::insert( KeyType const &Key )
+{
+  return insert( Key, new DataType() );
 }
 
 }
