@@ -43,10 +43,15 @@ Request::Ptr MultipartResponse::request( Request::Ptr req )
     return _req;
 
   if ( _req )  _req->recvBodyFrag.disconnect( this );
+
   _req = req;
+  _boundary.clear();
+  _head.clear();
+  _resp = 0;
+
   if ( _req )  {
     _req->recvBodyStart.connect( boost::bind( &MultipartResponse::onBodyStart, this, _1, _2 ) );
-     _req->recvBodyFrag.connect( boost::bind( &MultipartResponse::onBodyFrag, this, _1, _2 ) );
+    _req->recvBodyFrag. connect( boost::bind( &MultipartResponse::onBodyFrag,  this, _1, _2 ) );
   }
 
   return _req;
