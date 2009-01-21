@@ -65,6 +65,7 @@ rm -rf %{buildroot}
 Summary: Static libraries and header files for libFinagle app development.
 Group: Development/Libraries
 Requires: %name = %version-%release
+Requires: boost-devel
 
 %description devel
 This package contains the static libraries and headers necessary for developing
