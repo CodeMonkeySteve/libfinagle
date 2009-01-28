@@ -54,11 +54,11 @@ public:
   String( const std::string &str, size_type pos = 0, size_type len = npos );
   String( String const &str, size_type pos = 0, size_type len = npos );
   String( unsigned count, char ch );
-  String( unsigned num );
-  String( int num );
-  String( unsigned long num );
-  String( long num );
-  String( double num );
+  explicit String( unsigned num );
+  explicit String( int num );
+  explicit String( unsigned long num );
+  explicit String( long num );
+  explicit String( double num );
 
   String &operator=( const String &that );
   operator const char *( void ) const;
