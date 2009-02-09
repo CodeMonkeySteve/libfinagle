@@ -74,7 +74,7 @@ URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, Str
     ++q;
 
     for ( ; q != query.end(); ++q ) {
-      url.append( 1, ';' );
+      url.append( 1, '&' );
       url.append( URL::escape(q.key()) + "=" + URL::escape(q.val()) );
     }
   }
