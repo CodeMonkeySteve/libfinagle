@@ -36,7 +36,7 @@ public:
   static String escape( const String &str );
 
   typedef Map<String, String> ParamMap;
-  static URL HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, ParamMap const &query = ParamMap(), String const &fragment = String() );
+  static URL HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, ParamMap const &query = ParamMap(), String const &fragment = String(), char delim = ';' );
 };
 
 // INLINE IMPLEMENTATION ******************************************************

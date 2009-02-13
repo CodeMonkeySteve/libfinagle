@@ -50,5 +50,5 @@ void URLTest::testHTTPFull( void )
   query["one"] = "1!";
   query["tw()"] = "2";
   CPPUNIT_ASSERT_EQUAL( URL("http://user:password@hostname:42/foo/bar?one=1%21&tw%28%29=2#fr%40gment"),
-                        URL::HTTP( "user:password", IPAddress("hostname"), 42, "foo/bar", query, "fr@gment" ) );
+                        URL::HTTP( "user:password", IPAddress("hostname"), 42, "foo/bar", query, "fr@gment", '&' ) );
 }

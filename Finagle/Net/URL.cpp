@@ -46,7 +46,7 @@ String URL::escape( String const &str )
   return out;
 }
 
-URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, Map<String, String> const &query, String const &fragment )
+URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, Map<String, String> const &query, String const &fragment, char delim )
 {
   URL url( "http", "//" );
 
@@ -74,7 +74,7 @@ URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, Str
     ++q;
 
     for ( ; q != query.end(); ++q ) {
-      url.append( 1, '&' );
+      url.append( 1, delim );
       url.append( URL::escape(q.key()) + "=" + URL::escape(q.val()) );
     }
   }
