@@ -22,6 +22,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <Finagle/Net/URL.h>
 
+using namespace std;
 using namespace Finagle;
 
 class URLTest : public CppUnit::TestFixture {
@@ -40,15 +41,16 @@ CPPUNIT_TEST_SUITE_REGISTRATION( URLTest );
 
 void URLTest::testHTTPSimple( void )
 {
-  CPPUNIT_ASSERT_EQUAL( URL("http://hostname:80/foo"),
-                        URL::HTTP( String(), IPAddress("hostname"), 80, "foo" ) );
+  CPPUNIT_ASSERT_EQUAL( (string) "http://hostname:80/foo",
+                        (string const &) URL().host("hostname").port(80).path("foo") );
 }
 
 void URLTest::testHTTPFull( void )
 {
-  Map<String, String> query;
+  URL::ParamMap query;
   query["one"] = "1!";
   query["tw()"] = "2";
-  CPPUNIT_ASSERT_EQUAL( URL("http://user:password@hostname:42/foo/bar?one=1%21&tw%28%29=2#fr%40gment"),
-                        URL::HTTP( "user:password", IPAddress("hostname"), 42, "foo/bar", query, "fr@gment", '&' ) );
+  CPPUNIT_ASSERT_EQUAL( (string) "http://user:password@hostname:42/foo/bar?one=1%21&tw%28%29=2#fr%40gment",
+                        (string const &) URL().host("hostname").username("user").password("password").port(42)
+                                              .path("foo/bar").query(query).fragment("fr@gment").delim('&') );
 }

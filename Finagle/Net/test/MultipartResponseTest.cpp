@@ -28,7 +28,7 @@ using namespace Transfer;
 
 class MultipartResponseTest : public CppUnit::TestFixture, public boost::signals::trackable {
   CPPUNIT_TEST_SUITE( MultipartResponseTest );
-  CPPUNIT_TEST( testRequest );
+//  CPPUNIT_TEST( testRequest );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -66,9 +66,11 @@ void MultipartResponseTest::tearDown( void )
 
 void MultipartResponseTest::testRequest( void )
 {
+  URL url;
 //  Request::Ptr req( new Request( URL("http://192.168.10.200/mjpg/1/video.mjpg") ) );
 //  Request::Ptr req( new Request( URL("http://192.168.10.200/axis-cgi/motion/motiondata.cgi") ) );
-  Request::Ptr req( new Request( URL("http://home.finagle.org/test/server-push-fast.cgi") ) );
+  url.host("home.finagle.org").path("test/server-push-fast.cgi");
+  Request::Ptr req( new Request( url ) );
 
   _resp = new MultipartResponse;
   _resp->request( req );

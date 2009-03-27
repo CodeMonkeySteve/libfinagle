@@ -19,69 +19,79 @@
 ** at http://www.gnu.org/copyleft/lesser.html .
 */
 
-#include <cctype>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 #include "URL.h"
 
 using namespace std;
+using namespace boost;
 using namespace Finagle;
 
 /*!
 ** \namespace Finagle::URL
-** \brief Uniform Resource Locator
+** \brief HTTP Uniform Resource Locator
 */
 
-String URL::escape( String const &str )
+string URL::escape( string const &str )
 {
-  String out;
-  for ( String::ConstIterator ch = str.begin(); ch != str.end(); ++ch ) {
-    if ( isalnum( *ch ) || (*ch == '_') || (*ch == '.') || (*ch == '-') )
-      out.append( 1, *ch );
+  ostringstream out;
+  for ( string::const_iterator ch = str.begin(); ch != str.end(); ++ch ) {
+    if ( is_alnum()( *ch ) || (*ch == '_') || (*ch == '.') || (*ch == '-') )
+      out << *ch;
     else
     if ( *ch == ' ' )
-      out.append( 1, '+' );
+      out << '+';
     else
-      out.append( String::format( "%%%02X", (char) *ch ) );
+      out << '%' << boost::format("%02X") % unsigned(*ch);
   }
 
-  return out;
+  return out.str();
 }
 
-URL URL::HTTP( String const &userInfo, IPAddress const &host, unsigned port, String const &path, Map<String, String> const &query, String const &fragment, char delim )
+
+std::string const &URL::request( void ) const
 {
-  URL url( "http", "//" );
+  if ( !_req.empty() )
+    return _req;
 
-  if ( userInfo ) {
-    url.append( userInfo );
-    url.append( 1, '@' );
+  ostringstream req;
+
+  if ( _path[0] != '/' )  req << '/';
+  req << _path;
+
+  if ( !_params.empty() ) {
+    ParamMap::const_iterator p = _params.begin();
+    req << '?' << URL::escape(p->first) << '=' << URL::escape(p->second);
+
+    for ( ++p; p != _params.end(); ++p )
+      req << _delim << URL::escape(p->first) << '=' << URL::escape(p->second);
+  }
+  if ( !_frag.empty() )
+    req << "#" << URL::escape(_frag);
+
+  _req = req.str();
+  return _req;
+}
+
+URL::operator string const &( void ) const
+{
+  if ( !_url.empty() && !_req.empty() )
+    return _url;
+
+  ostringstream url;
+  url << "http://";
+
+  if ( !_user.empty() ) {
+    url << _user;
+    if ( !_pass.empty() )  url << ':' << _pass;
+    url << '@';
   }
 
-  url.append( host.name() );
+  url << _host;
+  if ( _port )  url << ':' << lexical_cast<unsigned>(_port);
+  url << request();
 
-  if ( port ) {
-    url.append( 1, ':' );
-    url.append( String(port) );
-  }
-
-  if ( path[0] != '/' )
-    url.append( 1, '/' );
-
-  url.append( path );
-
-  if ( !query.empty() ) {
-    Map<String, String>::ConstIterator q = query.begin();
-    url.append( 1, '?' );
-    url.append( URL::escape(q.key()) + "=" + URL::escape(q.val()) );
-    ++q;
-
-    for ( ; q != query.end(); ++q ) {
-      url.append( 1, delim );
-      url.append( URL::escape(q.key()) + "=" + URL::escape(q.val()) );
-    }
-  }
-  if ( fragment ) {
-    url.append( 1, '#' );
-    url.append( URL::escape(fragment) );
-  }
-
-  return url;
+  _url = url.str();
+  return _url;
 }

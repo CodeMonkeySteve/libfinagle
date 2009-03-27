@@ -51,7 +51,7 @@ Request::Request( URL const &url )
   if ( !_req )
     throw Transfer::Exception( "Unable to create cURL easy instance" );
 
-  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_URL, _url.c_str() ) );
+  CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_URL, ((string const &) _url).c_str() ) );
 
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_WRITEFUNCTION,  onBodyFrag ) );
   CURL_ASSERT( curl_easy_setopt( _req, CURLOPT_WRITEDATA, (void *) this ) );
