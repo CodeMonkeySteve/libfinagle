@@ -100,6 +100,7 @@ size_t Request::onBodyFrag( const char *data, size_t membSize, size_t membNum, R
 
       CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_TYPE, &type ) );
       CURL_ASSERT( curl_easy_getinfo( req->_req, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &size ) );
+      if ( size < 0.0 )  size = 0;
       req->recvBodyStart( (String) type, (size_t) size );
     }
   }
