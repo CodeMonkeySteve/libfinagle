@@ -51,7 +51,7 @@ protected:
 
 protected:
   void *_reqs;
-  std::set< void * > _reqSet;
+  std::map< void *, Request * > _reqMap;
 };
 
 static Finagle::Singleton<Processor> Proc;

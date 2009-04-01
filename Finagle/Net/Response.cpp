@@ -72,12 +72,6 @@ void Response::onBodyFrag( const char *data, size_t size )
 {
   if ( !data || !size )  return;
   _body.append( data, size );
-
-  if ( !_size && (_type == "text/plain") ) {
-    // stupid, ugly hack for unsized text parts
-    if ( *(_body.end() - 1) == '\n' )
-      onBodyDone();
-  }
 }
 
 

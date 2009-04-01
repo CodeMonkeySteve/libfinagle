@@ -25,8 +25,6 @@
 #include "Transfer.h"
 #include "Request.h"
 
-#include <iostream>
-
 using namespace std;
 using namespace Finagle;
 using namespace Transfer;

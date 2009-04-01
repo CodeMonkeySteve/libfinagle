@@ -40,7 +40,7 @@ public:
   void testFetch( void );
 
 protected:
-  void onBody( Response const &resp );
+  void onBody( void );
 
 protected:
   Response::Ptr _resp;
@@ -68,13 +68,13 @@ void ResponseTest::testFetch( void )
   url.host("testcam").username("root").password("dev").path("axis-cgi/view/param.cgi").param("action", "list");
 
   _resp = new Response( url );
-  _resp->recvBody.connect( boost::bind( &ResponseTest::onBody, this, _1 ) );
+  _resp->recvBody.connect( boost::bind( &ResponseTest::onBody, this ) );
   _resp->request()->perform();
   AppLoop::exec();
 }
 
 
-void ResponseTest::onBody( Response const &resp )
+void ResponseTest::onBody( void )
 {
    CPPUNIT_ASSERT( _resp->request()->succeeded() );
    CPPUNIT_ASSERT_EQUAL( 200U, _resp->request()->result() );
