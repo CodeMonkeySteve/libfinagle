@@ -37,7 +37,8 @@ public:
   Response( Request::Ptr req, bool saveBody = true );
   Response( URL const &uri );
 
-  Request::Ptr request( void );
+  Request::Ptr request( void ) const;
+  void request( Request::Ptr const &req );
 
   String const &type( void ) const;
   size_t size( void ) const;
@@ -66,7 +67,7 @@ protected:
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
-inline Request::Ptr Response::request( void )
+inline Request::Ptr Response::request( void ) const
 {
   return _req;
 }

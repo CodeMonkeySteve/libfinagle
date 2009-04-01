@@ -46,14 +46,22 @@ Response::Response( URL const &uri )
   init();
 }
 
+void Response::request( Request::Ptr const &req )
+{
+  if ( _req ) {
+    _req->recvBodyStart.disconnect( this );
+    _req->recvBodyFrag .disconnect( this );
+    _req->recvBodyDone .disconnect( this );
+  }
+  _req = req;
+  init();
+}
+
 void Response::init( void )
 {
-  if ( !_req )
-    return;
-
+  if ( !_req )  return;
   _req->recvBodyStart.connect( boost::bind( &Response::onBodyStart, this, _1, _2 ) );
   _req->recvBodyDone .connect( boost::bind( &Response::onBodyDone, this ) );
-
   if ( _saveBody )  _req->recvBodyFrag.connect( boost::bind( &Response::onBodyFrag, this, _1, _2 ) );
 }
 
@@ -67,13 +75,11 @@ void Response::onBodyStart( String const &type, size_t size )
     _body.reserve( _size );
 }
 
-
 void Response::onBodyFrag( const char *data, size_t size )
 {
   if ( !data || !size )  return;
   _body.append( data, size );
 }
-
 
 void Response::onBodyDone( void )
 {
