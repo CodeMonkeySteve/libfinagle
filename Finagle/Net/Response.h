@@ -37,7 +37,7 @@ public:
   Response( Request::Ptr req, bool saveBody = true );
   Response( URL const &uri );
 
-  Request::Ptr req( void );
+  Request::Ptr request( void );
 
   String const &type( void ) const;
   size_t size( void ) const;
@@ -51,6 +51,7 @@ protected:
 
   void onBodyStart( String const &type, size_t size );
   void onBodyFrag( const char *data, size_t size );
+  void onBodyDone( void );
 
   friend class MultipartResponse;
 
@@ -65,7 +66,7 @@ protected:
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
 
-inline Request::Ptr Response::req( void )
+inline Request::Ptr Response::request( void )
 {
   return _req;
 }

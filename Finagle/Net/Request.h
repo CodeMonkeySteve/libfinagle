@@ -50,6 +50,7 @@ public:
 public:
   boost::signal< void( String const &, size_t ) > recvBodyStart; //!< content type, size
   boost::signal< void( const char *, size_t ) >   recvBodyFrag;  //!< data, size
+  boost::signal< void( void ) >                   recvBodyDone;
 
 protected:
   static size_t onBodyFrag( const char *data, size_t membSize, size_t membNum, Request *req );

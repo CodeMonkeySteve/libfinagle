@@ -23,9 +23,6 @@
 
 #include "Response.h"
 
-#include <iostream>
-using namespace std;
-
 using namespace Finagle;
 using namespace Transfer;
 
@@ -55,8 +52,9 @@ void Response::init( void )
     return;
 
   _req->recvBodyStart.connect( boost::bind( &Response::onBodyStart, this, _1, _2 ) );
-  if ( _saveBody )
-    _req->recvBodyFrag.connect( boost::bind( &Response::onBodyFrag, this, _1, _2 ) );
+  _req->recvBodyDone .connect( boost::bind( &Response::onBodyDone, this ) );
+
+  if ( _saveBody )  _req->recvBodyFrag.connect( boost::bind( &Response::onBodyFrag, this, _1, _2 ) );
 }
 
 
@@ -65,20 +63,26 @@ void Response::onBodyStart( String const &type, size_t size )
   _type = type;
   _size = size;
 
-  if ( _saveBody )
-    _body.reserve( size );
+  if ( _size && _saveBody )
+    _body.reserve( _size );
 }
 
 
 void Response::onBodyFrag( const char *data, size_t size )
 {
-  if ( data )
-    _body.append( data, size );
+  if ( !data || !size )  return;
+  _body.append( data, size );
 
-  if ( _body.size() >= _size ) {
-    recvBody( *this );
-
-    if ( _req )
-      _req->recvBodyFrag.disconnect( this );
+  if ( !_size && (_type == "text/plain") ) {
+    // stupid, ugly hack for unsized text parts
+    if ( *(_body.end() - 1) == '\n' )
+      onBodyDone();
   }
+}
+
+
+void Response::onBodyDone( void )
+{
+  if ( _req )  _req->recvBodyFrag.disconnect( this );
+  recvBody( *this );
 }

@@ -30,15 +30,17 @@ using namespace Transfer;
 class ResponseTest : public CppUnit::TestFixture, public boost::signals::trackable {
   CPPUNIT_TEST_SUITE( ResponseTest );
   CPPUNIT_TEST( testCreateDestroy );
+  CPPUNIT_TEST( testFetch );
   CPPUNIT_TEST_SUITE_END();
 
 public:
   void setUp( void );
 
   void testCreateDestroy( void );
+  void testFetch( void );
 
 protected:
-  void onReqDone( Response const &resp );
+  void onBody( Response const &resp );
 
 protected:
   Response::Ptr _resp;
@@ -54,4 +56,30 @@ void ResponseTest::setUp( void )
 
 void ResponseTest::testCreateDestroy( void )
 {
+  Response::Ptr resp = new Response( URL().host("www.finagle.org") );
+  CPPUNIT_ASSERT( resp->request() );
+  CPPUNIT_ASSERT_NO_THROW( resp = 0 );
+}
+
+
+void ResponseTest::testFetch( void )
+{
+  URL url;
+  url.host("testcam").username("root").password("dev").path("axis-cgi/view/param.cgi").param("action", "list");
+
+  _resp = new Response( url );
+  _resp->recvBody.connect( boost::bind( &ResponseTest::onBody, this, _1 ) );
+  _resp->request()->perform();
+  AppLoop::exec();
+}
+
+
+void ResponseTest::onBody( Response const &resp )
+{
+   CPPUNIT_ASSERT( _resp->request()->succeeded() );
+   CPPUNIT_ASSERT_EQUAL( 200U, _resp->request()->result() );
+
+//   CPPUNIT_ASSERT_EQUAL( String("text/html"), _type.split(";")[0] );
+//   CPPUNIT_ASSERT( !resp.body().empty() );
+  AppLoop::exit( 0 );
 }

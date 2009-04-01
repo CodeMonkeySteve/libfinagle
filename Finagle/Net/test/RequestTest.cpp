@@ -30,7 +30,7 @@ using namespace Transfer;
 class RequestTest : public CppUnit::TestFixture, public boost::signals::trackable {
   CPPUNIT_TEST_SUITE( RequestTest );
   CPPUNIT_TEST( testCreateDestroy );
-//  CPPUNIT_TEST( testFetch );
+  CPPUNIT_TEST( testFetch );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -63,7 +63,7 @@ void RequestTest::setUp( void )
 
 void RequestTest::testCreateDestroy( void )
 {
-  Request::Ptr req = new Request( URL().host("http://www.finagle.org/") );
+  Request::Ptr req = new Request( URL().host("www.finagle.org") );
   CPPUNIT_ASSERT_NO_THROW( req = 0 );
 }
 
@@ -71,7 +71,7 @@ void RequestTest::testCreateDestroy( void )
 void RequestTest::testFetch( void )
 {
   URL url;
-  url.host( "http://www.finagle.org/" );
+  url.host( "www.finagle.org" );
 
   _req = new Request( url );
   _req->recvBodyStart.connect( boost::bind( &RequestTest::onBodyStart, this, _1, _2 ) );
