@@ -25,6 +25,9 @@
 #include "Transfer.h"
 #include "Request.h"
 
+#include <iostream>
+using namespace std;
+
 using namespace Finagle;
 using namespace Transfer;
 
@@ -66,9 +69,10 @@ Processor::~Processor( void )
 }
 
 
-Request const &Processor::add( Request const &req )
+Request const &Processor::add( Request &req )
 {
   CURLM_ASSERT( curl_multi_add_handle( _reqs, req._req ) );
+  _reqSet.insert( &req );
 
   CURLMcode res;
   int n = 0;
@@ -79,12 +83,15 @@ Request const &Processor::add( Request const &req )
   return req;
 }
 
-Request const &Processor::remove( Request const &req )
+Request const &Processor::remove( Request &req )
 {
+  if ( _reqSet.find( req._req ) == _reqSet.end() )  return req;
+
   CURLMcode res = curl_multi_remove_handle( _reqs, req._req );
   if ( res != CURLM_BAD_EASY_HANDLE )
     CURLM_ASSERT( res );
 
+  _reqSet.erase( req._req );
   return req;
 }
 
@@ -96,11 +103,23 @@ int Processor::fds( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const
   return fd;
 }
 
-void Processor::onSelect( fd_set &readFDs, fd_set &writeFDs, fd_set &exceptFDs ) const
+void Processor::onSelect( fd_set &, fd_set &, fd_set & ) const
 {
   CURLMcode res;
   int n = 0;
   while ( (res = curl_multi_perform( _reqs, &n )) == CURLM_CALL_MULTI_PERFORM )
     ;
   CURLM_ASSERT( res );
+
+/* this _should_ work, but doesn't, hence the hack in Response.cpp
+  // process info messages for completed requests
+  CURLMsg *msg;
+  while ( (msg == curl_multi_info_read( _reqs, &n )) ) {
+    if ( msg->msg != CURLMSG_DONE )  continue;
+
+    std::map<void *, Request *>::const_iterator req = _reqMap.find( msg->easy_handle );
+    if ( req != _reqSet.end() )
+      req->second->recvBodyDone();
+  }
+*/
 }

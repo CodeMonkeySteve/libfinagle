@@ -46,7 +46,7 @@ inline void CURL_ASSERT( CURLcode res )
 */
 
 Request::Request( URL const &url )
-: _url( url ), _req( curl_easy_init() ), _reqAdded( false ), _res( 0 ), _firstFrag( true )
+: _url( url ), _req( curl_easy_init() ), _res( 0 ), _firstFrag( true )
 {
   if ( !_req )
     throw Transfer::Exception( "Unable to create cURL easy instance" );
@@ -60,7 +60,7 @@ Request::Request( URL const &url )
 Request::~Request( void )
 {
   if ( !_req )  return;
-  if ( _reqAdded )  Proc().remove( *this );
+  Proc().remove( *this );
   curl_easy_cleanup( _req );
 }
 
@@ -80,7 +80,6 @@ void Request::perform( void )
 {
   if ( !_req )  return;
   Proc().add( *this );
-  _reqAdded = true;
 }
 
 

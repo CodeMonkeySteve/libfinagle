@@ -40,8 +40,8 @@ public:
   Processor( void );
  ~Processor( void );
 
-  Request const &add( Request const &req );
-  Request const &remove( Request const &req );
+  Request const &add( Request &req );
+  Request const &remove( Request &req );
 
 protected:
   void process( void );
@@ -51,6 +51,7 @@ protected:
 
 protected:
   void *_reqs;
+  std::set< void * > _reqSet;
 };
 
 static Finagle::Singleton<Processor> Proc;

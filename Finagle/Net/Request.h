@@ -57,7 +57,6 @@ protected:
 protected:
   URL _url;
   void *_req;
-  bool _reqAdded;
   mutable unsigned _res;
   bool _firstFrag;
 
