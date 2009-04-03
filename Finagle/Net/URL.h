@@ -30,7 +30,7 @@ namespace Finagle {
 
 class URL {
 public:
-  typedef std::map<std::string, std::string> ParamMap;
+  typedef std::multimap<std::string, std::string> ParamMap;
   static const char ParamDelim = ';';
 
 public:
@@ -163,7 +163,7 @@ inline URL &URL::delim( char delim )
 
 inline URL &URL::param( std::string const &name, std::string const &val )
 {
-  _params[name] = val;
+  _params.insert( ParamMap::value_type( name, val ) );
   return *this;
 }
 

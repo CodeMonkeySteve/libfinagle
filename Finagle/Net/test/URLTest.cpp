@@ -41,16 +41,16 @@ CPPUNIT_TEST_SUITE_REGISTRATION( URLTest );
 
 void URLTest::testHTTPSimple( void )
 {
+  URL url;
+  url.host("hostname").port(80).path("foo");
   CPPUNIT_ASSERT_EQUAL( (string) "http://hostname:80/foo",
-                        (string const &) URL().host("hostname").port(80).path("foo") );
+                        (string const &) url );
 }
 
 void URLTest::testHTTPFull( void )
 {
-  URL::ParamMap query;
-  query["one"] = "1!";
-  query["tw()"] = "2";
-  CPPUNIT_ASSERT_EQUAL( (string) "http://user:password@hostname:42/foo/bar?one=1%21&tw%28%29=2#fr%40gment",
-                        (string const &) URL().host("hostname").username("user").password("password").port(42)
-                                              .path("foo/bar").query(query).fragment("fr@gment").delim('&') );
+  URL url;
+  url.host("hostname").username("user").password("password").port(42).path("foo/bar")
+     .param("one", "1!").param("tw()", "2").fragment("fr@gment").delim('&');
+  CPPUNIT_ASSERT_EQUAL( (string) "http://user:password@hostname:42/foo/bar?one=1%21&tw%28%29=2#fr%40gment", (string const &) url );
 }
