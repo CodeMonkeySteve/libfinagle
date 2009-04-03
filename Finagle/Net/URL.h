@@ -47,7 +47,6 @@ public:
   URL &fragment( std::string const &frag );
   URL &query( ParamMap const &params );
   URL &delim( char delim );
-  ParamMap &query( void );
   URL &param( std::string const &name, std::string const &val );
 
   std::string const &username( void ) const;
@@ -58,6 +57,7 @@ public:
   std::string const &fragment( void ) const;
   ParamMap const &query( void ) const;
   char delim( void ) const;
+  std::string const &param( std::string const &name ) const;
 
   std::string const &request( void ) const;
   operator std::string const &( void ) const;
@@ -72,7 +72,6 @@ protected:
 };
 
 // INLINE IMPLEMENTATION ******************************************************
-
 
 inline std::ostream &operator <<( std::ostream &out, URL const &url )
 {
@@ -143,15 +142,6 @@ inline URL &URL::fragment( std::string const &frag )
   return *this;
 }
 
-inline URL &URL::query( ParamMap const &params )
-{
-  if ( _params != params ) {
-    _params = params;
-    _req.clear();
-  }
-  return *this;
-}
-
 inline URL &URL::delim( char delim )
 {
   if ( _delim != delim ) {
@@ -198,9 +188,11 @@ inline std::string const &URL::fragment( void ) const
   return _frag;
 }
 
-inline URL::ParamMap const &URL::query( void ) const
+inline std::string const &URL::param( std::string const &name ) const
 {
-  return _params;
+  static const std::string Nil;
+  ParamMap::const_iterator p = _params.find( name );
+  return (p == _params.end()) ? Nil : p->second;
 }
 
 inline char URL::delim( void ) const
