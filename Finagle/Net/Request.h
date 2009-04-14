@@ -41,6 +41,8 @@ public:
   Request( URL const &url );
  ~Request( void );
 
+  URL const &url( void ) const;
+
   unsigned result( void ) const;
   bool succeeded( void ) const;
   bool failed( void ) const;
@@ -65,6 +67,11 @@ protected:
 };
 
 // INLINE IMPLEMENTATION **********************************************************************************************************
+
+inline URL const &Request::url( void ) const
+{
+  return _url;
+}
 
 inline bool Request::succeeded( void ) const
 {
