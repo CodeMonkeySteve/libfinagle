@@ -11,14 +11,18 @@ desc 'Build RPM packages'
 PkgTask = Rake::AutoToolsRPMTask.new( :pkg => File.join( File.dirname(__FILE__), 'libFinagle.spec' ) )
 CLEAN.include File.join( File.dirname(__FILE__), 'configure' )
 
-desc 'Sign packages'
-task :sign => :pkg  do |t|
-  rpm_paths = PkgTask.spec.packages.map { |p|  p.path }
-  system( "sudo rpm --resign #{rpm_paths.join ' '}" ) and $?.exitstatus.zero?  or raise "Package signing failed"
+desc 'Sign all packages'
+task :sign => :pkgs  do |t|
+  pkgs = PkgTask.spec.packages.reject { |pkg|  RPM::Package.new( pkg.path ).has_sig? }
+  next if pkgs.empty?
+
+  pkgs = pkgs.collect { |p| p.path }.flatten.map { |p| "\"#{p}\"" }.join(' ')
+  system( "rpm --resign #{pkgs}" ) or
+    raise "Package signing failed"
 end
 
 desc 'Install packages'
-task :install => :pkg  do |t|
+task :install => :pkgs  do |t|
   rpm_paths = PkgTask.spec.packages.map { |p|  p.path }
   system( "sudo rpm -Uvh --oldpackage #{rpm_paths.join ' '}" ) and $?.exitstatus.zero?  or raise "Package install failed"
 end
