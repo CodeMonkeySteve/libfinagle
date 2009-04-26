@@ -8,6 +8,7 @@ Group: Development/Libraries
 #Url:
 Source: %{name}-%{version}-%{release}.tar.bz2
 
+BuildRequires: pcre-devel expat-devel curl-devel 
 Requires: pcre >= 6.6
 Requires: expat >= 1.95
 Requires: curl >= 7.15
